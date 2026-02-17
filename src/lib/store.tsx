@@ -43,6 +43,10 @@ interface AppState {
   logout: () => void;
   updateProfile: (data: Partial<User>) => void;
 
+  // User management (admin)
+  deleteUser: (id: number) => void;
+  toggleUserAdmin: (id: number) => void;
+
   // Participation functions
   joinKlub: (klubId: number) => void;
   leaveKlub: (klubId: number) => void;
@@ -58,7 +62,12 @@ interface AppState {
   updateMusobaqa: (id: number, musobaqa: Partial<Musobaqa>) => void;
   deleteMusobaqa: (id: number) => void;
 
+  addSportchi: (sportchi: Omit<Sportchi, "id">) => void;
+  updateSportchi: (id: number, sportchi: Partial<Sportchi>) => void;
+  deleteSportchi: (id: number) => void;
+
   addKlub: (klub: Omit<Klub, "id">) => void;
+  updateKlub: (id: number, klub: Partial<Klub>) => void;
   deleteKlub: (id: number) => void;
 
   addYutuq: (yutuq: Omit<Yutuq, "id">) => void;
@@ -80,7 +89,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [sportTurlari] = useState<SportType[]>(initialSportTurlari);
   const [sportJoylari, setSportJoylari] = useState<SportJoy[]>(initialSportJoylari);
   const [musobaqalar, setMusobaqalar] = useState<Musobaqa[]>(initialMusobaqalar);
-  const [sportchilar] = useState<Sportchi[]>(initialSportchilar);
+  const [sportchilar, setSportchilar] = useState<Sportchi[]>(initialSportchilar);
   const [klublar, setKlublar] = useState<Klub[]>(initialKlublar);
   const [yutuqlar, setYutuqlar] = useState<Yutuq[]>(initialYutuqlar);
   const [yangiliklar, setYangiliklar] = useState<Yangilik[]>(initialYangiliklar);
@@ -170,6 +179,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const updatedUser = { ...currentUser, ...data };
     setCurrentUser(updatedUser);
     setUsers(prev => prev.map(u => u.id === currentUser.id ? updatedUser : u));
+  };
+
+  // User management (admin)
+  const deleteUser = (id: number) => {
+    setUsers(prev => prev.filter(u => u.id !== id));
+  };
+
+  const toggleUserAdmin = (id: number) => {
+    setUsers(prev => prev.map(u =>
+      u.id === id ? { ...u, isAdmin: !u.isAdmin } : u
+    ));
   };
 
   // Participation functions
@@ -276,10 +296,32 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setMusobaqalar(musobaqalar.filter((m) => m.id !== id));
   };
 
+  // Sportchilar CRUD
+  const addSportchi = (sportchi: Omit<Sportchi, "id">) => {
+    const newId = Math.max(...sportchilar.map((s) => s.id), 0) + 1;
+    setSportchilar([...sportchilar, { ...sportchi, id: newId }]);
+  };
+
+  const updateSportchi = (id: number, sportchi: Partial<Sportchi>) => {
+    setSportchilar(
+      sportchilar.map((s) => (s.id === id ? { ...s, ...sportchi } : s))
+    );
+  };
+
+  const deleteSportchi = (id: number) => {
+    setSportchilar(sportchilar.filter((s) => s.id !== id));
+  };
+
   // Klublar CRUD
   const addKlub = (klub: Omit<Klub, "id">) => {
     const newId = Math.max(...klublar.map((k) => k.id), 0) + 1;
     setKlublar([...klublar, { ...klub, id: newId }]);
+  };
+
+  const updateKlub = (id: number, klub: Partial<Klub>) => {
+    setKlublar(
+      klublar.map((k) => (k.id === id ? { ...k, ...klub } : k))
+    );
   };
 
   const deleteKlub = (id: number) => {
@@ -341,6 +383,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
         login,
         logout,
         updateProfile,
+        // User management (admin)
+        deleteUser,
+        toggleUserAdmin,
         // Participation functions
         joinKlub,
         leaveKlub,
@@ -353,7 +398,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
         addMusobaqa,
         updateMusobaqa,
         deleteMusobaqa,
+        addSportchi,
+        updateSportchi,
+        deleteSportchi,
         addKlub,
+        updateKlub,
         deleteKlub,
         addYutuq,
         deleteYutuq,
