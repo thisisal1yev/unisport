@@ -12,6 +12,8 @@ import { KlublarPage } from "@/components/pages/klublar-page";
 import { SportchilarPage } from "@/components/pages/sportchilar-page";
 import { YutuqlarPage } from "@/components/pages/yutuqlar-page";
 import { YangiliklarPage } from "@/components/pages/yangiliklar-page";
+import { AuthPage } from "@/components/pages/auth-page";
+import { ProfilPage } from "@/components/pages/profil-page";
 
 function PageContent() {
   const { currentPage } = useApp();
@@ -31,6 +33,10 @@ function PageContent() {
       return <YutuqlarPage />;
     case "yangiliklar":
       return <YangiliklarPage />;
+    case "auth":
+      return <AuthPage />;
+    case "profil":
+      return <ProfilPage />;
     default:
       return <DashboardPage />;
   }

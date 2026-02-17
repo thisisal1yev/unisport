@@ -106,3 +106,29 @@ export interface Statistika {
   sportchilar: number;
   klublar: number;
 }
+
+// User
+export interface User {
+  id: number;
+  ism: string;
+  familiya: string;
+  email: string;
+  parol: string;
+  telefon?: string;
+  tug_sana?: string;
+  fakultet?: string;
+  guruh?: string;
+  // Физические данные
+  vazn?: number; // вес в кг
+  boy?: number; // рост в см
+  // Участие
+  klublar_ids: number[];
+  musobaqalar_ids: number[];
+  // Дополнительно
+  avatar_emoji: string;
+  bio?: string;
+  sport_turlari: string[];
+  ro_yxatdan_sana: string;
+  // Admin role
+  isAdmin?: boolean;
+}
