@@ -1,25 +1,31 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
-import type {
-  SportType,
-  SportJoy,
-  Musobaqa,
-  Sportchi,
-  Klub,
-  Yutuq,
-  Yangilik,
-  User,
-} from "./types";
 import {
-  sportTurlari as initialSportTurlari,
-  sportJoylari as initialSportJoylari,
-  musobaqalar as initialMusobaqalar,
-  sportchilar as initialSportchilar,
+  type ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import {
   klublar as initialKlublar,
-  yutuqlar as initialYutuqlar,
+  musobaqalar as initialMusobaqalar,
+  sportJoylari as initialSportJoylari,
+  sportTurlari as initialSportTurlari,
+  sportchilar as initialSportchilar,
   yangiliklar as initialYangiliklar,
+  yutuqlar as initialYutuqlar,
 } from "./mock-data";
+import type {
+  Klub,
+  Musobaqa,
+  SportJoy,
+  SportType,
+  Sportchi,
+  User,
+  Yangilik,
+  Yutuq,
+} from "./types";
 
 interface AppState {
   sportTurlari: SportType[];
@@ -38,8 +44,16 @@ interface AppState {
   isAuthenticated: boolean;
 
   // Auth functions
-  register: (userData: Omit<User, "id" | "ro_yxatdan_sana" | "klublar_ids" | "musobaqalar_ids">) => { success: boolean; message: string };
-  login: (email: string, parol: string) => { success: boolean; message: string };
+  register: (
+    userData: Omit<
+      User,
+      "id" | "ro_yxatdan_sana" | "klublar_ids" | "musobaqalar_ids"
+    >,
+  ) => { success: boolean; message: string };
+  login: (
+    email: string,
+    parol: string,
+  ) => { success: boolean; message: string };
   logout: () => void;
   updateProfile: (data: Partial<User>) => void;
 
@@ -87,12 +101,16 @@ const CURRENT_USER_KEY = "unisport_current_user";
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [sportTurlari] = useState<SportType[]>(initialSportTurlari);
-  const [sportJoylari, setSportJoylari] = useState<SportJoy[]>(initialSportJoylari);
-  const [musobaqalar, setMusobaqalar] = useState<Musobaqa[]>(initialMusobaqalar);
-  const [sportchilar, setSportchilar] = useState<Sportchi[]>(initialSportchilar);
+  const [sportJoylari, setSportJoylari] =
+    useState<SportJoy[]>(initialSportJoylari);
+  const [musobaqalar, setMusobaqalar] =
+    useState<Musobaqa[]>(initialMusobaqalar);
+  const [sportchilar, setSportchilar] =
+    useState<Sportchi[]>(initialSportchilar);
   const [klublar, setKlublar] = useState<Klub[]>(initialKlublar);
   const [yutuqlar, setYutuqlar] = useState<Yutuq[]>(initialYutuqlar);
-  const [yangiliklar, setYangiliklar] = useState<Yangilik[]>(initialYangiliklar);
+  const [yangiliklar, setYangiliklar] =
+    useState<Yangilik[]>(initialYangiliklar);
   const [currentPage, setCurrentPage] = useState("dashboard");
 
   // User state
@@ -102,62 +120,66 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   // Load users from localStorage on mount
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const savedUsers = localStorage.getItem(USERS_KEY);
-      const savedCurrentUser = localStorage.getItem(CURRENT_USER_KEY);
+    const savedUsers = localStorage.getItem(USERS_KEY);
+    const savedCurrentUser = localStorage.getItem(CURRENT_USER_KEY);
 
-      if (savedUsers) {
-        setUsers(JSON.parse(savedUsers));
-      }
-      if (savedCurrentUser) {
-        const user = JSON.parse(savedCurrentUser);
-        setCurrentUser(user);
-        setIsAuthenticated(true);
-      }
+    if (savedUsers) {
+      setUsers(JSON.parse(savedUsers));
+    }
+    if (savedCurrentUser) {
+      const user = JSON.parse(savedCurrentUser);
+      setCurrentUser(user);
+      setIsAuthenticated(true);
     }
   }, []);
 
   // Save users to localStorage when changed
   useEffect(() => {
-    if (typeof window !== "undefined" && users.length > 0) {
+    if (users.length > 0) {
       localStorage.setItem(USERS_KEY, JSON.stringify(users));
     }
   }, [users]);
 
   // Save current user to localStorage when changed
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      if (currentUser) {
-        localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
-      } else {
-        localStorage.removeItem(CURRENT_USER_KEY);
-      }
+    if (currentUser) {
+      localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
+    } else {
+      localStorage.removeItem(CURRENT_USER_KEY);
     }
   }, [currentUser]);
 
   // Auth functions
-  const register = (userData: Omit<User, "id" | "ro_yxatdan_sana" | "klublar_ids" | "musobaqalar_ids">) => {
-    const existingUser = users.find(u => u.email === userData.email);
+  const register = (
+    userData: Omit<
+      User,
+      "id" | "ro_yxatdan_sana" | "klublar_ids" | "musobaqalar_ids"
+    >,
+  ) => {
+    const existingUser = users.find((u) => u.email === userData.email);
     if (existingUser) {
-      return { success: false, message: "Bu email allaqachon ro'yxatdan o'tgan" };
+      return {
+        success: false,
+        message: "Bu email allaqachon ro'yxatdan o'tgan",
+      };
     }
 
     const newUser: User = {
       ...userData,
-      id: Math.max(...users.map(u => u.id), 0) + 1,
+      id: Math.max(...users.map((u) => u.id), 0) + 1,
       klublar_ids: [],
       musobaqalar_ids: [],
       ro_yxatdan_sana: new Date().toISOString().split("T")[0],
     };
 
-    setUsers(prev => [...prev, newUser]);
+    setUsers((prev) => [...prev, newUser]);
     setCurrentUser(newUser);
     setIsAuthenticated(true);
     return { success: true, message: "Muvaffaqiyatli ro'yxatdan o'tdingiz!" };
   };
 
   const login = (email: string, parol: string) => {
-    const user = users.find(u => u.email === email && u.parol === parol);
+    const user = users.find((u) => u.email === email && u.parol === parol);
     if (!user) {
       return { success: false, message: "Email yoki parol noto'g'ri" };
     }
@@ -178,18 +200,20 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     const updatedUser = { ...currentUser, ...data };
     setCurrentUser(updatedUser);
-    setUsers(prev => prev.map(u => u.id === currentUser.id ? updatedUser : u));
+    setUsers((prev) =>
+      prev.map((u) => (u.id === currentUser.id ? updatedUser : u)),
+    );
   };
 
   // User management (admin)
   const deleteUser = (id: number) => {
-    setUsers(prev => prev.filter(u => u.id !== id));
+    setUsers((prev) => prev.filter((u) => u.id !== id));
   };
 
   const toggleUserAdmin = (id: number) => {
-    setUsers(prev => prev.map(u =>
-      u.id === id ? { ...u, isAdmin: !u.isAdmin } : u
-    ));
+    setUsers((prev) =>
+      prev.map((u) => (u.id === id ? { ...u, isAdmin: !u.isAdmin } : u)),
+    );
   };
 
   // Participation functions
@@ -202,12 +226,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
         klublar_ids: [...currentUser.klublar_ids, klubId],
       };
       setCurrentUser(updatedUser);
-      setUsers(prev => prev.map(u => u.id === currentUser.id ? updatedUser : u));
+      setUsers((prev) =>
+        prev.map((u) => (u.id === currentUser.id ? updatedUser : u)),
+      );
 
       // Update klub members count
-      setKlublar(prev => prev.map(k =>
-        k.id === klubId ? { ...k, azolar_soni: k.azolar_soni + 1 } : k
-      ));
+      setKlublar((prev) =>
+        prev.map((k) =>
+          k.id === klubId ? { ...k, azolar_soni: k.azolar_soni + 1 } : k,
+        ),
+      );
     }
   };
 
@@ -216,22 +244,32 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     const updatedUser = {
       ...currentUser,
-      klublar_ids: currentUser.klublar_ids.filter(id => id !== klubId),
+      klublar_ids: currentUser.klublar_ids.filter((id) => id !== klubId),
     };
     setCurrentUser(updatedUser);
-    setUsers(prev => prev.map(u => u.id === currentUser.id ? updatedUser : u));
+    setUsers((prev) =>
+      prev.map((u) => (u.id === currentUser.id ? updatedUser : u)),
+    );
 
     // Update klub members count
-    setKlublar(prev => prev.map(k =>
-      k.id === klubId ? { ...k, azolar_soni: Math.max(0, k.azolar_soni - 1) } : k
-    ));
+    setKlublar((prev) =>
+      prev.map((k) =>
+        k.id === klubId
+          ? { ...k, azolar_soni: Math.max(0, k.azolar_soni - 1) }
+          : k,
+      ),
+    );
   };
 
   const joinMusobaqa = (musobaqaId: number) => {
     if (!currentUser) return;
 
-    const musobaqa = musobaqalar.find(m => m.id === musobaqaId);
-    if (!musobaqa || musobaqa.ishtirokchilar_soni >= musobaqa.maksimal_ishtirokchilar) return;
+    const musobaqa = musobaqalar.find((m) => m.id === musobaqaId);
+    if (
+      !musobaqa ||
+      musobaqa.ishtirokchilar_soni >= musobaqa.maksimal_ishtirokchilar
+    )
+      return;
 
     if (!currentUser.musobaqalar_ids.includes(musobaqaId)) {
       const updatedUser = {
@@ -239,12 +277,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
         musobaqalar_ids: [...currentUser.musobaqalar_ids, musobaqaId],
       };
       setCurrentUser(updatedUser);
-      setUsers(prev => prev.map(u => u.id === currentUser.id ? updatedUser : u));
+      setUsers((prev) =>
+        prev.map((u) => (u.id === currentUser.id ? updatedUser : u)),
+      );
 
       // Update competition participants count
-      setMusobaqalar(prev => prev.map(m =>
-        m.id === musobaqaId ? { ...m, ishtirokchilar_soni: m.ishtirokchilar_soni + 1 } : m
-      ));
+      setMusobaqalar((prev) =>
+        prev.map((m) =>
+          m.id === musobaqaId
+            ? { ...m, ishtirokchilar_soni: m.ishtirokchilar_soni + 1 }
+            : m,
+        ),
+      );
     }
   };
 
@@ -253,112 +297,135 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     const updatedUser = {
       ...currentUser,
-      musobaqalar_ids: currentUser.musobaqalar_ids.filter(id => id !== musobaqaId),
+      musobaqalar_ids: currentUser.musobaqalar_ids.filter(
+        (id) => id !== musobaqaId,
+      ),
     };
     setCurrentUser(updatedUser);
-    setUsers(prev => prev.map(u => u.id === currentUser.id ? updatedUser : u));
+    setUsers((prev) =>
+      prev.map((u) => (u.id === currentUser.id ? updatedUser : u)),
+    );
 
     // Update competition participants count
-    setMusobaqalar(prev => prev.map(m =>
-      m.id === musobaqaId ? { ...m, ishtirokchilar_soni: Math.max(0, m.ishtirokchilar_soni - 1) } : m
-    ));
+    setMusobaqalar((prev) =>
+      prev.map((m) =>
+        m.id === musobaqaId
+          ? {
+              ...m,
+              ishtirokchilar_soni: Math.max(0, m.ishtirokchilar_soni - 1),
+            }
+          : m,
+      ),
+    );
   };
 
   // Sport Joylari CRUD
   const addSportJoy = (joy: Omit<SportJoy, "id">) => {
-    const newId = Math.max(...sportJoylari.map((j) => j.id), 0) + 1;
-    setSportJoylari([...sportJoylari, { ...joy, id: newId }]);
+    setSportJoylari((prev) => {
+      const newId = Math.max(...prev.map((j) => j.id), 0) + 1;
+      return [...prev, { ...joy, id: newId }];
+    });
   };
 
   const updateSportJoy = (id: number, joy: Partial<SportJoy>) => {
-    setSportJoylari(
-      sportJoylari.map((j) => (j.id === id ? { ...j, ...joy } : j))
+    setSportJoylari((prev) =>
+      prev.map((j) => (j.id === id ? { ...j, ...joy } : j)),
     );
   };
 
   const deleteSportJoy = (id: number) => {
-    setSportJoylari(sportJoylari.filter((j) => j.id !== id));
+    setSportJoylari((prev) => prev.filter((j) => j.id !== id));
   };
 
   // Musobaqalar CRUD
   const addMusobaqa = (musobaqa: Omit<Musobaqa, "id">) => {
-    const newId = Math.max(...musobaqalar.map((m) => m.id), 0) + 1;
-    setMusobaqalar([...musobaqalar, { ...musobaqa, id: newId }]);
+    setMusobaqalar((prev) => {
+      const newId = Math.max(...prev.map((m) => m.id), 0) + 1;
+      return [...prev, { ...musobaqa, id: newId }];
+    });
   };
 
   const updateMusobaqa = (id: number, musobaqa: Partial<Musobaqa>) => {
-    setMusobaqalar(
-      musobaqalar.map((m) => (m.id === id ? { ...m, ...musobaqa } : m))
+    setMusobaqalar((prev) =>
+      prev.map((m) => (m.id === id ? { ...m, ...musobaqa } : m)),
     );
   };
 
   const deleteMusobaqa = (id: number) => {
-    setMusobaqalar(musobaqalar.filter((m) => m.id !== id));
+    setMusobaqalar((prev) => prev.filter((m) => m.id !== id));
   };
 
   // Sportchilar CRUD
   const addSportchi = (sportchi: Omit<Sportchi, "id">) => {
-    const newId = Math.max(...sportchilar.map((s) => s.id), 0) + 1;
-    setSportchilar([...sportchilar, { ...sportchi, id: newId }]);
+    setSportchilar((prev) => {
+      const newId = Math.max(...prev.map((s) => s.id), 0) + 1;
+      return [...prev, { ...sportchi, id: newId }];
+    });
   };
 
   const updateSportchi = (id: number, sportchi: Partial<Sportchi>) => {
-    setSportchilar(
-      sportchilar.map((s) => (s.id === id ? { ...s, ...sportchi } : s))
+    setSportchilar((prev) =>
+      prev.map((s) => (s.id === id ? { ...s, ...sportchi } : s)),
     );
   };
 
   const deleteSportchi = (id: number) => {
-    setSportchilar(sportchilar.filter((s) => s.id !== id));
+    setSportchilar((prev) => prev.filter((s) => s.id !== id));
   };
 
   // Klublar CRUD
   const addKlub = (klub: Omit<Klub, "id">) => {
-    const newId = Math.max(...klublar.map((k) => k.id), 0) + 1;
-    setKlublar([...klublar, { ...klub, id: newId }]);
+    setKlublar((prev) => {
+      const newId = Math.max(...prev.map((k) => k.id), 0) + 1;
+      return [...prev, { ...klub, id: newId }];
+    });
   };
 
   const updateKlub = (id: number, klub: Partial<Klub>) => {
-    setKlublar(
-      klublar.map((k) => (k.id === id ? { ...k, ...klub } : k))
+    setKlublar((prev) =>
+      prev.map((k) => (k.id === id ? { ...k, ...klub } : k)),
     );
   };
 
   const deleteKlub = (id: number) => {
-    setKlublar(klublar.filter((k) => k.id !== id));
+    setKlublar((prev) => prev.filter((k) => k.id !== id));
   };
 
   // Yutuqlar CRUD
   const addYutuq = (yutuq: Omit<Yutuq, "id">) => {
-    const newId = Math.max(...yutuqlar.map((y) => y.id), 0) + 1;
-    setYutuqlar([...yutuqlar, { ...yutuq, id: newId }]);
+    setYutuqlar((prev) => {
+      const newId = Math.max(...prev.map((y) => y.id), 0) + 1;
+      return [...prev, { ...yutuq, id: newId }];
+    });
   };
 
   const deleteYutuq = (id: number) => {
-    setYutuqlar(yutuqlar.filter((y) => y.id !== id));
+    setYutuqlar((prev) => prev.filter((y) => y.id !== id));
   };
 
   // Yangiliklar CRUD
   const addYangilik = (yangilik: Omit<Yangilik, "id">) => {
-    const newId = Math.max(...yangiliklar.map((y) => y.id), 0) + 1;
-    setYangiliklar([...yangiliklar, { ...yangilik, id: newId }]);
+    setYangiliklar((prev) => {
+      const newId = Math.max(...prev.map((y) => y.id), 0) + 1;
+      return [...prev, { ...yangilik, id: newId }];
+    });
   };
 
   const updateYangilik = (id: number, yangilik: Partial<Yangilik>) => {
-    setYangiliklar(
-      yangiliklar.map((y) => (y.id === id ? { ...y, ...yangilik } : y))
+    setYangiliklar((prev) =>
+      prev.map((y) => (y.id === id ? { ...y, ...yangilik } : y)),
     );
   };
 
   const deleteYangilik = (id: number) => {
-    setYangiliklar(yangiliklar.filter((y) => y.id !== id));
+    setYangiliklar((prev) => prev.filter((y) => y.id !== id));
   };
 
   const likeYangilik = (id: number) => {
-    setYangiliklar(
-      yangiliklar.map((y) =>
-        y.id === id ? { ...y, layklar: y.layklar + 1 } : y
-      )
+    setYangiliklar((prev) =>
+      prev.map((y) =>
+        y.id === id ? { ...y, layklar: y.layklar + 1 } : y,
+      ),
     );
   };
 

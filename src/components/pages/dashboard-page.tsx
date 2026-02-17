@@ -1,11 +1,12 @@
 "use client";
 
-import { useApp } from "@/lib/store";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { useApp } from "@/lib/store";
 
 export function DashboardPage() {
-  const { musobaqalar, yutuqlar, sportchilar, klublar, setCurrentPage } = useApp();
+  const { musobaqalar, yutuqlar, sportchilar, klublar, setCurrentPage } =
+    useApp();
 
   const stats = [
     {
@@ -127,7 +128,8 @@ export function DashboardPage() {
                   </div>
                   <div className="text-right">
                     <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium">
-                      {musobaqa.ishtirokchilar_soni}/{musobaqa.maksimal_ishtirokchilar}
+                      {musobaqa.ishtirokchilar_soni}/
+                      {musobaqa.maksimal_ishtirokchilar}
                     </span>
                   </div>
                 </div>

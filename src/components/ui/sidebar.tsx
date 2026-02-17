@@ -1,10 +1,10 @@
 "use client";
 
-import { useTheme } from "next-themes";
-import { cn } from "@/lib/utils";
-import { useApp } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useApp } from "@/lib/store";
+import { cn } from "@/lib/utils";
+import { useTheme } from "next-themes";
 import { useState } from "react";
 
 const navItems = [
@@ -19,7 +19,8 @@ const navItems = [
 ];
 
 export function Sidebar() {
-  const { currentPage, setCurrentPage, isAuthenticated, currentUser, logout } = useApp();
+  const { currentPage, setCurrentPage, isAuthenticated, currentUser, logout } =
+    useApp();
   const { theme, setTheme } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -59,17 +60,29 @@ export function Sidebar() {
             "mx-4 mt-4 p-3 rounded-xl flex items-center gap-3 transition-all",
             currentPage === "profil"
               ? "bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg"
-              : "bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700"
+              : "bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700",
           )}
         >
           <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-xl">
             {currentUser.avatar_emoji}
           </div>
           <div className="text-left flex-1">
-            <p className={cn("font-semibold text-sm", currentPage === "profil" ? "text-white" : "text-slate-800 dark:text-white")}>
+            <p
+              className={cn(
+                "font-semibold text-sm",
+                currentPage === "profil"
+                  ? "text-white"
+                  : "text-slate-800 dark:text-white",
+              )}
+            >
               {currentUser.ism} {currentUser.familiya}
             </p>
-            <p className={cn("text-xs", currentPage === "profil" ? "text-white/80" : "text-slate-500")}>
+            <p
+              className={cn(
+                "text-xs",
+                currentPage === "profil" ? "text-white/80" : "text-slate-500",
+              )}
+            >
               Profilni ko'rish
             </p>
           </div>
@@ -82,17 +95,31 @@ export function Sidebar() {
             "mx-4 mt-4 p-3 rounded-xl flex items-center gap-3 transition-all",
             currentPage === "auth"
               ? "bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg"
-              : "bg-emerald-50 dark:bg-emerald-900/30 hover:bg-emerald-100 dark:hover:bg-emerald-900/50"
+              : "bg-emerald-50 dark:bg-emerald-900/30 hover:bg-emerald-100 dark:hover:bg-emerald-900/50",
           )}
         >
           <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-800 flex items-center justify-center text-xl">
             👤
           </div>
           <div className="text-left flex-1">
-            <p className={cn("font-semibold text-sm", currentPage === "auth" ? "text-white" : "text-emerald-700 dark:text-emerald-300")}>
+            <p
+              className={cn(
+                "font-semibold text-sm",
+                currentPage === "auth"
+                  ? "text-white"
+                  : "text-emerald-700 dark:text-emerald-300",
+              )}
+            >
               Kirish / Ro'yxatdan o'tish
             </p>
-            <p className={cn("text-xs", currentPage === "auth" ? "text-white/80" : "text-emerald-600/70 dark:text-emerald-400/70")}>
+            <p
+              className={cn(
+                "text-xs",
+                currentPage === "auth"
+                  ? "text-white/80"
+                  : "text-emerald-600/70 dark:text-emerald-400/70",
+              )}
+            >
               Musobaqalarda qatnashing
             </p>
           </div>
@@ -109,8 +136,8 @@ export function Sidebar() {
             className={cn(
               "w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-medium",
               currentPage === item.id
-                ? "bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/25"
-                : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/25"
+                : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800",
             )}
           >
             <span className="text-xl">{item.icon}</span>
@@ -121,6 +148,22 @@ export function Sidebar() {
 
       {/* Bottom Actions */}
       <div className="p-4 border-t border-slate-200 dark:border-slate-800 space-y-2">
+        {/* Admin Panel Link */}
+        {isAuthenticated && currentUser?.isAdmin && (
+          <button
+            type="button"
+            onClick={() => handleNavClick("admin")}
+            className={cn(
+              "w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-medium",
+              currentPage === "admin"
+                ? "bg-gradient-to-r from-red-500 to-rose-600 text-white shadow-lg shadow-red-500/25"
+                : "text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20",
+            )}
+          >
+            <span className="text-xl">🔧</span>
+            <span>Admin Panel</span>
+          </button>
+        )}
         <Button
           variant="outline"
           className="w-full justify-center gap-2"

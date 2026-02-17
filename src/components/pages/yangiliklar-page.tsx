@@ -1,19 +1,44 @@
 "use client";
 
-import { useState } from "react";
-import { useApp } from "@/lib/store";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useApp } from "@/lib/store";
 import type { Yangilik } from "@/lib/types";
+import { useState } from "react";
 
-const kategoriyalar = ["Umumiy", "Futbol", "Basketbol", "Voleybol", "Musobaqa", "Yutuqlar"];
+const kategoriyalar = [
+  "Umumiy",
+  "Futbol",
+  "Basketbol",
+  "Voleybol",
+  "Musobaqa",
+  "Yutuqlar",
+];
 
 export function YangiliklarPage() {
-  const { yangiliklar, addYangilik, updateYangilik, deleteYangilik, likeYangilik } = useApp();
+  const {
+    yangiliklar,
+    addYangilik,
+    updateYangilik,
+    deleteYangilik,
+    likeYangilik,
+  } = useApp();
 
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [editModal, setEditModal] = useState<Yangilik | null>(null);
@@ -75,10 +100,6 @@ export function YangiliklarPage() {
     }
   };
 
-  const handleLike = (id: number) => {
-    likeYangilik(id);
-  };
-
   const FormContent = ({ isEdit = false }: { isEdit?: boolean }) => (
     <div className="space-y-4">
       <div>
@@ -87,7 +108,9 @@ export function YangiliklarPage() {
         </label>
         <Input
           value={formData.sarlavha}
-          onChange={(e) => setFormData({ ...formData, sarlavha: e.target.value })}
+          onChange={(e) =>
+            setFormData({ ...formData, sarlavha: e.target.value })
+          }
           placeholder="Yangilik sarlavhasi"
         />
       </div>
@@ -109,7 +132,9 @@ export function YangiliklarPage() {
           </label>
           <Select
             value={formData.kategoriya}
-            onValueChange={(value) => setFormData({ ...formData, kategoriya: value })}
+            onValueChange={(value) =>
+              setFormData({ ...formData, kategoriya: value })
+            }
           >
             <SelectTrigger>
               <SelectValue />
@@ -129,7 +154,9 @@ export function YangiliklarPage() {
           </label>
           <Input
             value={formData.rasm_emoji}
-            onChange={(e) => setFormData({ ...formData, rasm_emoji: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, rasm_emoji: e.target.value })
+            }
             maxLength={2}
           />
         </div>
@@ -227,7 +254,7 @@ export function YangiliklarPage() {
                 <div className="flex gap-4">
                   <button
                     type="button"
-                    onClick={() => handleLike(yangilik.id)}
+                    onClick={() => likeYangilik(yangilik.id)}
                     className="flex items-center gap-1 text-sm hover:scale-110 transition-transform text-red-500"
                   >
                     ❤️ {yangilik.layklar}

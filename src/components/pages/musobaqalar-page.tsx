@@ -1,20 +1,39 @@
 "use client";
 
-import { useState } from "react";
-import { useApp } from "@/lib/store";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { useApp } from "@/lib/store";
 import type { Musobaqa } from "@/lib/types";
+import { useState } from "react";
 
 export function MusobaqalarPage() {
-  const { sportTurlari, musobaqalar, sportchilar, addMusobaqa, updateMusobaqa, deleteMusobaqa } = useApp();
+  const {
+    sportTurlari,
+    musobaqalar,
+    sportchilar,
+    addMusobaqa,
+    updateMusobaqa,
+    deleteMusobaqa,
+  } = useApp();
 
-  const [filterSport, setFilterSport] = useState<string>("");
+  const [filterSport, setFilterSport] = useState("all");
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [detailModal, setDetailModal] = useState<Musobaqa | null>(null);
   const [editModal, setEditModal] = useState<Musobaqa | null>(null);
@@ -32,7 +51,7 @@ export function MusobaqalarPage() {
   });
 
   const filteredMusobaqalar = musobaqalar.filter((m) => {
-    return !filterSport || m.kategoriya === filterSport;
+    return filterSport === "all" || m.kategoriya === filterSport;
   });
 
   const resetForm = () => {
@@ -56,7 +75,9 @@ export function MusobaqalarPage() {
       sana: formData.sana,
       joy: formData.joy,
       ishtirokchilar_soni: Number.parseInt(formData.ishtirokchilar_soni),
-      maksimal_ishtirokchilar: Number.parseInt(formData.maksimal_ishtirokchilar),
+      maksimal_ishtirokchilar: Number.parseInt(
+        formData.maksimal_ishtirokchilar,
+      ),
       holat: "kelgusi",
       rasm_emoji: formData.rasm_emoji,
       tavsif: formData.tavsif,
@@ -74,7 +95,9 @@ export function MusobaqalarPage() {
       sana: formData.sana,
       joy: formData.joy,
       ishtirokchilar_soni: Number.parseInt(formData.ishtirokchilar_soni),
-      maksimal_ishtirokchilar: Number.parseInt(formData.maksimal_ishtirokchilar),
+      maksimal_ishtirokchilar: Number.parseInt(
+        formData.maksimal_ishtirokchilar,
+      ),
       rasm_emoji: formData.rasm_emoji,
       tavsif: formData.tavsif,
       mukofotlar: formData.mukofotlar,
@@ -107,11 +130,23 @@ export function MusobaqalarPage() {
   const getStatusBadge = (holat: string) => {
     switch (holat) {
       case "faol":
-        return <Badge className="bg-green-100 text-green-700 hover:bg-green-100">Faol</Badge>;
+        return (
+          <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
+            Faol
+          </Badge>
+        );
       case "yakunlangan":
-        return <Badge className="bg-slate-100 text-slate-700 hover:bg-slate-100">Yakunlangan</Badge>;
+        return (
+          <Badge className="bg-slate-100 text-slate-700 hover:bg-slate-100">
+            Yakunlangan
+          </Badge>
+        );
       default:
-        return <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">Kelgusi</Badge>;
+        return (
+          <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">
+            Kelgusi
+          </Badge>
+        );
     }
   };
 
@@ -138,7 +173,9 @@ export function MusobaqalarPage() {
           </label>
           <Select
             value={formData.kategoriya}
-            onValueChange={(value) => setFormData({ ...formData, kategoriya: value })}
+            onValueChange={(value) =>
+              setFormData({ ...formData, kategoriya: value })
+            }
           >
             <SelectTrigger>
               <SelectValue placeholder="Sport turini tanlang" />
@@ -182,7 +219,12 @@ export function MusobaqalarPage() {
             type="number"
             min="0"
             value={formData.maksimal_ishtirokchilar}
-            onChange={(e) => setFormData({ ...formData, maksimal_ishtirokchilar: e.target.value })}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                maksimal_ishtirokchilar: e.target.value,
+              })
+            }
           />
         </div>
         <div>
@@ -191,7 +233,9 @@ export function MusobaqalarPage() {
           </label>
           <Input
             value={formData.rasm_emoji}
-            onChange={(e) => setFormData({ ...formData, rasm_emoji: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, rasm_emoji: e.target.value })
+            }
             maxLength={2}
           />
         </div>
@@ -213,7 +257,9 @@ export function MusobaqalarPage() {
         </label>
         <Textarea
           value={formData.mukofotlar}
-          onChange={(e) => setFormData({ ...formData, mukofotlar: e.target.value })}
+          onChange={(e) =>
+            setFormData({ ...formData, mukofotlar: e.target.value })
+          }
           placeholder="1-o'rin: ...&#10;2-o'rin: ..."
           rows={3}
         />
@@ -271,7 +317,7 @@ export function MusobaqalarPage() {
                 <SelectValue placeholder="Barcha sport turlari" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value=" ">Barcha sport turlari</SelectItem>
+                <SelectItem value="all">Barcha sport turlari</SelectItem>
                 {sportTurlari.map((sport) => (
                   <SelectItem key={sport.id} value={sport.nomi}>
                     {sport.rasm_emoji} {sport.nomi}
@@ -310,7 +356,10 @@ export function MusobaqalarPage() {
                 <p>🎯 {musobaqa.kategoriya}</p>
                 <p>📅 {musobaqa.sana}</p>
                 <p>📍 {musobaqa.joy}</p>
-                <p>👥 {musobaqa.ishtirokchilar_soni}/{musobaqa.maksimal_ishtirokchilar} ishtirokchi</p>
+                <p>
+                  👥 {musobaqa.ishtirokchilar_soni}/
+                  {musobaqa.maksimal_ishtirokchilar} ishtirokchi
+                </p>
               </div>
               <div className="flex justify-between items-center">
                 {getStatusBadge(musobaqa.holat)}
@@ -322,10 +371,7 @@ export function MusobaqalarPage() {
                   >
                     ✏️
                   </Button>
-                  <Button
-                    size="sm"
-                    onClick={() => setDetailModal(musobaqa)}
-                  >
+                  <Button size="sm" onClick={() => setDetailModal(musobaqa)}>
                     📋 Batafsil
                   </Button>
                 </div>
@@ -353,8 +399,12 @@ export function MusobaqalarPage() {
                 <div className="flex items-center gap-3">
                   <span className="text-5xl">{detailModal.rasm_emoji}</span>
                   <div>
-                    <DialogTitle className="text-2xl">{detailModal.nomi}</DialogTitle>
-                    <p className="text-slate-600 dark:text-slate-400">{detailModal.kategoriya}</p>
+                    <DialogTitle className="text-2xl">
+                      {detailModal.nomi}
+                    </DialogTitle>
+                    <p className="text-slate-600 dark:text-slate-400">
+                      {detailModal.kategoriya}
+                    </p>
                   </div>
                 </div>
               </DialogHeader>
@@ -363,21 +413,28 @@ export function MusobaqalarPage() {
                 {/* Basic Info */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="bg-blue-50 dark:bg-blue-900/30 rounded-xl p-4">
-                    <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">📅 Sana</p>
+                    <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">
+                      📅 Sana
+                    </p>
                     <p className="text-lg font-bold text-blue-600 dark:text-blue-400">
                       {detailModal.sana}
                     </p>
                   </div>
                   <div className="bg-green-50 dark:bg-green-900/30 rounded-xl p-4">
-                    <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">📍 Joy</p>
+                    <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">
+                      📍 Joy
+                    </p>
                     <p className="text-lg font-bold text-green-600 dark:text-green-400">
                       {detailModal.joy}
                     </p>
                   </div>
                   <div className="bg-purple-50 dark:bg-purple-900/30 rounded-xl p-4">
-                    <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">👥 Ishtirokchilar</p>
+                    <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">
+                      👥 Ishtirokchilar
+                    </p>
                     <p className="text-lg font-bold text-purple-600 dark:text-purple-400">
-                      {detailModal.ishtirokchilar_soni}/{detailModal.maksimal_ishtirokchilar}
+                      {detailModal.ishtirokchilar_soni}/
+                      {detailModal.maksimal_ishtirokchilar}
                     </p>
                   </div>
                 </div>
@@ -388,7 +445,9 @@ export function MusobaqalarPage() {
                     <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-2">
                       📝 Tavsif
                     </h3>
-                    <p className="text-slate-600 dark:text-slate-400">{detailModal.tavsif}</p>
+                    <p className="text-slate-600 dark:text-slate-400">
+                      {detailModal.tavsif}
+                    </p>
                   </div>
                 )}
 
@@ -405,22 +464,29 @@ export function MusobaqalarPage() {
                 )}
 
                 {/* Registration */}
-                {detailModal.holat === "kelgusi" && detailModal.ishtirokchilar_soni < detailModal.maksimal_ishtirokchilar && (
-                  <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl p-6 text-center text-white">
-                    <h3 className="text-2xl font-bold mb-2">Ishtirok etmoqchimisiz?</h3>
-                    <p className="mb-4">
-                      Bo'sh joylar: {detailModal.maksimal_ishtirokchilar - detailModal.ishtirokchilar_soni}
-                    </p>
-                    <Button variant="secondary" size="lg">
-                      ✅ Ro'yxatdan o'tish
-                    </Button>
-                  </div>
-                )}
+                {detailModal.holat === "kelgusi" &&
+                  detailModal.ishtirokchilar_soni <
+                    detailModal.maksimal_ishtirokchilar && (
+                    <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl p-6 text-center text-white">
+                      <h3 className="text-2xl font-bold mb-2">
+                        Ishtirok etmoqchimisiz?
+                      </h3>
+                      <p className="mb-4">
+                        Bo'sh joylar:{" "}
+                        {detailModal.maksimal_ishtirokchilar -
+                          detailModal.ishtirokchilar_soni}
+                      </p>
+                      <Button variant="secondary" size="lg">
+                        ✅ Ro'yxatdan o'tish
+                      </Button>
+                    </div>
+                  )}
 
                 {/* Participants */}
                 <div>
                   <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-4">
-                    👥 Ishtirokchilar ({getParticipants(detailModal.kategoriya).length})
+                    👥 Ishtirokchilar (
+                    {getParticipants(detailModal.kategoriya).length})
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {getParticipants(detailModal.kategoriya).map((sportchi) => (

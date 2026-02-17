@@ -5,7 +5,13 @@ export interface SportType {
   tavsif: string;
   tarix: string;
   rasm_emoji: string;
+  rasm?: string;
   youtube_havola?: string;
+  asos_solingan?: string;
+  jamoa_hajmi?: string;
+  maydon_olchami?: string;
+  qoidalar?: string;
+  faktlar?: string[];
 }
 
 // Sport Locations
@@ -31,7 +37,7 @@ export interface Musobaqa {
   joy: string;
   ishtirokchilar_soni: number;
   maksimal_ishtirokchilar: number;
-  holat: 'kelgusi' | 'faol' | 'yakunlangan';
+  holat: "kelgusi" | "faol" | "yakunlangan";
   rasm_emoji: string;
   tavsif?: string;
   mukofotlar?: string;
@@ -44,7 +50,7 @@ export interface Sportchi {
   sport: string;
   fakultet?: string;
   guruh?: string;
-  daraja: 'Boshlovchi' | 'Havaskor' | 'Professional';
+  daraja: "Boshlovchi" | "Havaskor" | "Professional";
   medallar: number;
   yulduzlar: number;
   avatar_emoji: string;
@@ -81,7 +87,7 @@ export interface Yutuq {
     ism: string;
   };
   musobaqa: string;
-  medal_turi: 'oltin' | 'kumush' | 'bronza';
+  medal_turi: "oltin" | "kumush" | "bronza";
   medal_soni: number;
   sana: string;
   rasm_emoji: string;
@@ -99,14 +105,6 @@ export interface Yangilik {
   izohlar_soni: number;
 }
 
-// Statistics
-export interface Statistika {
-  musobaqalar: number;
-  yutuqlar: number;
-  sportchilar: number;
-  klublar: number;
-}
-
 // User
 export interface User {
   id: number;
@@ -118,17 +116,13 @@ export interface User {
   tug_sana?: string;
   fakultet?: string;
   guruh?: string;
-  // Физические данные
-  vazn?: number; // вес в кг
-  boy?: number; // рост в см
-  // Участие
-  klublar_ids: number[];
-  musobaqalar_ids: number[];
-  // Дополнительно
+  vazn?: number;
+  boy?: number;
   avatar_emoji: string;
   bio?: string;
   sport_turlari: string[];
-  ro_yxatdan_sana: string;
-  // Admin role
   isAdmin?: boolean;
+  klublar_ids: number[];
+  musobaqalar_ids: number[];
+  ro_yxatdan_sana: string;
 }

@@ -1,12 +1,25 @@
 "use client";
 
-import { useState } from "react";
-import { useApp } from "@/lib/store";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useApp } from "@/lib/store";
+import { getMedalEmoji } from "@/lib/utils";
+import { useState } from "react";
 
 export function YutuqlarPage() {
   const { sportchilar, yutuqlar, addYutuq, deleteYutuq } = useApp();
@@ -31,10 +44,10 @@ export function YutuqlarPage() {
   };
 
   const handleAdd = () => {
-    const sportchi = sportchilar.find((s) => s.id === Number.parseInt(formData.sportchi_id));
+    const sportchi = sportchilar.find(
+      (s) => s.id === Number.parseInt(formData.sportchi_id),
+    );
     if (!sportchi) return;
-
-    const medalEmoji = formData.medal_turi === "oltin" ? "🥇" : formData.medal_turi === "kumush" ? "🥈" : "🥉";
 
     addYutuq({
       nomi: formData.nomi,
@@ -43,7 +56,7 @@ export function YutuqlarPage() {
       medal_turi: formData.medal_turi,
       medal_soni: Number.parseInt(formData.medal_soni),
       sana: new Date().toISOString().split("T")[0],
-      rasm_emoji: medalEmoji,
+      rasm_emoji: getMedalEmoji(formData.medal_turi),
     });
     resetForm();
     setAddModalOpen(false);
@@ -59,19 +72,6 @@ export function YutuqlarPage() {
   const topSportchilar = [...sportchilar]
     .sort((a, b) => b.medallar - a.medallar)
     .slice(0, 10);
-
-  const getMedalEmoji = (medalTuri: string) => {
-    switch (medalTuri) {
-      case "oltin":
-        return "🥇";
-      case "kumush":
-        return "🥈";
-      case "bronza":
-        return "🥉";
-      default:
-        return "🏅";
-    }
-  };
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
@@ -96,7 +96,9 @@ export function YutuqlarPage() {
                 </label>
                 <Select
                   value={formData.sportchi_id}
-                  onValueChange={(value) => setFormData({ ...formData, sportchi_id: value })}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, sportchi_id: value })
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Sportchini tanlang" />
@@ -116,7 +118,9 @@ export function YutuqlarPage() {
                 </label>
                 <Input
                   value={formData.nomi}
-                  onChange={(e) => setFormData({ ...formData, nomi: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, nomi: e.target.value })
+                  }
                   placeholder="1-o'rin"
                 />
               </div>
@@ -126,7 +130,9 @@ export function YutuqlarPage() {
                 </label>
                 <Input
                   value={formData.musobaqa}
-                  onChange={(e) => setFormData({ ...formData, musobaqa: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, musobaqa: e.target.value })
+                  }
                   placeholder="Viloyat chempionati"
                 />
               </div>
@@ -136,7 +142,12 @@ export function YutuqlarPage() {
                 </label>
                 <Select
                   value={formData.medal_turi}
-                  onValueChange={(value) => setFormData({ ...formData, medal_turi: value as "oltin" | "kumush" | "bronza" })}
+                  onValueChange={(value) =>
+                    setFormData({
+                      ...formData,
+                      medal_turi: value as "oltin" | "kumush" | "bronza",
+                    })
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -157,14 +168,20 @@ export function YutuqlarPage() {
                   min="1"
                   max="10"
                   value={formData.medal_soni}
-                  onChange={(e) => setFormData({ ...formData, medal_soni: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, medal_soni: e.target.value })
+                  }
                 />
               </div>
               <div className="flex gap-4 pt-4">
                 <Button
                   className="flex-1 bg-gradient-to-r from-green-500 to-teal-600"
                   onClick={handleAdd}
-                  disabled={!formData.sportchi_id || !formData.nomi || !formData.musobaqa}
+                  disabled={
+                    !formData.sportchi_id ||
+                    !formData.nomi ||
+                    !formData.musobaqa
+                  }
                 >
                   Qo'shish
                 </Button>
@@ -191,10 +208,14 @@ export function YutuqlarPage() {
             <h2 className="text-2xl font-bold mb-4">🏆 Top 10 Sportchilar</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {topSportchilar.map((s, i) => {
-                const bgColor = i === 0 ? "bg-yellow-300 text-slate-800" :
-                               i === 1 ? "bg-gray-300 text-slate-800" :
-                               i === 2 ? "bg-orange-300 text-slate-800" :
-                               "bg-white/90 text-slate-800";
+                const bgColor =
+                  i === 0
+                    ? "bg-yellow-300 text-slate-800"
+                    : i === 1
+                      ? "bg-gray-300 text-slate-800"
+                      : i === 2
+                        ? "bg-orange-300 text-slate-800"
+                        : "bg-white/90 text-slate-800";
                 return (
                   <div
                     key={s.id}
@@ -204,7 +225,9 @@ export function YutuqlarPage() {
                     <div className="text-3xl">{s.avatar_emoji}</div>
                     <div className="flex-1">
                       <h4 className="font-bold">{s.ism}</h4>
-                      <p className="text-sm opacity-80">{s.sport} | {s.fakultet}</p>
+                      <p className="text-sm opacity-80">
+                        {s.sport} | {s.fakultet}
+                      </p>
                       <p className="text-sm">
                         🏅 {s.medallar} medal | {"⭐".repeat(s.yulduzlar)}
                       </p>
@@ -243,7 +266,9 @@ export function YutuqlarPage() {
               <div className="space-y-1 text-sm text-slate-600 dark:text-slate-400">
                 <p>👤 {yutuq.sportchi.ism}</p>
                 <p>🏆 {yutuq.musobaqa}</p>
-                <p>🥇 {yutuq.medal_soni}x {yutuq.medal_turi}</p>
+                <p>
+                  🥇 {yutuq.medal_soni}x {yutuq.medal_turi}
+                </p>
                 <p className="text-slate-500">📅 {yutuq.sana}</p>
               </div>
             </CardContent>
