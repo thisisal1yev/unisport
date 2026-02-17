@@ -19,12 +19,17 @@ const navItems = [
 ];
 
 export function Sidebar() {
-  const { currentPage, setCurrentPage } = useApp();
+  const { currentPage, setCurrentPage, isAuthenticated, currentUser, logout } = useApp();
   const { theme, setTheme } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleNavClick = (pageId: string) => {
     setCurrentPage(pageId);
+    setMobileOpen(false);
+  };
+
+  const handleLogout = () => {
+    logout();
     setMobileOpen(false);
   };
 
@@ -45,6 +50,55 @@ export function Sidebar() {
         </div>
       </div>
 
+      {/* User Profile Section */}
+      {isAuthenticated && currentUser ? (
+        <button
+          type="button"
+          onClick={() => handleNavClick("profil")}
+          className={cn(
+            "mx-4 mt-4 p-3 rounded-xl flex items-center gap-3 transition-all",
+            currentPage === "profil"
+              ? "bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg"
+              : "bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700"
+          )}
+        >
+          <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-xl">
+            {currentUser.avatar_emoji}
+          </div>
+          <div className="text-left flex-1">
+            <p className={cn("font-semibold text-sm", currentPage === "profil" ? "text-white" : "text-slate-800 dark:text-white")}>
+              {currentUser.ism} {currentUser.familiya}
+            </p>
+            <p className={cn("text-xs", currentPage === "profil" ? "text-white/80" : "text-slate-500")}>
+              Profilni ko'rish
+            </p>
+          </div>
+        </button>
+      ) : (
+        <button
+          type="button"
+          onClick={() => handleNavClick("auth")}
+          className={cn(
+            "mx-4 mt-4 p-3 rounded-xl flex items-center gap-3 transition-all",
+            currentPage === "auth"
+              ? "bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg"
+              : "bg-emerald-50 dark:bg-emerald-900/30 hover:bg-emerald-100 dark:hover:bg-emerald-900/50"
+          )}
+        >
+          <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-800 flex items-center justify-center text-xl">
+            👤
+          </div>
+          <div className="text-left flex-1">
+            <p className={cn("font-semibold text-sm", currentPage === "auth" ? "text-white" : "text-emerald-700 dark:text-emerald-300")}>
+              Kirish / Ro'yxatdan o'tish
+            </p>
+            <p className={cn("text-xs", currentPage === "auth" ? "text-white/80" : "text-emerald-600/70 dark:text-emerald-400/70")}>
+              Musobaqalarda qatnashing
+            </p>
+          </div>
+        </button>
+      )}
+
       {/* Navigation */}
       <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
         {navItems.map((item) => (
@@ -55,7 +109,7 @@ export function Sidebar() {
             className={cn(
               "w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-medium",
               currentPage === item.id
-                ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/25"
+                ? "bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/25"
                 : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
             )}
           >
@@ -75,13 +129,16 @@ export function Sidebar() {
           <span>{theme === "dark" ? "☀️" : "🌙"}</span>
           <span>{theme === "dark" ? "Yorug' tema" : "Qora tema"}</span>
         </Button>
-        <Button
-          variant="destructive"
-          className="w-full justify-center gap-2"
-        >
-          <span>🚪</span>
-          <span>Chiqish</span>
-        </Button>
+        {isAuthenticated && (
+          <Button
+            variant="destructive"
+            className="w-full justify-center gap-2"
+            onClick={handleLogout}
+          >
+            <span>🚪</span>
+            <span>Chiqish</span>
+          </Button>
+        )}
       </div>
     </div>
   );
