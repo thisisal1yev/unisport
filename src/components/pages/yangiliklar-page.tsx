@@ -224,18 +224,6 @@ export function YangiliklarPage() {
                     📅 {yangilik.sana}
                   </span>
                 </div>
-                <div className="flex gap-4">
-                  <button
-                    type="button"
-                    onClick={() => handleLike(yangilik.id)}
-                    className="flex items-center gap-1 text-sm hover:scale-110 transition-transform text-red-500"
-                  >
-                    ❤️ {yangilik.layklar}
-                  </button>
-                  <span className="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400">
-                    💬 {yangilik.izohlar_soni}
-                  </span>
-                </div>
               </div>
             </CardContent>
           </Card>

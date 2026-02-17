@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { tumanlar } from "@/lib/mock-data";
+import { YandexMap } from "@/components/ui/yandex-map";
 import type { SportJoy } from "@/lib/types";
 
 export function SportJoylariPage() {
@@ -17,6 +18,7 @@ export function SportJoylariPage() {
   const [filterTuman, setFilterTuman] = useState<string>("");
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [editingJoy, setEditingJoy] = useState<SportJoy | null>(null);
+  const [selectedLocationId, setSelectedLocationId] = useState<number | null>(null);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -300,6 +302,7 @@ export function SportJoylariPage() {
               onClick={() => {
                 setFilterSport("");
                 setFilterTuman("");
+                setSelectedLocationId(null);
               }}
             >
               Tozalash
@@ -308,23 +311,17 @@ export function SportJoylariPage() {
         </CardContent>
       </Card>
 
-      {/* Map Placeholder */}
+      {/* Yandex Map */}
       <Card className="border-0 shadow-lg bg-white dark:bg-slate-800">
         <CardContent className="p-6">
           <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-4">
-            Xarita
+            🗺️ Xarita
           </h3>
-          <div className="h-64 bg-gradient-to-br from-blue-100 to-green-100 dark:from-slate-700 dark:to-slate-600 rounded-xl flex items-center justify-center">
-            <div className="text-center">
-              <div className="text-6xl mb-2">🗺️</div>
-              <p className="text-slate-600 dark:text-slate-300">
-                Interaktiv xarita ({filteredJoylar.length} joy)
-              </p>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                Yandex Maps API bilan integratsiya
-              </p>
-            </div>
-          </div>
+          <YandexMap
+            locations={filteredJoylar}
+            onLocationSelect={(location) => setSelectedLocationId(location.id)}
+            selectedLocationId={selectedLocationId}
+          />
         </CardContent>
       </Card>
 
@@ -333,7 +330,10 @@ export function SportJoylariPage() {
         {filteredJoylar.map((joy) => (
           <Card
             key={joy.id}
-            className="group hover:-translate-y-1 transition-all duration-300 hover:shadow-xl border-0 shadow-lg bg-white dark:bg-slate-800"
+            className={`group hover:-translate-y-1 transition-all duration-300 hover:shadow-xl border-0 shadow-lg bg-white dark:bg-slate-800 cursor-pointer ${
+              selectedLocationId === joy.id ? "ring-2 ring-teal-500 ring-offset-2" : ""
+            }`}
+            onClick={() => setSelectedLocationId(joy.id)}
           >
             <CardContent className="p-6">
               <div className="flex justify-between items-start mb-4">
@@ -343,7 +343,10 @@ export function SportJoylariPage() {
                 <div className="flex gap-2">
                   <button
                     type="button"
-                    onClick={() => openEditModal(joy)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openEditModal(joy);
+                    }}
                     className="text-xl hover:scale-110 transition-transform"
                     title="Tahrirlash"
                   >
@@ -351,7 +354,10 @@ export function SportJoylariPage() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => handleDelete(joy.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(joy.id);
+                    }}
                     className="text-xl hover:scale-110 transition-transform"
                     title="O'chirish"
                   >
