@@ -129,4 +129,6 @@ export interface User {
   bio?: string;
   sport_turlari: string[];
   ro_yxatdan_sana: string;
+  // Admin role
+  isAdmin?: boolean;
 }
