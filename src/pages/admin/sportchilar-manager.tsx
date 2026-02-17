@@ -23,7 +23,7 @@ import { useApp } from "@/lib/store";
 import type { Sportchi } from "@/lib/types";
 import { useState } from "react";
 
-export function SportchilarManager() {
+export default function SportchilarManager() {
   const {
     sportchilar,
     sportTurlari,

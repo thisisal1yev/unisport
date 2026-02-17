@@ -1,10 +1,23 @@
 import type { AppProps } from 'next/app'
+import { useRouter } from 'next/router'
 import '@/app/globals.css'
 import { ThemeProvider } from 'next-themes'
 import { AppProvider } from '@/lib/store'
-import { Sidebar } from '@/components/ui/sidebar'
+import { AdminLayout } from '@/layouts/admin-layout'
+import { CoachLayout } from '@/layouts/coach-layout'
+import { SportsmanLayout } from '@/layouts/sportsman-layout'
+
+function getLayoutForRoute(pathname: string) {
+	if (pathname.startsWith('/admin')) return AdminLayout
+	if (pathname.startsWith('/coach')) return CoachLayout
+	if (pathname.startsWith('/sportsman')) return SportsmanLayout
+	return null
+}
 
 export default function MyApp({ Component, pageProps }: AppProps) {
+	const router = useRouter()
+	const Layout = getLayoutForRoute(router.pathname)
+
 	return (
 		<ThemeProvider
 			attribute="class"
@@ -12,13 +25,13 @@ export default function MyApp({ Component, pageProps }: AppProps) {
 			enableSystem
 		>
 			<AppProvider>
-				<Sidebar />
-
-				<div className="min-h-screen bg-slate-50 dark:bg-slate-950">
-					<main className="md:ml-64 p-4 md:p-8">
+				{Layout ? (
+					<Layout>
 						<Component {...pageProps} />
-					</main>
-				</div>
+					</Layout>
+				) : (
+					<Component {...pageProps} />
+				)}
 			</AppProvider>
 		</ThemeProvider>
 	)

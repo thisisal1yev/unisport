@@ -50,7 +50,7 @@ export default function DashboardPage() {
           >
             <CardContent className="p-6">
               <div
-                className={`w-12 h-12 rounded-full bg-gradient-to-r ${stat.gradient} flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform`}
+                className={`w-12 h-12 rounded-full bg-linear-to-r ${stat.gradient} flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform`}
               >
                 {stat.icon}
               </div>
@@ -77,7 +77,7 @@ export default function DashboardPage() {
             </p>
             <Button
               onClick={() => setCurrentPage("sport-turlari")}
-              className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700"
+              className="bg-linear-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700"
             >
               Ko'rish
             </Button>
@@ -94,7 +94,7 @@ export default function DashboardPage() {
             </p>
             <Button
               onClick={() => setCurrentPage("sport-joylari")}
-              className="bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700"
+              className="bg-linear-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700"
             >
               Xaritadan ko'rish
             </Button>
@@ -138,7 +138,7 @@ export default function DashboardPage() {
           <Button
             variant="outline"
             className="w-full mt-4"
-            onClick={() => setCurrentPage("musobaqalar")}
+            onClick={() => setCurrentPage("/sportsman/musobaqalar")}
           >
             Barcha musobaqalar
           </Button>

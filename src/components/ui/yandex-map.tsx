@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { SportJoy } from "@/lib/types";
 
 const YANDEX_API_KEY = "427b6299-02ce-4db5-a52e-d098d4fc4b11";
@@ -11,16 +11,41 @@ interface YandexMapProps {
   selectedLocationId?: number | null;
 }
 
+// Yandex Maps API types
+interface YandexMaps {
+  ready: (callback: () => void) => void;
+  Map: new (element: HTMLElement, options: {
+    center: [number, number];
+    zoom: number;
+    controls: string[];
+  }) => {
+    center: [number, number];
+    zoom: number;
+    geoObjects: {
+      add: (obj: unknown) => void;
+      remove: (obj: unknown) => void;
+      getBounds: () => [[number, number], [number, number]] | null;
+    };
+    setBounds: (bounds: [[number, number], [number, number]], options?: object) => void;
+    setCenter: (center: [number, number], zoom?: number, options?: object) => void;
+  };
+  Placemark: new (coordinates: [number, number], properties: object, options: object) => {
+    events: {
+      add: (event: string, handler: () => void) => void;
+    };
+  };
+}
+
 declare global {
   interface Window {
-    ymaps: any;
+    ymaps: YandexMaps;
   }
 }
 
 export function YandexMap({ locations, onLocationSelect, selectedLocationId }: YandexMapProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<any>(null);
-  const markersRef = useRef<any[]>([]);
+  const mapRef = useRef<InstanceType<YandexMaps["Map"]> | null>(null);
+  const markersRef = useRef<InstanceType<YandexMaps["Placemark"]>[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -52,45 +77,13 @@ export function YandexMap({ locations, onLocationSelect, selectedLocationId }: Y
     };
   }, []);
 
-  // Initialize map when loaded
-  useEffect(() => {
-    if (!isLoaded || !mapContainerRef.current || mapRef.current) return;
-
-    try {
-      // Calculate center from locations or default to Fergana
-      const centerLat = locations.length > 0
-        ? locations.reduce((sum, loc) => sum + loc.kenglik, 0) / locations.length
-        : 40.3839;
-      const centerLng = locations.length > 0
-        ? locations.reduce((sum, loc) => sum + loc.uzunlik, 0) / locations.length
-        : 71.7873;
-
-      mapRef.current = new window.ymaps.Map(mapContainerRef.current, {
-        center: [centerLat, centerLng],
-        zoom: 12,
-        controls: ["zoomControl", "fullscreenControl", "geolocationControl"],
-      });
-
-      // Add markers
-      addMarkers();
-    } catch (err) {
-      setError("Xarita yaratishda xatolik yuz berdi");
-      console.error(err);
-    }
-  }, [isLoaded, locations]);
-
-  // Update markers when locations change
-  useEffect(() => {
-    if (!mapRef.current || !isLoaded) return;
-    addMarkers();
-  }, [locations, selectedLocationId, isLoaded]);
-
-  const addMarkers = () => {
-    if (!mapRef.current) return;
+  const addMarkers = useCallback(() => {
+    const map = mapRef.current;
+    if (!map) return;
 
     // Clear existing markers
     markersRef.current.forEach((marker) => {
-      mapRef.current.geoObjects.remove(marker);
+      map.geoObjects.remove(marker);
     });
     markersRef.current = [];
 
@@ -134,18 +127,49 @@ export function YandexMap({ locations, onLocationSelect, selectedLocationId }: Y
         }
       });
 
-      mapRef.current.geoObjects.add(placemark);
+      map.geoObjects.add(placemark);
       markersRef.current.push(placemark);
     });
 
     // Fit bounds to show all markers
     if (locations.length > 0 && markersRef.current.length > 0) {
-      mapRef.current.setBounds(
-        mapRef.current.geoObjects.getBounds(),
-        { checkZoomRange: true, zoomMargin: 50 }
-      );
+      const bounds = map.geoObjects.getBounds();
+      if (bounds) {
+        map.setBounds(bounds, { checkZoomRange: true, zoomMargin: 50 });
+      }
     }
-  };
+  }, [locations, onLocationSelect, selectedLocationId]);
+
+  // Initialize map when loaded
+  useEffect(() => {
+    if (!isLoaded || !mapContainerRef.current || mapRef.current) return;
+
+    try {
+      const centerLat = locations.length > 0
+        ? locations.reduce((sum, loc) => sum + loc.kenglik, 0) / locations.length
+        : 40.3839;
+      const centerLng = locations.length > 0
+        ? locations.reduce((sum, loc) => sum + loc.uzunlik, 0) / locations.length
+        : 71.7873;
+
+      mapRef.current = new window.ymaps.Map(mapContainerRef.current, {
+        center: [centerLat, centerLng],
+        zoom: 12,
+        controls: ["zoomControl", "fullscreenControl", "geolocationControl"],
+      });
+
+      addMarkers();
+    } catch (err) {
+      setError("Xarita yaratishda xatolik yuz berdi");
+      console.error(err);
+    }
+  }, [isLoaded, locations, addMarkers]);
+
+  // Update markers when locations change
+  useEffect(() => {
+    if (!mapRef.current || !isLoaded) return;
+    addMarkers();
+  }, [addMarkers, isLoaded]);
 
   // Center on selected location
   useEffect(() => {

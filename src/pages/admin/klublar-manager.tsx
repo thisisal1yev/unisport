@@ -22,7 +22,7 @@ import { useApp } from "@/lib/store";
 import type { Klub } from "@/lib/types";
 import { useState } from "react";
 
-export function KlublarManager() {
+export default function KlublarManager() {
   const { klublar, sportTurlari, addKlub, updateKlub, deleteKlub } = useApp();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingKlub, setEditingKlub] = useState<Klub | null>(null);

@@ -3,7 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { useApp } from "@/lib/store";
 
-export function AdminDashboard() {
+export default function AdminDashboard() {
   const {
     sportchilar,
     klublar,

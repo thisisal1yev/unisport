@@ -86,7 +86,7 @@ export function Sidebar() {
 					className={cn(
 						'mx-4 mt-4 p-3 rounded-xl flex items-center gap-3 transition-all',
 						currentPage === 'profil'
-							? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg'
+							? 'bg-linear-to-r from-emerald-500 to-teal-600 text-white shadow-lg'
 							: 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700'
 					)}
 				>
@@ -121,7 +121,7 @@ export function Sidebar() {
 					className={cn(
 						'mx-4 mt-4 p-3 rounded-xl flex items-center gap-3 transition-all',
 						currentPage === 'auth'
-							? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg'
+							? 'bg-linear-to-r from-emerald-500 to-teal-600 text-white shadow-lg'
 							: 'bg-emerald-50 dark:bg-emerald-900/30 hover:bg-emerald-100 dark:hover:bg-emerald-900/50'
 					)}
 				>
