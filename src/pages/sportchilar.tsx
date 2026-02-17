@@ -21,7 +21,7 @@ import type { Sportchi } from "@/lib/types";
 import { getMedalEmoji } from "@/lib/utils";
 import { useState } from "react";
 
-export function SportchilarPage() {
+export default function SportchilarPage() {
   const { sportTurlari, sportchilar, yutuqlar } = useApp();
 
   const [filterSport, setFilterSport] = useState("all");

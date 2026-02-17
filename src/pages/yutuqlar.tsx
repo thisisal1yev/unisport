@@ -21,7 +21,7 @@ import { useApp } from "@/lib/store";
 import { getMedalEmoji } from "@/lib/utils";
 import { useState } from "react";
 
-export function YutuqlarPage() {
+export default function YutuqlarPage() {
   const { sportchilar, yutuqlar, addYutuq, deleteYutuq } = useApp();
 
   const [addModalOpen, setAddModalOpen] = useState(false);

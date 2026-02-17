@@ -22,7 +22,7 @@ import { useApp } from "@/lib/store";
 import type { Klub, Sportchi } from "@/lib/types";
 import { useState } from "react";
 
-export function KlublarPage() {
+export default function KlublarPage() {
   const { sportTurlari, klublar, sportchilar, addKlub, deleteKlub } = useApp();
 
   const [addModalOpen, setAddModalOpen] = useState(false);

@@ -12,7 +12,7 @@ import { useApp } from "@/lib/store";
 import type { SportType } from "@/lib/types";
 import { useMemo, useState } from "react";
 
-export function SportTurlariPage() {
+export default function SportTurlariPage() {
   const { sportTurlari, musobaqalar, sportchilar } = useApp();
   const [selectedSport, setSelectedSport] = useState<SportType | null>(null);
 

@@ -39,7 +39,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
-export function ProfilPage() {
+export default function ProfilPage() {
   const {
     currentUser,
     updateProfile,

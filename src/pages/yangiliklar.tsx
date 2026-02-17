@@ -31,7 +31,7 @@ const kategoriyalar = [
   "Yutuqlar",
 ];
 
-export function YangiliklarPage() {
+export default function YangiliklarPage() {
   const {
     yangiliklar,
     addYangilik,

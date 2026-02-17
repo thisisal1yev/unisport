@@ -23,7 +23,7 @@ import { useApp } from "@/lib/store";
 import type { Musobaqa } from "@/lib/types";
 import { useState } from "react";
 
-export function MusobaqalarPage() {
+export default function MusobaqalarPage() {
   const {
     sportTurlari,
     musobaqalar,

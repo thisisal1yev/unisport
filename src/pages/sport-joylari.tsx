@@ -22,7 +22,7 @@ import { useApp } from "@/lib/store";
 import type { SportJoy } from "@/lib/types";
 import { useState } from "react";
 
-export function SportJoylariPage() {
+export default function SportJoylariPage() {
   const {
     sportTurlari,
     sportJoylari,

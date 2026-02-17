@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useApp } from "@/lib/store";
 
-export function DashboardPage() {
+export default function DashboardPage() {
   const { musobaqalar, yutuqlar, sportchilar, klublar, setCurrentPage } =
     useApp();
 
