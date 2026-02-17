@@ -1,19 +1,18 @@
 "use client";
 
-import { useApp } from "@/lib/store";
-import { AppProvider } from "@/lib/store";
-import { ThemeProvider } from "@/components/ui/theme-provider";
-import { Sidebar } from "@/components/ui/sidebar";
-import { DashboardPage } from "@/components/pages/dashboard-page";
-import { SportTurlariPage } from "@/components/pages/sport-turlari-page";
-import { SportJoylariPage } from "@/components/pages/sport-joylari-page";
-import { MusobaqalarPage } from "@/components/pages/musobaqalar-page";
-import { KlublarPage } from "@/components/pages/klublar-page";
-import { SportchilarPage } from "@/components/pages/sportchilar-page";
-import { YutuqlarPage } from "@/components/pages/yutuqlar-page";
-import { YangiliklarPage } from "@/components/pages/yangiliklar-page";
 import { AuthPage } from "@/components/pages/auth-page";
+import { DashboardPage } from "@/components/pages/dashboard-page";
+import { KlublarPage } from "@/components/pages/klublar-page";
+import { MusobaqalarPage } from "@/components/pages/musobaqalar-page";
 import { ProfilPage } from "@/components/pages/profil-page";
+import { SportJoylariPage } from "@/components/pages/sport-joylari-page";
+import { SportTurlariPage } from "@/components/pages/sport-turlari-page";
+import { SportchilarPage } from "@/components/pages/sportchilar-page";
+import { YangiliklarPage } from "@/components/pages/yangiliklar-page";
+import { YutuqlarPage } from "@/components/pages/yutuqlar-page";
+import { Sidebar } from "@/components/ui/sidebar";
+import { ThemeProvider } from "@/components/ui/theme-provider";
+import { AppProvider, useApp } from "@/lib/store";
 
 function PageContent() {
   const { currentPage } = useApp();

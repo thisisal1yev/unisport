@@ -1,101 +1,14 @@
+import { sportTurlari } from "./sports-data";
 import type {
-  SportType,
-  SportJoy,
-  Musobaqa,
-  Sportchi,
   Klub,
-  Yutuq,
+  Musobaqa,
+  SportJoy,
+  Sportchi,
   Yangilik,
-  Statistika
-} from './types';
+  Yutuq,
+} from "./types";
 
-export const sportTurlari: SportType[] = [
-  {
-    id: 1,
-    nomi: "Futbol",
-    tavsif: "Futbol - bu 11 nafardan iborat ikki jamoa o'rtasida o'ynaladigan sport o'yini. Maqsad - to'pni raqib darvozasiga kiritish.",
-    tarix: "Futbol 19-asrda Angliyada paydo bo'lgan va butun dunyoga tarqalgan. Bugungi kunda eng mashhur sport turlaridan biri hisoblanadi.",
-    rasm_emoji: "⚽",
-    youtube_havola: "https://www.youtube.com/embed/jvwqYnvzIEU"
-  },
-  {
-    id: 2,
-    nomi: "Basketbol",
-    tavsif: "Basketbol - bu ikki jamoa o'rtasida o'ynaladigan sport o'yini. Har bir jamoa 5 nafardan iborat.",
-    tarix: "Basketbol 1891-yilda Amerika Qo'shma Shtatlarida ixtiro qilingan.",
-    rasm_emoji: "🏀"
-  },
-  {
-    id: 3,
-    nomi: "Voleybol",
-    tavsif: "Voleybol - bu to'r orqali o'ynaladigan sport o'yini. Har bir jamoa 6 nafardan iborat.",
-    tarix: "Voleybol 1895-yilda AQShda ixtiro qilingan.",
-    rasm_emoji: "🏐"
-  },
-  {
-    id: 4,
-    nomi: "Tennis",
-    tavsif: "Tennis - bu raketka va to'p bilan o'ynaladigan sport turi.",
-    tarix: "Tennis 12-asrda Fransiyada paydo bo'lgan.",
-    rasm_emoji: "🎾"
-  },
-  {
-    id: 5,
-    nomi: "Suzish",
-    tavsif: "Suzish - bu suvda harakatlanish sport turi. Turli uslublar mavjud.",
-    tarix: "Suzish qadimgi davrlardan beri ma'lum bo'lgan sport turi.",
-    rasm_emoji: "🏊"
-  },
-  {
-    id: 6,
-    nomi: "Yugurish",
-    tavsif: "Yugurish - eng oddiy va tabiiy sport turi. Salomatlik uchun juda foydali.",
-    tarix: "Yugurish eng qadimgi sport turlaridan biri hisoblanadi.",
-    rasm_emoji: "🏃"
-  },
-  {
-    id: 7,
-    nomi: "Boks",
-    tavsif: "Boks - bu jang san'ati bo'lib, qo'l bilan urish texnikasiga asoslangan.",
-    tarix: "Boks qadimgi Gretsiyada paydo bo'lgan.",
-    rasm_emoji: "🥊"
-  },
-  {
-    id: 8,
-    nomi: "Karate",
-    tavsif: "Karate - Yaponiyada paydo bo'lgan jang san'ati.",
-    tarix: "Karate Okinava orolida 17-asrda shakllangan.",
-    rasm_emoji: "🥋"
-  },
-  {
-    id: 9,
-    nomi: "Shaxmat",
-    tavsif: "Shaxmat - aqliy sport o'yini. Strategik fikrlash talab qiladi.",
-    tarix: "Shaxmat Hindistonda 6-asrda paydo bo'lgan.",
-    rasm_emoji: "♟️"
-  },
-  {
-    id: 10,
-    nomi: "Stol tennisi",
-    tavsif: "Stol tennisi - kichik raketka va to'p bilan maxsus stolda o'ynaladigan sport.",
-    tarix: "Stol tennisi 19-asr oxirida Angliyada paydo bo'lgan.",
-    rasm_emoji: "🏓"
-  },
-  {
-    id: 11,
-    nomi: "Badminton",
-    tavsif: "Badminton - raketka va volancha bilan o'ynaladigan sport turi.",
-    tarix: "Badminton Hindistonda paydo bo'lgan va Angliyada rivojlangan.",
-    rasm_emoji: "🏸"
-  },
-  {
-    id: 12,
-    nomi: "Velosport",
-    tavsif: "Velosport - velosiped bilan bog'liq turli sport musobaqalari.",
-    tarix: "Velosport 19-asrda Yevropada paydo bo'lgan.",
-    rasm_emoji: "🚴"
-  }
-];
+export { sportTurlari };
 
 export const sportJoylari: SportJoy[] = [
   {
@@ -108,19 +21,19 @@ export const sportJoylari: SportJoy[] = [
     sport_turlari: ["Futbol", "Yugurish"],
     telefon: "+998 73 244 0101",
     ish_vaqti: "06:00 - 22:00",
-    reyting: 4.5
+    reyting: 4.5,
   },
   {
     id: 2,
     nomi: "Sport Majmuasi 'Yoshlik'",
     manzil: "Farg'ona shahri, Al-Farg'oniy ko'chasi 5",
     kenglik: 40.3801,
-    uzunlik: 71.7910,
+    uzunlik: 71.791,
     tuman: "Farg'ona",
     sport_turlari: ["Basketbol", "Voleybol", "Tennis"],
     telefon: "+998 73 245 5555",
     ish_vaqti: "07:00 - 21:00",
-    reyting: 4.8
+    reyting: 4.8,
   },
   {
     id: 3,
@@ -132,7 +45,7 @@ export const sportJoylari: SportJoy[] = [
     sport_turlari: ["Suzish"],
     telefon: "+998 73 253 1234",
     ish_vaqti: "08:00 - 20:00",
-    reyting: 4.2
+    reyting: 4.2,
   },
   {
     id: 4,
@@ -144,7 +57,7 @@ export const sportJoylari: SportJoy[] = [
     sport_turlari: ["Boks", "Karate"],
     telefon: "+998 73 246 7890",
     ish_vaqti: "09:00 - 19:00",
-    reyting: 4.6
+    reyting: 4.6,
   },
   {
     id: 5,
@@ -156,8 +69,8 @@ export const sportJoylari: SportJoy[] = [
     sport_turlari: ["Tennis", "Badminton"],
     telefon: "+998 73 354 4321",
     ish_vaqti: "07:00 - 20:00",
-    reyting: 4.3
-  }
+    reyting: 4.3,
+  },
 ];
 
 export const musobaqalar: Musobaqa[] = [
@@ -171,8 +84,10 @@ export const musobaqalar: Musobaqa[] = [
     maksimal_ishtirokchilar: 32,
     holat: "kelgusi",
     rasm_emoji: "⚽",
-    tavsif: "Farg'ona viloyati universitetlari o'rtasidagi an'anaviy futbol musobaqasi",
-    mukofotlar: "1-o'rin: 5,000,000 so'm\n2-o'rin: 3,000,000 so'm\n3-o'rin: 1,500,000 so'm"
+    tavsif:
+      "Farg'ona viloyati universitetlari o'rtasidagi an'anaviy futbol musobaqasi",
+    mukofotlar:
+      "1-o'rin: 5,000,000 so'm\n2-o'rin: 3,000,000 so'm\n3-o'rin: 1,500,000 so'm",
   },
   {
     id: 2,
@@ -185,7 +100,7 @@ export const musobaqalar: Musobaqa[] = [
     holat: "faol",
     rasm_emoji: "🏀",
     tavsif: "Talabalar o'rtasidagi basketbol chempionati",
-    mukofotlar: "1-o'rin: 3,000,000 so'm\n2-o'rin: 2,000,000 so'm"
+    mukofotlar: "1-o'rin: 3,000,000 so'm\n2-o'rin: 2,000,000 so'm",
   },
   {
     id: 3,
@@ -198,7 +113,7 @@ export const musobaqalar: Musobaqa[] = [
     holat: "yakunlangan",
     rasm_emoji: "🏐",
     tavsif: "Qishki voleybol turniri",
-    mukofotlar: "G'olib jamoaga sovg'alar"
+    mukofotlar: "G'olib jamoaga sovg'alar",
   },
   {
     id: 4,
@@ -210,7 +125,7 @@ export const musobaqalar: Musobaqa[] = [
     maksimal_ishtirokchilar: 64,
     holat: "kelgusi",
     rasm_emoji: "♟️",
-    tavsif: "Intellektual sport musobaqasi"
+    tavsif: "Intellektual sport musobaqasi",
   },
   {
     id: 5,
@@ -222,8 +137,8 @@ export const musobaqalar: Musobaqa[] = [
     maksimal_ishtirokchilar: 500,
     holat: "kelgusi",
     rasm_emoji: "🏃",
-    tavsif: "5 km va 10 km masofalar"
-  }
+    tavsif: "5 km va 10 km masofalar",
+  },
 ];
 
 export const sportchilar: Sportchi[] = [
@@ -241,7 +156,7 @@ export const sportchilar: Sportchi[] = [
     tug_yil: 2003,
     bio: "Jamoaning eng yaxshi hujumchisi",
     klub: "FarDU Futbol Klubi",
-    klub_id: 1
+    klub_id: 1,
   },
   {
     id: 2,
@@ -257,7 +172,7 @@ export const sportchilar: Sportchi[] = [
     tug_yil: 2004,
     bio: "Ayollar jamoasining lideri",
     klub: "Basketbol Klubi",
-    klub_id: 2
+    klub_id: 2,
   },
   {
     id: 3,
@@ -270,7 +185,7 @@ export const sportchilar: Sportchi[] = [
     yulduzlar: 3,
     avatar_emoji: "🧑",
     tug_yil: 2002,
-    bio: "Voleybol jamoasi a'zosi"
+    bio: "Voleybol jamoasi a'zosi",
   },
   {
     id: 4,
@@ -286,7 +201,7 @@ export const sportchilar: Sportchi[] = [
     tug_yil: 2001,
     bio: "Viloyat chempioni",
     klub: "Boks Klubi",
-    klub_id: 3
+    klub_id: 3,
   },
   {
     id: 5,
@@ -299,7 +214,7 @@ export const sportchilar: Sportchi[] = [
     yulduzlar: 3,
     avatar_emoji: "👧",
     tug_yil: 2003,
-    bio: "Tennis bo'yicha iqtidorli sportchi"
+    bio: "Tennis bo'yicha iqtidorli sportchi",
   },
   {
     id: 6,
@@ -313,7 +228,7 @@ export const sportchilar: Sportchi[] = [
     avatar_emoji: "🤓",
     telefon: "+998 94 456 7890",
     tug_yil: 2002,
-    bio: "Respublika shaxmat chempioni"
+    bio: "Respublika shaxmat chempioni",
   },
   {
     id: 7,
@@ -327,7 +242,7 @@ export const sportchilar: Sportchi[] = [
     avatar_emoji: "🧑‍🦰",
     tug_yil: 2004,
     klub: "FarDU Futbol Klubi",
-    klub_id: 1
+    klub_id: 1,
   },
   {
     id: 8,
@@ -341,8 +256,8 @@ export const sportchilar: Sportchi[] = [
     avatar_emoji: "👱‍♀️",
     telefon: "+998 95 567 8901",
     tug_yil: 2003,
-    bio: "Suzish bo'yicha viloyat rekordchisi"
-  }
+    bio: "Suzish bo'yicha viloyat rekordchisi",
+  },
 ];
 
 export const klublar: Klub[] = [
@@ -358,8 +273,8 @@ export const klublar: Klub[] = [
       ism: "Islomov Sardor",
       sport: "Futbol",
       medallar: 12,
-      yulduzlar: 5
-    }
+      yulduzlar: 5,
+    },
   },
   {
     id: 2,
@@ -373,8 +288,8 @@ export const klublar: Klub[] = [
       ism: "Karimova Dilnoza",
       sport: "Basketbol",
       medallar: 8,
-      yulduzlar: 4
-    }
+      yulduzlar: 4,
+    },
   },
   {
     id: 3,
@@ -388,8 +303,8 @@ export const klublar: Klub[] = [
       ism: "Toshmatov Bobur",
       sport: "Boks",
       medallar: 15,
-      yulduzlar: 5
-    }
+      yulduzlar: 5,
+    },
   },
   {
     id: 4,
@@ -397,7 +312,7 @@ export const klublar: Klub[] = [
     tavsif: "Aqliy sport ixlosmandlari uchun",
     sport_turi: "Shaxmat",
     rasm_emoji: "♟️",
-    azolar_soni: 30
+    azolar_soni: 30,
   },
   {
     id: 5,
@@ -405,8 +320,8 @@ export const klublar: Klub[] = [
     tavsif: "Erkaklar va ayollar voleybol jamoalari",
     sport_turi: "Voleybol",
     rasm_emoji: "🏐",
-    azolar_soni: 20
-  }
+    azolar_soni: 20,
+  },
 ];
 
 export const yutuqlar: Yutuq[] = [
@@ -418,7 +333,7 @@ export const yutuqlar: Yutuq[] = [
     medal_turi: "oltin",
     medal_soni: 1,
     sana: "2025-12-15",
-    rasm_emoji: "🥇"
+    rasm_emoji: "🥇",
   },
   {
     id: 2,
@@ -428,7 +343,7 @@ export const yutuqlar: Yutuq[] = [
     medal_turi: "kumush",
     medal_soni: 1,
     sana: "2025-11-20",
-    rasm_emoji: "🥈"
+    rasm_emoji: "🥈",
   },
   {
     id: 3,
@@ -438,7 +353,7 @@ export const yutuqlar: Yutuq[] = [
     medal_turi: "oltin",
     medal_soni: 1,
     sana: "2025-10-10",
-    rasm_emoji: "🥇"
+    rasm_emoji: "🥇",
   },
   {
     id: 4,
@@ -448,7 +363,7 @@ export const yutuqlar: Yutuq[] = [
     medal_turi: "oltin",
     medal_soni: 1,
     sana: "2025-09-05",
-    rasm_emoji: "🥇"
+    rasm_emoji: "🥇",
   },
   {
     id: 5,
@@ -458,61 +373,82 @@ export const yutuqlar: Yutuq[] = [
     medal_turi: "bronza",
     medal_soni: 1,
     sana: "2025-08-25",
-    rasm_emoji: "🥉"
-  }
+    rasm_emoji: "🥉",
+  },
 ];
 
 export const yangiliklar: Yangilik[] = [
   {
     id: 1,
     sarlavha: "Futbol jamoasi viloyat chempionatida g'olib bo'ldi!",
-    mazmun: "FarDU futbol jamoasi qattiq kurashlar davomida viloyat chempionatida birinchi o'rinni egalladi. Jamoa kapitani Islomov Sardor eng yaxshi futbolchi deb topildi. Musobaqa davomida jamoamiz 8 ta o'yin o'tkazib, barchasida g'alaba qozondi.",
+    mazmun:
+      "FarDU futbol jamoasi qattiq kurashlar davomida viloyat chempionatida birinchi o'rinni egalladi. Jamoa kapitani Islomov Sardor eng yaxshi futbolchi deb topildi. Musobaqa davomida jamoamiz 8 ta o'yin o'tkazib, barchasida g'alaba qozondi.",
     kategoriya: "Futbol",
     rasm_emoji: "⚽",
     sana: "2025-12-16",
     layklar: 45,
-    izohlar_soni: 12
+    izohlar_soni: 12,
   },
   {
     id: 2,
     sarlavha: "Yangi sport majmuasi qurilmoqda",
-    mazmun: "Universitet hududida zamonaviy sport majmuasi qurilishi boshlandi. Majmua 2026-yil oxirigacha foydalanishga topshirilishi rejalashtirilgan. U yerda suzish havzasi, basketbol va voleybol maydonchalari bo'ladi.",
+    mazmun:
+      "Universitet hududida zamonaviy sport majmuasi qurilishi boshlandi. Majmua 2026-yil oxirigacha foydalanishga topshirilishi rejalashtirilgan. U yerda suzish havzasi, basketbol va voleybol maydonchalari bo'ladi.",
     kategoriya: "Umumiy",
     rasm_emoji: "🏗️",
     sana: "2025-12-10",
     layklar: 32,
-    izohlar_soni: 8
+    izohlar_soni: 8,
   },
   {
     id: 3,
     sarlavha: "Shaxmat bo'yicha trening boshlanmoqda",
-    mazmun: "Yangi o'quv yili boshlanishi munosabati bilan shaxmat bo'yicha bepul treninglar e'lon qilinadi. Barcha darajadagi talabalar qatnashishi mumkin. Treninglar har hafta seshanba va payshanba kunlari o'tkaziladi.",
+    mazmun:
+      "Yangi o'quv yili boshlanishi munosabati bilan shaxmat bo'yicha bepul treninglar e'lon qilinadi. Barcha darajadagi talabalar qatnashishi mumkin. Treninglar har hafta seshanba va payshanba kunlari o'tkaziladi.",
     kategoriya: "Shaxmat",
     rasm_emoji: "♟️",
     sana: "2025-12-05",
     layklar: 28,
-    izohlar_soni: 5
+    izohlar_soni: 5,
   },
   {
     id: 4,
     sarlavha: "Basketbol jamoasi yangi mavsumga tayyor",
-    mazmun: "Universitetimiz basketbol jamoasi yangi mavsumga tayyorgarlik ko'rmoqda. Jamoaga yangi o'yinchilar qabul qilindi va intensiv mashg'ulotlar boshlandi.",
+    mazmun:
+      "Universitetimiz basketbol jamoasi yangi mavsumga tayyorgarlik ko'rmoqda. Jamoaga yangi o'yinchilar qabul qilindi va intensiv mashg'ulotlar boshlandi.",
     kategoriya: "Basketbol",
     rasm_emoji: "🏀",
     sana: "2025-12-01",
     layklar: 19,
-    izohlar_soni: 3
-  }
+    izohlar_soni: 3,
+  },
 ];
 
-export const statistika: Statistika = {
-  musobaqalar: musobaqalar.length,
-  yutuqlar: yutuqlar.length,
-  sportchilar: sportchilar.length,
-  klublar: klublar.length
-};
-
 // Filters
-export const tumanlar = ["Farg'ona", "Marg'ilon", "Quva", "Qo'qon", "Rishton", "Oltiariq"];
-export const fakultetlar = ["Axborot texnologiyalari", "Iqtisodiyot", "Fizika-matematika", "Jismoniy tarbiya", "Xorijiy tillar", "Matematika", "Biologiya"];
-export const guruhlar = ["AT-21", "AT-22", "IQ-22", "FM-20", "JT-23", "XT-21", "M-22", "B-21"];
+export const tumanlar = [
+  "Farg'ona",
+  "Marg'ilon",
+  "Quva",
+  "Qo'qon",
+  "Rishton",
+  "Oltiariq",
+];
+export const fakultetlar = [
+  "Axborot texnologiyalari",
+  "Iqtisodiyot",
+  "Fizika-matematika",
+  "Jismoniy tarbiya",
+  "Xorijiy tillar",
+  "Matematika",
+  "Biologiya",
+];
+export const guruhlar = [
+  "AT-21",
+  "AT-22",
+  "IQ-22",
+  "FM-20",
+  "JT-23",
+  "XT-21",
+  "M-22",
+  "B-21",
+];

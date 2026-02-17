@@ -1,14 +1,26 @@
 "use client";
 
-import { useState } from "react";
-import { useApp } from "@/lib/store";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useApp } from "@/lib/store";
 import type { Klub, Sportchi } from "@/lib/types";
+import { useState } from "react";
 
 export function KlublarPage() {
   const { sportTurlari, klublar, sportchilar, addKlub, deleteKlub } = useApp();
@@ -59,9 +71,12 @@ export function KlublarPage() {
   const getKlubStats = (klub: Klub) => {
     const members = getKlubMembers(klub);
     const totalMedals = members.reduce((sum, m) => sum + m.medallar, 0);
-    const avgRating = members.length > 0
-      ? (members.reduce((sum, m) => sum + m.yulduzlar, 0) / members.length).toFixed(1)
-      : 0;
+    const avgRating =
+      members.length > 0
+        ? (
+            members.reduce((sum, m) => sum + m.yulduzlar, 0) / members.length
+          ).toFixed(1)
+        : 0;
     return { totalMedals, avgRating, memberCount: members.length };
   };
 
@@ -94,7 +109,9 @@ export function KlublarPage() {
         </label>
         <Select
           value={formData.sport_turi}
-          onValueChange={(value) => setFormData({ ...formData, sport_turi: value })}
+          onValueChange={(value) =>
+            setFormData({ ...formData, sport_turi: value })
+          }
         >
           <SelectTrigger>
             <SelectValue placeholder="Sport turini tanlang" />
@@ -114,7 +131,9 @@ export function KlublarPage() {
         </label>
         <Input
           value={formData.rasm_emoji}
-          onChange={(e) => setFormData({ ...formData, rasm_emoji: e.target.value })}
+          onChange={(e) =>
+            setFormData({ ...formData, rasm_emoji: e.target.value })
+          }
           maxLength={2}
         />
       </div>
@@ -239,8 +258,12 @@ export function KlublarPage() {
           {membersModal && (
             <>
               <DialogHeader>
-                <DialogTitle className="text-2xl">{membersModal.nomi}</DialogTitle>
-                <p className="text-slate-600 dark:text-slate-400">{membersModal.tavsif}</p>
+                <DialogTitle className="text-2xl">
+                  {membersModal.nomi}
+                </DialogTitle>
+                <p className="text-slate-600 dark:text-slate-400">
+                  {membersModal.tavsif}
+                </p>
               </DialogHeader>
 
               {/* Club Stats */}
@@ -249,34 +272,50 @@ export function KlublarPage() {
                   <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
                     {getKlubStats(membersModal).memberCount}
                   </div>
-                  <div className="text-sm text-slate-600 dark:text-slate-400">A'zolar soni</div>
+                  <div className="text-sm text-slate-600 dark:text-slate-400">
+                    A'zolar soni
+                  </div>
                 </div>
                 <div className="bg-green-50 dark:bg-green-900/30 rounded-xl p-4 text-center">
                   <div className="text-3xl font-bold text-green-600 dark:text-green-400">
                     {getKlubStats(membersModal).totalMedals}
                   </div>
-                  <div className="text-sm text-slate-600 dark:text-slate-400">Jami medallar</div>
+                  <div className="text-sm text-slate-600 dark:text-slate-400">
+                    Jami medallar
+                  </div>
                 </div>
                 <div className="bg-yellow-50 dark:bg-yellow-900/30 rounded-xl p-4 text-center">
                   <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">
                     {getKlubStats(membersModal).avgRating} ⭐
                   </div>
-                  <div className="text-sm text-slate-600 dark:text-slate-400">O'rtacha reyting</div>
+                  <div className="text-sm text-slate-600 dark:text-slate-400">
+                    O'rtacha reyting
+                  </div>
                 </div>
               </div>
 
               {/* Leader Info */}
               {membersModal.lider && (
                 <div className="bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-xl p-4 mb-6">
-                  <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-2">👑 Klub Lideri</h3>
+                  <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-2">
+                    👑 Klub Lideri
+                  </h3>
                   <div className="flex items-center gap-4">
                     <div className="text-4xl">👑</div>
                     <div>
-                      <h4 className="font-bold text-lg text-slate-800 dark:text-white">{membersModal.lider.ism}</h4>
-                      <p className="text-sm text-slate-600 dark:text-slate-400">{membersModal.lider.sport}</p>
+                      <h4 className="font-bold text-lg text-slate-800 dark:text-white">
+                        {membersModal.lider.ism}
+                      </h4>
+                      <p className="text-sm text-slate-600 dark:text-slate-400">
+                        {membersModal.lider.sport}
+                      </p>
                       <div className="flex gap-2 mt-1">
-                        <span className="text-sm">🏅 {membersModal.lider.medallar} medal</span>
-                        <span className="text-sm">{"⭐".repeat(membersModal.lider.yulduzlar)}</span>
+                        <span className="text-sm">
+                          🏅 {membersModal.lider.medallar} medal
+                        </span>
+                        <span className="text-sm">
+                          {"⭐".repeat(membersModal.lider.yulduzlar)}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -284,7 +323,9 @@ export function KlublarPage() {
               )}
 
               {/* Members List */}
-              <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-4">👥 Klub A'zolari</h3>
+              <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-4">
+                👥 Klub A'zolari
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {getKlubMembers(membersModal).length > 0 ? (
                   getKlubMembers(membersModal).map((member) => (
@@ -296,14 +337,24 @@ export function KlublarPage() {
                         <div className="text-4xl">{member.avatar_emoji}</div>
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
-                            <h4 className="font-bold text-slate-800 dark:text-white">{member.ism}</h4>
+                            <h4 className="font-bold text-slate-800 dark:text-white">
+                              {member.ism}
+                            </h4>
                             {membersModal.lider?.id === member.id && (
-                              <span className="text-yellow-500 text-xl">👑</span>
+                              <span className="text-yellow-500 text-xl">
+                                👑
+                              </span>
                             )}
                           </div>
-                          <p className="text-sm text-slate-600 dark:text-slate-400">{member.sport}</p>
-                          <p className="text-xs text-slate-500 dark:text-slate-400">{member.fakultet}</p>
-                          <p className="text-xs text-slate-500 dark:text-slate-400">{member.guruh}</p>
+                          <p className="text-sm text-slate-600 dark:text-slate-400">
+                            {member.sport}
+                          </p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
+                            {member.fakultet}
+                          </p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
+                            {member.guruh}
+                          </p>
                           <div className="flex gap-3 mt-2">
                             <span className="text-xs bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 px-2 py-1 rounded">
                               {member.daraja}
@@ -349,7 +400,10 @@ export function KlublarPage() {
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                   Sportchini tanlang
                 </label>
-                <Select value={selectedLeader} onValueChange={setSelectedLeader}>
+                <Select
+                  value={selectedLeader}
+                  onValueChange={setSelectedLeader}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Sportchini tanlang" />
                   </SelectTrigger>

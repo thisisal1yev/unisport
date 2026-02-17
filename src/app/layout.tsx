@@ -14,7 +14,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "UniSport — Sport Platformasi",
-  description: "Universitet sport platformasi: musobaqalar, klublar, sportchilar va yutuqlar",
+  description:
+    "Universitet sport platformasi: musobaqalar, klublar, sportchilar va yutuqlar",
 };
 
 export default function RootLayout({
@@ -23,10 +24,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="uz" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body className="antialiased">
-        {children}
-      </body>
+    <html
+      lang="uz"
+      suppressHydrationWarning
+      className={`${geistSans.variable} ${geistMono.variable}`}
+    >
+      <body className="antialiased">{children}</body>
     </html>
   );
 }

@@ -1,28 +1,43 @@
 "use client";
 
-import { useState } from "react";
-import { useApp } from "@/lib/store";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { fakultetlar, guruhlar } from "@/lib/mock-data";
+import { useApp } from "@/lib/store";
 import type { Sportchi } from "@/lib/types";
+import { getMedalEmoji } from "@/lib/utils";
+import { useState } from "react";
 
 export function SportchilarPage() {
   const { sportTurlari, sportchilar, yutuqlar } = useApp();
 
-  const [filterSport, setFilterSport] = useState<string>("");
-  const [filterFakultet, setFilterFakultet] = useState<string>("");
-  const [filterGuruh, setFilterGuruh] = useState<string>("");
-  const [filterDaraja, setFilterDaraja] = useState<string>("");
-  const [selectedSportchi, setSelectedSportchi] = useState<Sportchi | null>(null);
+  const [filterSport, setFilterSport] = useState("all");
+  const [filterFakultet, setFilterFakultet] = useState("all");
+  const [filterGuruh, setFilterGuruh] = useState("all");
+  const [filterDaraja, setFilterDaraja] = useState("all");
+  const [selectedSportchi, setSelectedSportchi] = useState<Sportchi | null>(
+    null,
+  );
 
   const filteredSportchilar = sportchilar.filter((s) => {
-    const matchesSport = !filterSport || s.sport === filterSport;
-    const matchesFakultet = !filterFakultet || s.fakultet === filterFakultet;
-    const matchesGuruh = !filterGuruh || s.guruh === filterGuruh;
-    const matchesDaraja = !filterDaraja || s.daraja === filterDaraja;
+    const matchesSport = filterSport === "all" || s.sport === filterSport;
+    const matchesFakultet =
+      filterFakultet === "all" || s.fakultet === filterFakultet;
+    const matchesGuruh = filterGuruh === "all" || s.guruh === filterGuruh;
+    const matchesDaraja = filterDaraja === "all" || s.daraja === filterDaraja;
     return matchesSport && matchesFakultet && matchesGuruh && matchesDaraja;
   });
 
@@ -31,10 +46,10 @@ export function SportchilarPage() {
   };
 
   const resetFilters = () => {
-    setFilterSport("");
-    setFilterFakultet("");
-    setFilterGuruh("");
-    setFilterDaraja("");
+    setFilterSport("all");
+    setFilterFakultet("all");
+    setFilterGuruh("all");
+    setFilterDaraja("all");
   };
 
   return (
@@ -55,7 +70,7 @@ export function SportchilarPage() {
                 <SelectValue placeholder="Barcha sport turlari" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value=" ">Barcha sport turlari</SelectItem>
+                <SelectItem value="all">Barcha sport turlari</SelectItem>
                 {sportTurlari.map((sport) => (
                   <SelectItem key={sport.id} value={sport.nomi}>
                     {sport.rasm_emoji} {sport.nomi}
@@ -68,7 +83,7 @@ export function SportchilarPage() {
                 <SelectValue placeholder="Barcha fakultetlar" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value=" ">Barcha fakultetlar</SelectItem>
+                <SelectItem value="all">Barcha fakultetlar</SelectItem>
                 {fakultetlar.map((f) => (
                   <SelectItem key={f} value={f}>
                     {f}
@@ -81,7 +96,7 @@ export function SportchilarPage() {
                 <SelectValue placeholder="Barcha guruhlar" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value=" ">Barcha guruhlar</SelectItem>
+                <SelectItem value="all">Barcha guruhlar</SelectItem>
                 {guruhlar.map((g) => (
                   <SelectItem key={g} value={g}>
                     {g}
@@ -94,7 +109,7 @@ export function SportchilarPage() {
                 <SelectValue placeholder="Barcha darajalar" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value=" ">Barcha darajalar</SelectItem>
+                <SelectItem value="all">Barcha darajalar</SelectItem>
                 <SelectItem value="Boshlovchi">Boshlovchi</SelectItem>
                 <SelectItem value="Havaskor">Havaskor</SelectItem>
                 <SelectItem value="Professional">Professional</SelectItem>
@@ -132,7 +147,9 @@ export function SportchilarPage() {
               </p>
               <div className="flex justify-center gap-4 mt-4">
                 <span className="text-sm">🏅 {sportchi.medallar}</span>
-                <span className="text-sm">{"⭐".repeat(sportchi.yulduzlar)}</span>
+                <span className="text-sm">
+                  {"⭐".repeat(sportchi.yulduzlar)}
+                </span>
               </div>
             </CardContent>
           </Card>
@@ -149,7 +166,10 @@ export function SportchilarPage() {
       )}
 
       {/* Profile Modal */}
-      <Dialog open={!!selectedSportchi} onOpenChange={() => setSelectedSportchi(null)}>
+      <Dialog
+        open={!!selectedSportchi}
+        onOpenChange={() => setSelectedSportchi(null)}
+      >
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           {selectedSportchi && (
             <>
@@ -160,7 +180,9 @@ export function SportchilarPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {/* Left Column - Avatar & Stats */}
                 <div className="text-center">
-                  <div className="text-9xl mb-4">{selectedSportchi.avatar_emoji}</div>
+                  <div className="text-9xl mb-4">
+                    {selectedSportchi.avatar_emoji}
+                  </div>
                   <h2 className="text-3xl font-bold text-slate-800 dark:text-white mb-2">
                     {selectedSportchi.ism}
                   </h2>
@@ -217,34 +239,28 @@ export function SportchilarPage() {
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {getSportchiYutuqlar(selectedSportchi.id).length > 0 ? (
-                      getSportchiYutuqlar(selectedSportchi.id).map((yutuq) => {
-                        const medalEmoji =
-                          yutuq.medal_turi === "oltin"
-                            ? "🥇"
-                            : yutuq.medal_turi === "kumush"
-                            ? "🥈"
-                            : "🥉";
-                        return (
-                          <div
-                            key={yutuq.id}
-                            className="border border-slate-200 dark:border-slate-700 rounded-xl p-4"
-                          >
-                            <div className="text-3xl mb-2">{medalEmoji}</div>
-                            <h4 className="font-semibold text-slate-800 dark:text-white">
-                              {yutuq.nomi}
-                            </h4>
-                            <p className="text-sm text-slate-600 dark:text-slate-400">
-                              {yutuq.musobaqa}
-                            </p>
-                            <p className="text-sm text-slate-600 dark:text-slate-400">
-                              📅 {yutuq.sana}
-                            </p>
-                            <p className="text-sm font-semibold text-slate-800 dark:text-white">
-                              {yutuq.medal_soni}x {yutuq.medal_turi}
-                            </p>
+                      getSportchiYutuqlar(selectedSportchi.id).map((yutuq) => (
+                        <div
+                          key={yutuq.id}
+                          className="border border-slate-200 dark:border-slate-700 rounded-xl p-4"
+                        >
+                          <div className="text-3xl mb-2">
+                            {getMedalEmoji(yutuq.medal_turi)}
                           </div>
-                        );
-                      })
+                          <h4 className="font-semibold text-slate-800 dark:text-white">
+                            {yutuq.nomi}
+                          </h4>
+                          <p className="text-sm text-slate-600 dark:text-slate-400">
+                            {yutuq.musobaqa}
+                          </p>
+                          <p className="text-sm text-slate-600 dark:text-slate-400">
+                            📅 {yutuq.sana}
+                          </p>
+                          <p className="text-sm font-semibold text-slate-800 dark:text-white">
+                            {yutuq.medal_soni}x {yutuq.medal_turi}
+                          </p>
+                        </div>
+                      ))
                     ) : (
                       <p className="text-slate-500 dark:text-slate-400 col-span-2">
                         Hozircha yutuqlar yo'q
@@ -255,7 +271,10 @@ export function SportchilarPage() {
               </div>
 
               <div className="flex justify-end mt-6">
-                <Button variant="outline" onClick={() => setSelectedSportchi(null)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setSelectedSportchi(null)}
+                >
                   Yopish
                 </Button>
               </div>

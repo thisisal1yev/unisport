@@ -1,24 +1,40 @@
 "use client";
 
-import { useState } from "react";
-import { useApp } from "@/lib/store";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { tumanlar } from "@/lib/mock-data";
-import { YandexMap } from "@/components/ui/yandex-map";
+import { useApp } from "@/lib/store";
 import type { SportJoy } from "@/lib/types";
+import { useState } from "react";
 
 export function SportJoylariPage() {
-  const { sportTurlari, sportJoylari, addSportJoy, updateSportJoy, deleteSportJoy } = useApp();
+  const {
+    sportTurlari,
+    sportJoylari,
+    addSportJoy,
+    updateSportJoy,
+    deleteSportJoy,
+  } = useApp();
 
-  const [filterSport, setFilterSport] = useState<string>("");
-  const [filterTuman, setFilterTuman] = useState<string>("");
+  const [filterSport, setFilterSport] = useState("all");
+  const [filterTuman, setFilterTuman] = useState("all");
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [editingJoy, setEditingJoy] = useState<SportJoy | null>(null);
-  const [selectedLocationId, setSelectedLocationId] = useState<number | null>(null);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -34,8 +50,9 @@ export function SportJoylariPage() {
   });
 
   const filteredJoylar = sportJoylari.filter((joy) => {
-    const matchesSport = !filterSport || joy.sport_turlari.includes(filterSport);
-    const matchesTuman = !filterTuman || joy.tuman === filterTuman;
+    const matchesSport =
+      filterSport === "all" || joy.sport_turlari.includes(filterSport);
+    const matchesTuman = filterTuman === "all" || joy.tuman === filterTuman;
     return matchesSport && matchesTuman;
   });
 
@@ -138,7 +155,9 @@ export function SportJoylariPage() {
             type="number"
             step="0.000001"
             value={formData.kenglik}
-            onChange={(e) => setFormData({ ...formData, kenglik: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, kenglik: e.target.value })
+            }
             placeholder="40.3839"
           />
         </div>
@@ -150,7 +169,9 @@ export function SportJoylariPage() {
             type="number"
             step="0.000001"
             value={formData.uzunlik}
-            onChange={(e) => setFormData({ ...formData, uzunlik: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, uzunlik: e.target.value })
+            }
             placeholder="71.7873"
           />
         </div>
@@ -181,7 +202,9 @@ export function SportJoylariPage() {
         </label>
         <Input
           value={formData.sport_turlari}
-          onChange={(e) => setFormData({ ...formData, sport_turlari: e.target.value })}
+          onChange={(e) =>
+            setFormData({ ...formData, sport_turlari: e.target.value })
+          }
           placeholder="Futbol, Basketbol, Voleybol"
         />
       </div>
@@ -192,7 +215,9 @@ export function SportJoylariPage() {
           </label>
           <Input
             value={formData.telefon}
-            onChange={(e) => setFormData({ ...formData, telefon: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, telefon: e.target.value })
+            }
             placeholder="+998 73 ..."
           />
         </div>
@@ -202,7 +227,9 @@ export function SportJoylariPage() {
           </label>
           <Input
             value={formData.ish_vaqti}
-            onChange={(e) => setFormData({ ...formData, ish_vaqti: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, ish_vaqti: e.target.value })
+            }
             placeholder="08:00 - 20:00"
           />
         </div>
@@ -217,14 +244,21 @@ export function SportJoylariPage() {
           min="1"
           max="5"
           value={formData.reyting}
-          onChange={(e) => setFormData({ ...formData, reyting: e.target.value })}
+          onChange={(e) =>
+            setFormData({ ...formData, reyting: e.target.value })
+          }
         />
       </div>
       <div className="flex gap-4 pt-4">
         <Button
           className="flex-1"
           onClick={isEdit ? handleEdit : handleAdd}
-          disabled={!formData.nomi || !formData.manzil || !formData.tuman || !formData.sport_turlari}
+          disabled={
+            !formData.nomi ||
+            !formData.manzil ||
+            !formData.tuman ||
+            !formData.sport_turlari
+          }
         >
           {isEdit ? "Saqlash" : "Qo'shish"}
         </Button>
@@ -276,7 +310,7 @@ export function SportJoylariPage() {
                 <SelectValue placeholder="Barcha sport turlari" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value=" ">Barcha sport turlari</SelectItem>
+                <SelectItem value="all">Barcha sport turlari</SelectItem>
                 {sportTurlari.map((sport) => (
                   <SelectItem key={sport.id} value={sport.nomi}>
                     {sport.nomi}
@@ -289,7 +323,7 @@ export function SportJoylariPage() {
                 <SelectValue placeholder="Barcha tumanlar" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value=" ">Barcha tumanlar</SelectItem>
+                <SelectItem value="all">Barcha tumanlar</SelectItem>
                 {tumanlar.map((tuman) => (
                   <SelectItem key={tuman} value={tuman}>
                     {tuman}
@@ -300,9 +334,8 @@ export function SportJoylariPage() {
             <Button
               variant="outline"
               onClick={() => {
-                setFilterSport("");
-                setFilterTuman("");
-                setSelectedLocationId(null);
+                setFilterSport("all");
+                setFilterTuman("all");
               }}
             >
               Tozalash
@@ -311,17 +344,23 @@ export function SportJoylariPage() {
         </CardContent>
       </Card>
 
-      {/* Yandex Map */}
+      {/* Map Placeholder */}
       <Card className="border-0 shadow-lg bg-white dark:bg-slate-800">
         <CardContent className="p-6">
           <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-4">
-            🗺️ Xarita
+            Xarita
           </h3>
-          <YandexMap
-            locations={filteredJoylar}
-            onLocationSelect={(location) => setSelectedLocationId(location.id)}
-            selectedLocationId={selectedLocationId}
-          />
+          <div className="h-64 bg-gradient-to-br from-blue-100 to-green-100 dark:from-slate-700 dark:to-slate-600 rounded-xl flex items-center justify-center">
+            <div className="text-center">
+              <div className="text-6xl mb-2">🗺️</div>
+              <p className="text-slate-600 dark:text-slate-300">
+                Interaktiv xarita ({filteredJoylar.length} joy)
+              </p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                Yandex Maps API bilan integratsiya
+              </p>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
@@ -330,10 +369,7 @@ export function SportJoylariPage() {
         {filteredJoylar.map((joy) => (
           <Card
             key={joy.id}
-            className={`group hover:-translate-y-1 transition-all duration-300 hover:shadow-xl border-0 shadow-lg bg-white dark:bg-slate-800 cursor-pointer ${
-              selectedLocationId === joy.id ? "ring-2 ring-teal-500 ring-offset-2" : ""
-            }`}
-            onClick={() => setSelectedLocationId(joy.id)}
+            className="group hover:-translate-y-1 transition-all duration-300 hover:shadow-xl border-0 shadow-lg bg-white dark:bg-slate-800"
           >
             <CardContent className="p-6">
               <div className="flex justify-between items-start mb-4">
@@ -343,10 +379,7 @@ export function SportJoylariPage() {
                 <div className="flex gap-2">
                   <button
                     type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      openEditModal(joy);
-                    }}
+                    onClick={() => openEditModal(joy)}
                     className="text-xl hover:scale-110 transition-transform"
                     title="Tahrirlash"
                   >
@@ -354,10 +387,7 @@ export function SportJoylariPage() {
                   </button>
                   <button
                     type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDelete(joy.id);
-                    }}
+                    onClick={() => handleDelete(joy.id)}
                     className="text-xl hover:scale-110 transition-transform"
                     title="O'chirish"
                   >

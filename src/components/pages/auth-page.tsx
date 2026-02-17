@@ -1,10 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { useApp } from "@/lib/store";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -12,13 +16,30 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { User, Mail, Lock, Phone, Calendar, GraduationCap, Users, Scale, Ruler, Trophy } from "lucide-react";
 import { fakultetlar, guruhlar, sportTurlari } from "@/lib/mock-data";
-
-const avatarEmojis = ["🧑", "👩", "🧑‍🦱", "👱‍♀️", "🧑‍🦰", "👨", "👩‍🦱", "🧔", "👧", "🤓", "💪", "🏃", "🏊", "⚽", "🏀"];
+import { useApp } from "@/lib/store";
+import { AVATAR_EMOJIS } from "@/lib/constants";
+import {
+  Calendar,
+  GraduationCap,
+  Lock,
+  Mail,
+  Phone,
+  Ruler,
+  Scale,
+  Trophy,
+  User,
+  Users,
+} from "lucide-react";
+import { useState } from "react";
 
 export function AuthPage() {
-  const { register, login, setCurrentPage, sportTurlari: sportTypes } = useApp();
+  const {
+    register,
+    login,
+    setCurrentPage,
+    sportTurlari: sportTypes,
+  } = useApp();
   const [isLogin, setIsLogin] = useState(true);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -109,10 +130,10 @@ export function AuthPage() {
   };
 
   const toggleSport = (sport: string) => {
-    setRegData(prev => ({
+    setRegData((prev) => ({
       ...prev,
       sport_turlari: prev.sport_turlari.includes(sport)
-        ? prev.sport_turlari.filter(s => s !== sport)
+        ? prev.sport_turlari.filter((s) => s !== sport)
         : [...prev.sport_turlari, sport],
     }));
   };
@@ -139,7 +160,11 @@ export function AuthPage() {
               type="button"
               variant={isLogin ? "default" : "outline"}
               className={`flex-1 ${isLogin ? "bg-emerald-600 hover:bg-emerald-700" : ""}`}
-              onClick={() => { setIsLogin(true); setError(""); setSuccess(""); }}
+              onClick={() => {
+                setIsLogin(true);
+                setError("");
+                setSuccess("");
+              }}
             >
               Kirish
             </Button>
@@ -147,7 +172,11 @@ export function AuthPage() {
               type="button"
               variant={!isLogin ? "default" : "outline"}
               className={`flex-1 ${!isLogin ? "bg-emerald-600 hover:bg-emerald-700" : ""}`}
-              onClick={() => { setIsLogin(false); setError(""); setSuccess(""); }}
+              onClick={() => {
+                setIsLogin(false);
+                setError("");
+                setSuccess("");
+              }}
             >
               Ro'yxatdan o'tish
             </Button>
@@ -188,22 +217,32 @@ export function AuthPage() {
                   className="pl-11 h-12"
                 />
               </div>
-              <Button type="submit" className="w-full h-12 bg-emerald-600 hover:bg-emerald-700 text-lg font-semibold">
+              <Button
+                type="submit"
+                className="w-full h-12 bg-emerald-600 hover:bg-emerald-700 text-lg font-semibold"
+              >
                 Kirish
               </Button>
             </form>
           ) : (
             // Register Form
-            <form onSubmit={handleRegister} className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+            <form
+              onSubmit={handleRegister}
+              className="space-y-4 max-h-[60vh] overflow-y-auto pr-2"
+            >
               {/* Avatar selection */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-400">Avatar tanlang</label>
+                <label className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                  Avatar tanlang
+                </label>
                 <div className="flex flex-wrap gap-2">
-                  {avatarEmojis.map((emoji) => (
+                  {AVATAR_EMOJIS.map((emoji) => (
                     <button
                       type="button"
                       key={emoji}
-                      onClick={() => setRegData(prev => ({ ...prev, avatar_emoji: emoji }))}
+                      onClick={() =>
+                        setRegData((prev) => ({ ...prev, avatar_emoji: emoji }))
+                      }
                       className={`w-10 h-10 text-xl rounded-lg transition-all ${
                         regData.avatar_emoji === emoji
                           ? "bg-emerald-100 dark:bg-emerald-900 ring-2 ring-emerald-500"
@@ -223,14 +262,21 @@ export function AuthPage() {
                   <Input
                     placeholder="Ism *"
                     value={regData.ism}
-                    onChange={(e) => setRegData(prev => ({ ...prev, ism: e.target.value }))}
+                    onChange={(e) =>
+                      setRegData((prev) => ({ ...prev, ism: e.target.value }))
+                    }
                     className="pl-11 h-12"
                   />
                 </div>
                 <Input
                   placeholder="Familiya *"
                   value={regData.familiya}
-                  onChange={(e) => setRegData(prev => ({ ...prev, familiya: e.target.value }))}
+                  onChange={(e) =>
+                    setRegData((prev) => ({
+                      ...prev,
+                      familiya: e.target.value,
+                    }))
+                  }
                   className="h-12"
                 />
               </div>
@@ -242,7 +288,9 @@ export function AuthPage() {
                   type="email"
                   placeholder="Email *"
                   value={regData.email}
-                  onChange={(e) => setRegData(prev => ({ ...prev, email: e.target.value }))}
+                  onChange={(e) =>
+                    setRegData((prev) => ({ ...prev, email: e.target.value }))
+                  }
                   className="pl-11 h-12"
                 />
               </div>
@@ -254,7 +302,9 @@ export function AuthPage() {
                     type="password"
                     placeholder="Parol *"
                     value={regData.parol}
-                    onChange={(e) => setRegData(prev => ({ ...prev, parol: e.target.value }))}
+                    onChange={(e) =>
+                      setRegData((prev) => ({ ...prev, parol: e.target.value }))
+                    }
                     className="pl-11 h-12"
                   />
                 </div>
@@ -262,7 +312,12 @@ export function AuthPage() {
                   type="password"
                   placeholder="Parolni tasdiqlang *"
                   value={regData.confirmParol}
-                  onChange={(e) => setRegData(prev => ({ ...prev, confirmParol: e.target.value }))}
+                  onChange={(e) =>
+                    setRegData((prev) => ({
+                      ...prev,
+                      confirmParol: e.target.value,
+                    }))
+                  }
                   className="h-12"
                 />
               </div>
@@ -274,7 +329,12 @@ export function AuthPage() {
                   <Input
                     placeholder="Telefon"
                     value={regData.telefon}
-                    onChange={(e) => setRegData(prev => ({ ...prev, telefon: e.target.value }))}
+                    onChange={(e) =>
+                      setRegData((prev) => ({
+                        ...prev,
+                        telefon: e.target.value,
+                      }))
+                    }
                     className="pl-11 h-12"
                   />
                 </div>
@@ -284,7 +344,12 @@ export function AuthPage() {
                     type="date"
                     placeholder="Tug'ilgan sana"
                     value={regData.tug_sana}
-                    onChange={(e) => setRegData(prev => ({ ...prev, tug_sana: e.target.value }))}
+                    onChange={(e) =>
+                      setRegData((prev) => ({
+                        ...prev,
+                        tug_sana: e.target.value,
+                      }))
+                    }
                     className="pl-11 h-12"
                   />
                 </div>
@@ -294,7 +359,9 @@ export function AuthPage() {
               <div className="grid grid-cols-2 gap-3">
                 <Select
                   value={regData.fakultet}
-                  onValueChange={(value) => setRegData(prev => ({ ...prev, fakultet: value }))}
+                  onValueChange={(value) =>
+                    setRegData((prev) => ({ ...prev, fakultet: value }))
+                  }
                 >
                   <SelectTrigger className="h-12">
                     <GraduationCap className="w-5 h-5 text-slate-400 mr-2" />
@@ -302,14 +369,18 @@ export function AuthPage() {
                   </SelectTrigger>
                   <SelectContent>
                     {fakultetlar.map((f) => (
-                      <SelectItem key={f} value={f}>{f}</SelectItem>
+                      <SelectItem key={f} value={f}>
+                        {f}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
 
                 <Select
                   value={regData.guruh}
-                  onValueChange={(value) => setRegData(prev => ({ ...prev, guruh: value }))}
+                  onValueChange={(value) =>
+                    setRegData((prev) => ({ ...prev, guruh: value }))
+                  }
                 >
                   <SelectTrigger className="h-12">
                     <Users className="w-5 h-5 text-slate-400 mr-2" />
@@ -317,7 +388,9 @@ export function AuthPage() {
                   </SelectTrigger>
                   <SelectContent>
                     {guruhlar.map((g) => (
-                      <SelectItem key={g} value={g}>{g}</SelectItem>
+                      <SelectItem key={g} value={g}>
+                        {g}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -331,7 +404,9 @@ export function AuthPage() {
                     type="number"
                     placeholder="Vazn (kg)"
                     value={regData.vazn}
-                    onChange={(e) => setRegData(prev => ({ ...prev, vazn: e.target.value }))}
+                    onChange={(e) =>
+                      setRegData((prev) => ({ ...prev, vazn: e.target.value }))
+                    }
                     className="pl-11 h-12"
                   />
                 </div>
@@ -341,7 +416,9 @@ export function AuthPage() {
                     type="number"
                     placeholder="Bo'y (cm)"
                     value={regData.boy}
-                    onChange={(e) => setRegData(prev => ({ ...prev, boy: e.target.value }))}
+                    onChange={(e) =>
+                      setRegData((prev) => ({ ...prev, boy: e.target.value }))
+                    }
                     className="pl-11 h-12"
                   />
                 </div>
@@ -349,7 +426,9 @@ export function AuthPage() {
 
               {/* Sports selection */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-400">Sport turlari</label>
+                <label className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                  Sport turlari
+                </label>
                 <div className="flex flex-wrap gap-2">
                   {sportTypes.slice(0, 8).map((sport) => (
                     <button
@@ -373,12 +452,17 @@ export function AuthPage() {
                 <Input
                   placeholder="O'zingiz haqingizda qisqacha..."
                   value={regData.bio}
-                  onChange={(e) => setRegData(prev => ({ ...prev, bio: e.target.value }))}
+                  onChange={(e) =>
+                    setRegData((prev) => ({ ...prev, bio: e.target.value }))
+                  }
                   className="h-12"
                 />
               </div>
 
-              <Button type="submit" className="w-full h-12 bg-emerald-600 hover:bg-emerald-700 text-lg font-semibold">
+              <Button
+                type="submit"
+                className="w-full h-12 bg-emerald-600 hover:bg-emerald-700 text-lg font-semibold"
+              >
                 Ro'yxatdan o'tish
               </Button>
             </form>
