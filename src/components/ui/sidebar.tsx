@@ -4,29 +4,45 @@ import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { useApp } from '@/lib/store'
 import { cn } from '@/lib/utils'
+import { ThemeToggle } from './ThemeToggle'
 import { useTheme } from 'next-themes'
 import { useState } from 'react'
 import Link from 'next/link'
 
 const navItems = [
-	{ id: 'dashboard', label: 'Asosiy', icon: '🏠', to: '/dashboard' },
+	{ id: 'dashboard', label: 'Asosiy', icon: '🏠', to: '/sportsman/dashboard' },
 	{
 		id: 'sport-turlari',
 		label: 'Sport turlari',
 		icon: '🎯',
-		to: '/sport-turlari'
+		to: '/sportsman/sport-turlari'
 	},
 	{
 		id: 'sport-joylari',
 		label: 'Sport joylari',
 		icon: '📍',
-		to: '/sport-joylari'
+		to: '/sportsman/sport-joylari'
 	},
-	{ id: 'musobaqalar', label: 'Musobaqalar', icon: '📅', to: '/musobaqalar' },
-	{ id: 'klublar', label: 'Klublar', icon: '⚽', to: '/klublar' },
-	{ id: 'sportchilar', label: 'Sportchilar', icon: '🤾‍♂️', to: '/sportchilar' },
-	{ id: 'yutuqlar', label: 'Yutuqlar', icon: '🏅', to: '/yutuqlar' },
-	{ id: 'yangiliklar', label: 'Yangiliklar', icon: '📰', to: '/yangiliklar' }
+	{
+		id: 'musobaqalar',
+		label: 'Musobaqalar',
+		icon: '📅',
+		to: '/sportsman/musobaqalar'
+	},
+	{ id: 'klublar', label: 'Klublar', icon: '⚽', to: '/sportsman/klublar' },
+	{
+		id: 'sportchilar',
+		label: 'Sportchilar',
+		icon: '🤾‍♂️',
+		to: '/sportsman/sportchilar'
+	},
+	{ id: 'yutuqlar', label: 'Yutuqlar', icon: '🏅', to: '/sportsman/yutuqlar' },
+	{
+		id: 'yangiliklar',
+		label: 'Yangiliklar',
+		icon: '📰',
+		to: '/sportsman/yangiliklar'
+	}
 ]
 
 export function Sidebar() {
@@ -64,8 +80,8 @@ export function Sidebar() {
 
 			{/* User Profile Section */}
 			{isAuthenticated && currentUser ? (
-				<button
-					type="button"
+				<Link
+				href={'/sportsman/profil'}
 					onClick={() => handleNavClick('profil')}
 					className={cn(
 						'mx-4 mt-4 p-3 rounded-xl flex items-center gap-3 transition-all',
@@ -77,7 +93,7 @@ export function Sidebar() {
 					<div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-xl">
 						{currentUser.avatar_emoji}
 					</div>
-					<div className="text-left flex-1">
+					<div className="text-left flex-1">2
 						<p
 							className={cn(
 								'font-semibold text-sm',
@@ -97,11 +113,11 @@ export function Sidebar() {
 							Profilni ko'rish
 						</p>
 					</div>
-				</button>
+				</Link>
 			) : (
-				<button
-					type="button"
-					onClick={() => handleNavClick('auth')}
+				<Link
+				href={'/auth'}
+				onClick={() => handleNavClick('auth')}
 					className={cn(
 						'mx-4 mt-4 p-3 rounded-xl flex items-center gap-3 transition-all',
 						currentPage === 'auth'
@@ -134,7 +150,7 @@ export function Sidebar() {
 							Musobaqalarda qatnashing
 						</p>
 					</div>
-				</button>
+				</Link>
 			)}
 
 			{/* Navigation */}
@@ -144,7 +160,7 @@ export function Sidebar() {
 						key={item.id}
 						onClick={() => handleNavClick(item.id)}
 						type="button"
-            href={item.to}
+						href={item.to}
 						className={cn(
 							'w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-medium',
 							currentPage === item.id
@@ -176,14 +192,9 @@ export function Sidebar() {
 						<span>Admin Panel</span>
 					</button>
 				)}
-				<Button
-					variant="outline"
-					className="w-full justify-center gap-2"
-					onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-				>
-					<span>{theme === 'dark' ? '☀️' : '🌙'}</span>
-					<span>{theme === 'dark' ? "Yorug' tema" : 'Qora tema'}</span>
-				</Button>
+
+				<ThemeToggle />
+
 				{isAuthenticated && (
 					<Button
 						variant="destructive"
