@@ -69,7 +69,7 @@ export default function AdminDashboard() {
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
       {stats.map((stat) => (
         <Card key={stat.label} className="overflow-hidden">
-          <div className={`h-1 bg-gradient-to-r ${stat.color}`} />
+          <div className={`h-1 bg-linear-to-r ${stat.color}`} />
           <CardContent className="pt-4">
             <div className="flex items-center gap-3">
               <div className="text-3xl">{stat.icon}</div>
