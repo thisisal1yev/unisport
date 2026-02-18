@@ -150,94 +150,128 @@ export default function HomePage() {
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div
-              className={`space-y-8 transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+{/* Hero Section */}
+<section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8">
+  <div className="max-w-7xl mx-auto">
+    <div className="grid lg:grid-cols-2 gap-16 items-center">
+      {/* LEFT */}
+      <div
+        className={`space-y-8 transition-all duration-1000 ${
+          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+        }`}
+      >
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/20">
+          <Star className="w-4 h-4 text-emerald-400" />
+          <span className="text-emerald-400 text-sm font-medium">
+            Farg'ona Davlat Texnika Universiteti sport platformasi
+          </span>
+        </div>
+
+        <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black leading-tight">
+          <span className="bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
+            Sport —
+          </span>
+          <br />
+          <span className="bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent">
+            hayot tarzi
+          </span>
+        </h1>
+
+        <p className="text-lg text-slate-400 max-w-xl leading-relaxed">
+          Universitetimizning sport platformasiga xush kelibsiz! Musobaqalarda
+          ishtirok eting, yutuqlaringizni kuzating va sport hamjamiyatiga
+          qo'shiling.
+        </p>
+
+        <div className="flex flex-col sm:flex-row gap-4">
+          <Link href="/sportsman/dashboard">
+            <Button
+              size="lg"
+              className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-2xl shadow-emerald-500/30 px-8 h-14 text-base font-semibold group"
             >
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/20">
-                <Star className="w-4 h-4 text-emerald-400" />
-                <span className="text-emerald-400 text-sm font-medium">
-                  Farg'ona Davlat Universiteti sport platformasi
-                </span>
+              Platformaga kirish
+              <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </Button>
+          </Link>
+        </div>
+      </div>
+
+      {/* RIGHT (TV) */}
+      <div
+        className={`relative transition-all duration-1000 delay-300 ${
+          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+        }`}
+      >
+        <div className="tv_glow" />
+
+        <div className="main_wrapper">
+          <div className="main">
+            <div className="antenna">
+              <div className="antenna_shadow" />
+              <div className="a1" />
+              <div className="a1d" />
+              <div className="a2" />
+              <div className="a2d" />
+              <div className="a_base" />
+            </div>
+
+            <div className="tv">
+              <div className="cruve">
+                <svg
+                  xmlSpace="preserve"
+                  viewBox="0 0 189.929 189.929"
+                  xmlns="http://www.w3.org/2000/svg"
+                  version="1.1"
+                  className="curve_svg"
+                >
+                  <path d="M70.343,70.343c-30.554,30.553-44.806,72.7-39.102,115.635l-29.738,3.951C-5.442,137.659,11.917,86.34,49.129,49.13 C86.34,11.918,137.664-5.445,189.928,1.502l-3.95,29.738C143.041,25.54,100.895,39.789,70.343,70.343z" />
+                </svg>
               </div>
 
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black leading-tight">
-                <span className="bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
-                  Sport —
-                </span>
-                <br />
-                <span className="bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent">
-                  hayot tarzi
-                </span>
-              </h1>
+              <div className="display_div">
+                <div className="screen_out">
+                  <div className="screen_out1">
+                    <div className="screen">
+                      <img className="tv_img" src="/1.jpg" alt="TV screen" />
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-              <p className="text-lg text-slate-400 max-w-xl leading-relaxed">
-                Universitetimizning sport platformasiga xush kelibsiz!
-                Musobaqalarda ishtirok eting, yutuqlaringizni kuzating va sport
-                hamjamiyatiga qo'shiling.
-              </p>
+              <div className="lines">
+                <div className="line1" />
+                <div className="line2" />
+                <div className="line3" />
+              </div>
 
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link href="/sportsman/dashboard">
-                  <Button
-                    size="lg"
-                    className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-2xl shadow-emerald-500/30 px-8 h-14 text-base font-semibold group"
-                  >
-                    Platformaga kirish
-                    <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </Link>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="border-slate-700 bg-slate-800/50 hover:bg-slate-800 text-white h-14 px-8 text-base font-semibold group"
-                >
-                  <Play className="mr-2 w-5 h-5 group-hover:scale-110 transition-transform" />
-                  Video ko'rish
-                </Button>
+              <div className="buttons_div">
+                <div className="b1">
+                  <div />
+                </div>
+                <div className="b2" />
+                <div className="speakers">
+                  <div className="g1">
+                    <div className="g11" />
+                    <div className="g12" />
+                    <div className="g13" />
+                  </div>
+                  <div className="g" />
+                  <div className="g" />
+                </div>
               </div>
             </div>
 
-            <div
-              className={`relative transition-all duration-1000 delay-300 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
-            >
-              <div className="relative">
-                {/* Main Card */}
-                <div className="relative z-10 bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-3xl p-8 border border-white/10 shadow-2xl">
-                  <div className="grid grid-cols-2 gap-6">
-                    {stats.map((stat, index) => (
-                      <div
-                        key={stat.label}
-                        className={`p-6 rounded-2xl bg-gradient-to-br ${stat.color} bg-opacity-10 border border-white/5 transition-all duration-500`}
-                        style={{ animationDelay: `${index * 100}ms` }}
-                      >
-                        <stat.icon className="w-8 h-8 text-white/80 mb-4" />
-                        <div className="text-4xl font-black text-white mb-1">
-                          {stat.value}+
-                        </div>
-                        <div className="text-sm text-white/70 font-medium">
-                          {stat.label}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Floating Elements */}
-                <div className="absolute -top-6 -right-6 w-24 h-24 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl flex items-center justify-center shadow-lg shadow-amber-500/30 animate-bounce">
-                  <Crown className="w-10 h-10 text-white" />
-                </div>
-                <div className="absolute -bottom-4 -left-4 w-20 h-20 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/30 animate-pulse">
-                  <Award className="w-8 h-8 text-white" />
-                </div>
-              </div>
+            <div className="bottom">
+              <div className="base1" />
+              <div className="base2" />
+              <div className="base3" />
             </div>
           </div>
         </div>
-      </section>
+      </div>
+    </div>
+  </div>
+</section>
 
       {/* Features Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 relative">
@@ -605,7 +639,7 @@ export default function HomePage() {
                 <span className="text-xl font-bold text-white">UniSport</span>
               </div>
               <p className="text-slate-400 max-w-md mb-6">
-                Farg'ona Davlat Universiteti sport platformasi. Barcha sport
+                Farg'ona Davlat Texnika Universiteti sport platformasi. Barcha sport
                 turlari, musobaqalar va yutuqlar bir joyda.
               </p>
               <div className="flex items-center gap-4">
@@ -662,7 +696,7 @@ export default function HomePage() {
               <ul className="space-y-3 text-slate-400">
                 <li className="flex items-center gap-2">
                   <MapPin className="w-4 h-4" />
-                  <span>Farg'ona shahri, Mustaqillik ko'chasi 19</span>
+                  <span>Farg'ona shahri, Farg'ona ko'chasi 86</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <svg
@@ -678,7 +712,7 @@ export default function HomePage() {
                       d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                     />
                   </svg>
-                  <span>sport@fdu.uz</span>
+                  <span>sport@fdtu.uz</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <svg
@@ -704,6 +738,426 @@ export default function HomePage() {
             <p>&copy; 2026 UniSport. Barcha huquqlar himoyalangan.</p>
           </div>
         </div>
+        <style jsx global>{`
+/* ===== TV (embedded) ===== */
+
+/* === Управление размером ТВ === */
+:root {
+  --tv-scale: 2;
+}
+
+/* Свечение */
+.tv_glow {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: calc(450px * var(--tv-scale));
+  height: calc(300px * var(--tv-scale));
+  background: rgba(16, 185, 129, 0.12);
+  filter: blur(calc(48px * var(--tv-scale)));
+  border-radius: 9999px;
+  z-index: 0;
+}
+
+/* ОБЁРТКА — масштабируем ВСЁ */
+.main_wrapper {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 30em;
+  height: 30em;
+
+  transform: scale(var(--tv-scale));
+  transform-origin: center;
+}
+
+/* ===== TV (embedded) ===== */
+
+.tv_glow {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 450px;
+  height: 300px;
+  background: rgba(16, 185, 129, 0.12);
+  filter: blur(48px);
+  border-radius: 9999px;
+  z-index: 0;
+}
+
+.main_wrapper {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30em;
+  height: 30em;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 5em;
+}
+
+.antenna {
+  width: 5em;
+  height: 5em;
+  border-radius: 50%;
+  border: 2px solid black;
+  background-color: #f27405;
+  margin-bottom: -6em;
+  z-index: -1;
+  position: relative;
+}
+
+.antenna_shadow {
+  position: absolute;
+  background-color: transparent;
+  width: 50px;
+  height: 56px;
+  margin-left: 1.68em;
+  border-radius: 45%;
+  transform: rotate(140deg);
+  border: 4px solid transparent;
+  box-shadow: inset 0px 16px #a85103, inset 0px 16px 1px 1px #a85103;
+}
+
+.antenna::after {
+  content: "";
+  position: absolute;
+  margin-top: -9.4em;
+  margin-left: 0.4em;
+  transform: rotate(-25deg);
+  width: 1em;
+  height: 0.5em;
+  border-radius: 50%;
+  background-color: #f69e50;
+}
+
+.antenna::before {
+  content: "";
+  position: absolute;
+  margin-top: 0.2em;
+  margin-left: 1.25em;
+  transform: rotate(-20deg);
+  width: 1.5em;
+  height: 0.8em;
+  border-radius: 50%;
+  background-color: #f69e50;
+}
+
+.a1 {
+  position: relative;
+  top: -102%;
+  left: -130%;
+  width: 12em;
+  height: 5.5em;
+  border-radius: 50px;
+  background-image: linear-gradient(#171717, #171717, #353535, #353535, #171717);
+  transform: rotate(-29deg);
+  clip-path: polygon(50% 0%, 49% 100%, 52% 100%);
+}
+
+.a1d {
+  position: relative;
+  top: -211%;
+  left: -35%;
+  transform: rotate(45deg);
+  width: 0.5em;
+  height: 0.5em;
+  border-radius: 50%;
+  border: 2px solid black;
+  background-color: #979797;
+  z-index: 99;
+}
+
+.a2 {
+  position: relative;
+  top: -210%;
+  left: -10%;
+  width: 12em;
+  height: 4em;
+  border-radius: 50px;
+  background-image: linear-gradient(#171717, #171717, #353535, #353535, #171717);
+  margin-right: 5em;
+  clip-path: polygon(47% 0, 34% 34%, 54% 25%, 32% 100%, 29% 96%, 49% 32%, 30% 38%);
+  transform: rotate(-8deg);
+}
+
+.a2d {
+  position: relative;
+  top: -294%;
+  left: 94%;
+  width: 0.5em;
+  height: 0.5em;
+  border-radius: 50%;
+  border: 2px solid black;
+  background-color: #979797;
+  z-index: 99;
+}
+
+.tv {
+  width: 17em;
+  height: 9em;
+  margin-top: 3em;
+  border-radius: 15px;
+  background-color: #d36604;
+  display: flex;
+  justify-content: center;
+  border: 2px solid #1d0e01;
+  box-shadow: inset 0.2em 0.2em #e69635;
+  position: relative;
+}
+
+/* текстура корпуса ТВ */
+.tv::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 15px;
+  background:
+    repeating-radial-gradient(#d36604 0 0.0001%, #00000070 0 0.0002%) 50% 0/2500px 2500px,
+    repeating-conic-gradient(#d36604 0 0.0001%, #00000070 0 0.0002%) 60% 60%/2500px 2500px;
+  background-blend-mode: difference;
+  opacity: 0.09;
+  pointer-events: none;
+}
+
+.curve_svg {
+  position: absolute;
+  margin-top: 0.25em;
+  margin-left: -0.25em;
+  height: 12px;
+  width: 12px;
+}
+
+.display_div {
+  display: flex;
+  align-items: center;
+  align-self: center;
+  justify-content: center;
+  border-radius: 15px;
+  box-shadow: 3.5px 3.5px 0px #e69635;
+  position: relative;
+  z-index: 1;
+}
+
+.screen_out1 {
+  width: 11em;
+  height: 7.75em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+}
+
+.screen {
+  width: 13em;
+  height: 7.85em;
+  border: 2px solid #1d0e01;
+  background-color: #ffffff;
+  border-radius: 10px;
+  z-index: 2;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  position: relative;
+  overflow: hidden;
+}
+
+
+.tv_img {
+  width: 90%;   
+  height: 80%;
+  object-fit: cover;
+  display: block;
+  border-radius: 6px;
+}
+
+
+/* ===== СИЛЬНЫЙ "полупрозрачный шум" поверх картинки ===== */
+.screen::after {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+  z-index: 5;
+
+  /* шум крупнее => делаем размер "зерна" больше (меньше background-size) */
+  background:
+    repeating-radial-gradient(
+      circle at 30% 20%,
+      rgba(255, 255, 255, 0.18) 0 0.6px,
+      rgba(0, 0, 0, 0.16) 0.6px 1.2px
+    ),
+    repeating-conic-gradient(
+      from 0deg,
+      rgba(255, 255, 255, 0.12) 0 0.6deg,
+      rgba(0, 0, 0, 0.12) 0.6deg 1.2deg
+    );
+
+  background-size: 90px 90px, 140px 140px;
+  background-position: 0 0, 40px 60px;
+
+  /* сила шума */
+  opacity: 0.65;
+
+  /* выглядит как стекло/CRT */
+  mix-blend-mode: overlay;
+
+  /* лёгкая "дрожь" */
+  animation: tvNoiseShift 0.14s infinite steps(2, end);
+  filter: contrast(125%) brightness(105%);
+}
+
+@keyframes tvNoiseShift {
+  0%   { transform: translate(0, 0) rotate(0deg); }
+  25%  { transform: translate(-1.5px, 1px) rotate(0.05deg); }
+  50%  { transform: translate(1px, -1.5px) rotate(-0.05deg); }
+  75%  { transform: translate(-1px, -1px) rotate(0.03deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+/* (опционально) горизонтальные "скан-линии" поверх шума */
+.screen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0,0,0,0.12) 0px,
+    rgba(0,0,0,0.12) 1px,
+    rgba(0,0,0,0.00) 3px
+  );
+  opacity: 0.35;
+  mix-blend-mode: multiply;
+}
+
+.lines {
+  display: flex;
+  column-gap: 0.1em;
+  align-self: flex-end;
+  position: relative;
+  z-index: 1;
+}
+
+.line1, .line3 {
+  width: 2px;
+  height: 0.5em;
+  background-color: black;
+  border-radius: 25px 25px 0px 0px;
+  margin-top: 0.5em;
+}
+
+.line2 {
+  width: 2px;
+  height: 1em;
+  background-color: black;
+  border-radius: 25px 25px 0px 0px;
+}
+
+.buttons_div {
+  width: 4.25em;
+  align-self: center;
+  height: 8em;
+  background-color: #e69635;
+  border: 2px solid #1d0e01;
+  padding: 0.6em;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  row-gap: 0.75em;
+  box-shadow: 3px 3px 0px #e69635;
+  position: relative;
+  z-index: 1;
+  margin-left: 0.6em;
+}
+
+.b1, .b2 {
+  width: 1.65em;
+  height: 1.65em;
+  border-radius: 50%;
+  background-color: #7f5934;
+  border: 2px solid black;
+  box-shadow: inset 2px 2px 1px #b49577, -2px 0px #513721, -2px 0px 0px 1px black;
+  position: relative;
+}
+
+.b1 div {
+  position: absolute;
+  top: 0.05em;
+  left: 0.72em;
+  transform: rotate(45deg);
+  width: 0.15em;
+  height: 1.5em;
+  background-color: #000;
+}
+
+.speakers {
+  display: flex;
+  flex-direction: column;
+  row-gap: 0.5em;
+}
+
+.speakers .g1 {
+  display: flex;
+  column-gap: 0.25em;
+}
+
+.g11, .g12, .g13 {
+  width: 0.65em;
+  height: 0.65em;
+  border-radius: 50%;
+  background-color: #7f5934;
+  border: 2px solid black;
+  box-shadow: inset 1.25px 1.25px 1px #b49577;
+}
+
+.speakers .g {
+  height: 2px;
+  background-color: #171717;
+}
+
+.bottom {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  column-gap: 8.7em;
+  position: relative;
+}
+
+.base1, .base2 {
+  height: 1em;
+  width: 2em;
+  border: 2px solid #171717;
+  background-color: #4d4d4d;
+  margin-top: -0.15em;
+  z-index: -1;
+}
+
+.base3 {
+  position: absolute;
+  height: 0.15em;
+  width: 17.5em;
+  background-color: #171717;
+  margin-top: 0.8em;
+}
+`}</style>
+
       </footer>
     </div>
   );
