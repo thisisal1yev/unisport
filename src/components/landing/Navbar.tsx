@@ -42,10 +42,14 @@ export default function Navbar() {
         </div>
 
         <div className="hidden md:flex items-center gap-4">
-          <Button variant="ghost" size="sm" className="font-semibold">Log In</Button>
-          <Button size="sm" className="font-semibold uppercase tracking-wide">
-            Join Now
-          </Button>
+          <Link href="/auth">
+            <Button variant="ghost" size="sm" className="font-semibold">Log In</Button>
+          </Link>
+          <Link href="/auth">
+            <Button size="sm" className="font-semibold uppercase tracking-wide">
+              Join Now
+            </Button>
+          </Link>
         </div>
 
         {/* Mobile Nav */}
@@ -60,8 +64,12 @@ export default function Navbar() {
               <div className="flex flex-col gap-6 mt-10">
                 <NavLinks />
                 <div className="flex flex-col gap-4 mt-4">
-                  <Button variant="outline" className="w-full">Log In</Button>
-                  <Button className="w-full">Join Now</Button>
+                  <Link href="/auth">
+                    <Button variant="outline" className="w-full">Log In</Button>
+                  </Link>
+                  <Link href="/auth">
+                    <Button className="w-full">Join Now</Button>
+                  </Link>
                 </div>
               </div>
             </SheetContent>

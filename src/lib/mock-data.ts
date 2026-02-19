@@ -424,15 +424,6 @@ export const yangiliklar: Yangilik[] = [
   },
 ];
 
-// Filters
-export const tumanlar = [
-  "Farg'ona",
-  "Marg'ilon",
-  "Quva",
-  "Qo'qon",
-  "Rishton",
-  "Oltiariq",
-];
 export const fakultetlar = [
   "Mexanika-mashinasozlik fakulteti",
   "Energetika muhandisligi fakulteti",

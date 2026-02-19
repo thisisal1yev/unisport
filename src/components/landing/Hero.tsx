@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ArrowRight, Play } from "lucide-react";
@@ -54,10 +55,12 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.6 }}
           >
-            <Button size="lg" className="h-14 px-8 text-lg uppercase tracking-wide font-bold skew-x-[-10deg] hover:skew-x-0 transition-transform">
-              <span className="skew-x-[10deg]">Start Your Journey</span>
-              <ArrowRight className="ml-2 w-5 h-5 skew-x-[10deg]" />
-            </Button>
+            <Link href="/auth">
+              <Button size="lg" className="h-14 px-8 text-lg uppercase tracking-wide font-bold skew-x-[-10deg] hover:skew-x-0 transition-transform">
+                <span className="skew-x-[10deg]">Start Your Journey</span>
+                <ArrowRight className="ml-2 w-5 h-5 skew-x-[10deg]" />
+              </Button>
+            </Link>
           </motion.div>
         </div>
       </div>

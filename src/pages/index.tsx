@@ -18,13 +18,13 @@ export default function HomePage() {
 
         <div className="container mx-auto px-6 relative z-10">
           <h2 className="text-4xl md:text-6xl font-display font-bold uppercase mb-8">
-            Ready to take the field?
+            Afsonani boshlashga tayyormisiz?
           </h2>
           <p className="text-xl md:text-2xl mb-10 max-w-2xl mx-auto opacity-90 font-medium">
-            Join over 500 universities managing their sports leagues with Unisport.
+            Unisport bilan universitet sportini yangi bosqichga olib chiqing.
           </p>
           <button className="bg-white text-primary text-lg font-bold px-10 py-4 rounded-md uppercase tracking-wide hover:bg-accent hover:text-white transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 duration-300">
-            Join the League Today
+            Bugunoq boshlang
           </button>
         </div>
       </section>

@@ -255,7 +255,7 @@ export default function CoachSportchilar() {
                   <SelectValue placeholder="Klub (ixtiyoriy)" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Klub yo'q</SelectItem>
+                  <SelectItem value="none">Klub yo'q</SelectItem>
                   {klublar.map((k) => (
                     <SelectItem key={k.id} value={k.id.toString()}>
                       {k.rasm_emoji} {k.nomi}

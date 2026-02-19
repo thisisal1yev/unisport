@@ -54,6 +54,7 @@ export interface Sportchi {
   daraja: "Boshlovchi" | "Havaskor" | "Professional";
   medallar: number;
   yulduzlar: number;
+  rang?: "Oltin" | "Kumush" | "Bronza" | "Reboqsiz";
   avatar_emoji: string;
   telefon?: string;
   tug_yil?: number;

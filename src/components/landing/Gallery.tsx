@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
@@ -29,10 +30,12 @@ export default function Gallery() {
             <h2 className="text-primary font-bold tracking-widest uppercase mb-3">Jarayondagi musobaqalar</h2>
             <h3 className="text-4xl md:text-5xl font-display font-bold uppercase">Afsonalar <br/>Yaratiladigan joy</h3>
           </div>
-          <Button variant="outline" className="hidden md:flex">
-            Barcha musobaqalarni ko‘rish
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
+          <Link href="/auth">
+            <Button variant="outline" className="hidden md:flex">
+              Barcha musobaqalarni ko‘rish
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </Link>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-[500px] md:h-[400px]">
@@ -60,10 +63,12 @@ export default function Gallery() {
         </div>
         
         <div className="mt-8 md:hidden">
-          <Button variant="outline" className="w-full">
-            Barcha musobaqalarni ko‘rish
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
+          <Link href="/auth">
+            <Button variant="outline" className="w-full">
+              Barcha musobaqalarni ko‘rish
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

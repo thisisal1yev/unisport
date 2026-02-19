@@ -316,8 +316,6 @@ export const VILOYATLAR_VA_TUMANLAR: Record<string, string[]> = {
   ],
 };
 
-// Для обратной совместимости (будет использоваться как Viloyatlar)
 export const Viloyatlar = VILOYATLAR;
 
-// Все Tumanlar (районы) - для обратной совместимости
 export const TUMANLAR = Object.values(VILOYATLAR_VA_TUMANLAR).flat();

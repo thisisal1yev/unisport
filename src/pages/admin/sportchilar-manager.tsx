@@ -41,7 +41,8 @@ export default function SportchilarManager() {
     guruh: "",
     daraja: "Havaskor" as "Boshlovchi" | "Havaskor" | "Professional",
     medallar: 0,
-    yulduzlar: 3,
+    yulduzlar: 0,
+    rang: "Reboqsiz" as "Oltin" | "Kumush" | "Bronza" | "Reboqsiz",
     avatar_emoji: "🧑",
     telefon: "",
     tug_yil: 2000,
@@ -58,7 +59,8 @@ export default function SportchilarManager() {
       guruh: "",
       daraja: "Havaskor",
       medallar: 0,
-      yulduzlar: 3,
+      yulduzlar: 0,
+      rang: "Reboqsiz",
       avatar_emoji: "🧑",
       telefon: "",
       tug_yil: 2000,
@@ -79,6 +81,7 @@ export default function SportchilarManager() {
       daraja: sportchi.daraja,
       medallar: sportchi.medallar,
       yulduzlar: sportchi.yulduzlar,
+      rang: sportchi.rang || "Reboqsiz",
       avatar_emoji: sportchi.avatar_emoji,
       telefon: sportchi.telefon || "",
       tug_yil: sportchi.tug_yil || 2000,
@@ -194,6 +197,37 @@ export default function SportchilarManager() {
                 />
                 <Input
                   type="number"
+                  placeholder="Yulduzlar"
+                  min="0"
+                  max="5"
+                  value={formData.yulduzlar}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      yulduzlar: Number(e.target.value),
+                    })
+                  }
+                />
+              </div>
+              <Select
+                value={formData.rang}
+                onValueChange={(
+                  v: "Oltin" | "Kumush" | "Bronza" | "Reboqsiz",
+                ) => setFormData({ ...formData, rang: v })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Rang" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Reboqsiz">Reboqsiz</SelectItem>
+                  <SelectItem value="Bronza">Bronza</SelectItem>
+                  <SelectItem value="Kumush">Kumush</SelectItem>
+                  <SelectItem value="Oltin">Oltin</SelectItem>
+                </SelectContent>
+              </Select>
+              <div className="grid grid-cols-2 gap-4">
+                <Input
+                  type="number"
                   placeholder="Tug'ilgan yil"
                   value={formData.tug_yil}
                   onChange={(e) =>
@@ -203,14 +237,14 @@ export default function SportchilarManager() {
                     })
                   }
                 />
+                <Input
+                  placeholder="Telefon"
+                  value={formData.telefon}
+                  onChange={(e) =>
+                    setFormData({ ...formData, telefon: e.target.value })
+                  }
+                />
               </div>
-              <Input
-                placeholder="Telefon"
-                value={formData.telefon}
-                onChange={(e) =>
-                  setFormData({ ...formData, telefon: e.target.value })
-                }
-              />
               <Select
                 value={formData.klub_id?.toString() || ""}
                 onValueChange={(v) => {
@@ -226,7 +260,7 @@ export default function SportchilarManager() {
                   <SelectValue placeholder="Klub (ixtiyoriy)" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Klub yo'q</SelectItem>
+                  <SelectItem value="none">Klub yo'q</SelectItem>
                   {klublar.map((k) => (
                     <SelectItem key={k.id} value={k.id.toString()}>
                       {k.rasm_emoji} {k.nomi}
