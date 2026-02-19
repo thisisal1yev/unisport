@@ -1,0 +1,9 @@
+export { Navbar } from "./Navbar";
+export { HeroSection } from "./HeroSection";
+export { Features } from "./Features";
+export { SportsTypes } from "./SportsTypes";
+export { Competitions } from "./Competitions";
+export { TopAthletes } from "./TopAthletes";
+export { Clubs } from "./Clubs";
+export { CTASection } from "./CTASection";
+export { Footer } from "./Footer";
