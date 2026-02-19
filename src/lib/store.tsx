@@ -15,6 +15,7 @@ import {
   sportchilar as initialSportchilar,
   yangiliklar as initialYangiliklar,
   yutuqlar as initialYutuqlar,
+  guruhlar as initialGuruhlar,
 } from "./mock-data";
 import type {
   Klub,
@@ -35,6 +36,8 @@ interface AppState {
   klublar: Klub[];
   yutuqlar: Yutuq[];
   yangiliklar: Yangilik[];
+  guruhlar: string[];
+  addGuruh: (guruh: string) => void;
   currentPage: string;
   setCurrentPage: (page: string) => void;
 
@@ -96,6 +99,7 @@ interface AppState {
 const AppContext = createContext<AppState | undefined>(undefined);
 
 // LocalStorage keys
+const GURUHLAR_KEY = "unisport_guruhlar";
 const USERS_KEY = "unisport_users";
 const CURRENT_USER_KEY = "unisport_current_user";
 
@@ -109,8 +113,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     useState<Sportchi[]>(initialSportchilar);
   const [klublar, setKlublar] = useState<Klub[]>(initialKlublar);
   const [yutuqlar, setYutuqlar] = useState<Yutuq[]>(initialYutuqlar);
-  const [yangiliklar, setYangiliklar] =
-    useState<Yangilik[]>(initialYangiliklar);
+  const [yangiliklar, setYangiliklar] = useState<Yangilik[]>(initialYangiliklar);
+  const [guruhlar, setGuruhlar] = useState<string[]>(initialGuruhlar);
   const [currentPage, setCurrentPage] = useState("dashboard");
 
   // User state
@@ -122,6 +126,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const savedUsers = localStorage.getItem(USERS_KEY);
     const savedCurrentUser = localStorage.getItem(CURRENT_USER_KEY);
+    const savedGuruhlar = localStorage.getItem(GURUHLAR_KEY);
 
     if (savedUsers) {
       setUsers(JSON.parse(savedUsers));
@@ -130,6 +135,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       const user = JSON.parse(savedCurrentUser);
       setCurrentUser(user);
       setIsAuthenticated(true);
+    }
+    if (savedGuruhlar) {
+      setGuruhlar(JSON.parse(savedGuruhlar));
     }
   }, []);
 
@@ -148,6 +156,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
       localStorage.removeItem(CURRENT_USER_KEY);
     }
   }, [currentUser]);
+
+  // Save guruhlar to localStorage when changed
+  useEffect(() => {
+    localStorage.setItem(GURUHLAR_KEY, JSON.stringify(guruhlar));
+  }, [guruhlar]);
 
   // Auth functions
   const register = (
@@ -429,6 +442,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
     );
   };
 
+  // Guruhlar functions
+  const addGuruh = (guruh: string) => {
+    if (guruh.trim() && !guruhlar.includes(guruh)) {
+      setGuruhlar((prev) => [...prev, guruh]);
+    }
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -439,6 +459,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         klublar,
         yutuqlar,
         yangiliklar,
+        guruhlar,
+        addGuruh,
         currentPage,
         setCurrentPage,
         // User state

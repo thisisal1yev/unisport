@@ -39,10 +39,14 @@ export default function AuthPage() {
     login,
     setCurrentPage,
     sportTurlari: sportTypes,
+    guruhlar,
+    addGuruh,
   } = useApp();
   const [isLogin, setIsLogin] = useState(true);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [newGuruh, setNewGuruh] = useState("");
+  const [showNewGuruhInput, setShowNewGuruhInput] = useState(false);
 
   // Login form
   const [loginEmail, setLoginEmail] = useState("");
@@ -105,6 +109,13 @@ export default function AuthPage() {
       return;
     }
 
+    // Agar yangi guruh kiritilgan bo'lsa, uni qo'shish
+    let finalGuruh = regData.guruh;
+    if (showNewGuruhInput && newGuruh.trim()) {
+      addGuruh(newGuruh.trim());
+      finalGuruh = newGuruh.trim();
+    }
+
     const result = register({
       ism: regData.ism,
       familiya: regData.familiya,
@@ -113,7 +124,7 @@ export default function AuthPage() {
       telefon: regData.telefon || undefined,
       tug_sana: regData.tug_sana || undefined,
       fakultet: regData.fakultet || undefined,
-      guruh: regData.guruh || undefined,
+      guruh: finalGuruh || undefined,
       vazn: regData.vazn ? Number.parseFloat(regData.vazn) : undefined,
       boy: regData.boy ? Number.parseFloat(regData.boy) : undefined,
       avatar_emoji: regData.avatar_emoji,
@@ -377,16 +388,24 @@ export default function AuthPage() {
                 </Select>
 
                 <Select
-                  value={regData.guruh}
-                  onValueChange={(value) =>
-                    setRegData((prev) => ({ ...prev, guruh: value }))
-                  }
+                  value={showNewGuruhInput ? "new" : regData.guruh}
+                  onValueChange={(value) => {
+                    if (value === "new") {
+                      setShowNewGuruhInput(true);
+                      setRegData((prev) => ({ ...prev, guruh: "" }));
+                    } else {
+                      setShowNewGuruhInput(false);
+                      setNewGuruh("");
+                      setRegData((prev) => ({ ...prev, guruh: value }));
+                    }
+                  }}
                 >
                   <SelectTrigger className="h-12">
                     <Users className="w-5 h-5 text-slate-400 mr-2" />
                     <SelectValue placeholder="Guruh" />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="new">+ Yangi guruh</SelectItem>
                     {guruhlar.map((g) => (
                       <SelectItem key={g} value={g}>
                         {g}
@@ -395,6 +414,16 @@ export default function AuthPage() {
                   </SelectContent>
                 </Select>
               </div>
+
+              {/* New Group Input */}
+              {showNewGuruhInput && (
+                <Input
+                  placeholder="Yangi guruhning nomini kiriting"
+                  value={newGuruh}
+                  onChange={(e) => setNewGuruh(e.target.value)}
+                  className="h-12"
+                />
+              )}
 
               {/* Weight & Height */}
               <div className="grid grid-cols-2 gap-3">

@@ -8,6 +8,8 @@ const navItems: NavItem[] = [
   { id: "klublar", label: "Klublar", icon: "⚽", to: "/coach/klublar" },
   { id: "musobaqalar", label: "Musobaqalar", icon: "📅", to: "/coach/musobaqalar" },
   { id: "sport-joylari", label: "Sport joylari", icon: "📍", to: "/coach/sport-joylari" },
+  { id: "yangiliklar", label: "Yangiliklar", icon: "📰", to: "/coach/yangiliklar" },
+  { id: "yutuqlar", label: "Yutuqlar", icon: "🏆", to: "/coach/yutuqlar" },
 ];
 
 export function CoachLayout({ children }: { children: React.ReactNode }) {

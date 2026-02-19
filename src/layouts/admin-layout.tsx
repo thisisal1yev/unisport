@@ -8,6 +8,8 @@ const navItems: NavItem[] = [
   { id: "klublar-manager", label: "Klublar", icon: "⚽", to: "/admin/klublar-manager" },
   { id: "musobaqalar-manager", label: "Musobaqalar", icon: "📅", to: "/admin/musobaqalar-manager" },
   { id: "sport-joylari-manager", label: "Sport joylari", icon: "📍", to: "/admin/sport-joylari-manager" },
+  { id: "yangiliklar", label: "Yangiliklar", icon: "📰", to: "/admin/yangiliklar" },
+  { id: "yutuqlar", label: "Yutuqlar", icon: "🏆", to: "/admin/yutuqlar" },
 ];
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {

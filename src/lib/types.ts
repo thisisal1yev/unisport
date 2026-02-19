@@ -21,6 +21,7 @@ export interface SportJoy {
   manzil: string;
   kenglik: number;
   uzunlik: number;
+  viloyat?: string;
   tuman: string;
   sport_turlari: string[];
   telefon?: string;
@@ -100,6 +101,7 @@ export interface Yangilik {
   mazmun: string;
   kategoriya: string;
   rasm_emoji: string;
+  rasm?: string; // optional image URL
   sana: string;
   layklar: number;
   izohlar_soni: number;

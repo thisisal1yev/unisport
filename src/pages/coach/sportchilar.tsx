@@ -19,7 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { fakultetlar, guruhlar } from "@/lib/mock-data";
+import { fakultetlar } from "@/lib/mock-data";
 import { useApp } from "@/lib/store";
 import type { Sportchi } from "@/lib/types";
 import { getMedalEmoji } from "@/lib/utils";
@@ -34,6 +34,7 @@ export default function CoachSportchilar() {
     addSportchi,
     updateSportchi,
     deleteSportchi,
+    guruhlar,
   } = useApp();
 
   const [filterSport, setFilterSport] = useState("all");
@@ -146,11 +147,6 @@ export default function CoachSportchilar() {
             if (!open) resetForm();
           }}
         >
-          <DialogTrigger asChild>
-            <Button className="bg-emerald-500 hover:bg-emerald-600">
-              + Yangi sportchi
-            </Button>
-          </DialogTrigger>
           <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
@@ -381,23 +377,6 @@ export default function CoachSportchilar() {
                     {"⭐".repeat(sportchi.yulduzlar)}
                   </span>
                 </div>
-              </div>
-              <div className="flex gap-2 mt-4">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex-1"
-                  onClick={() => openEditDialog(sportchi)}
-                >
-                  ✏️ Tahrirlash
-                </Button>
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => handleDelete(sportchi.id)}
-                >
-                  🗑️
-                </Button>
               </div>
             </CardContent>
           </Card>

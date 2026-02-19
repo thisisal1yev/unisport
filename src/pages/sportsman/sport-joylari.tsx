@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { YandexMap } from "@/components/ui/yandex-map";
-import { tumanlar } from "@/lib/mock-data";
+import { VILOYATLAR, VILOYATLAR_VA_TUMANLAR } from "@/lib/constants";
 import { useApp } from "@/lib/store";
 import { useState } from "react";
 
@@ -18,14 +18,17 @@ export default function SportJoylariPage() {
   const { sportTurlari, sportJoylari } = useApp();
 
   const [filterSport, setFilterSport] = useState("all");
+  const [filterViloyat, setFilterViloyat] = useState("all");
   const [filterTuman, setFilterTuman] = useState("all");
   const [selectedJoyId, setSelectedJoyId] = useState<number | null>(null);
 
   const filteredJoylar = sportJoylari.filter((joy) => {
     const matchesSport =
       filterSport === "all" || joy.sport_turlari.includes(filterSport);
+    const matchesViloyat =
+      filterViloyat === "all" || joy.viloyat === filterViloyat;
     const matchesTuman = filterTuman === "all" || joy.tuman === filterTuman;
-    return matchesSport && matchesTuman;
+    return matchesSport && matchesViloyat && matchesTuman;
   });
 
   return (
@@ -40,7 +43,7 @@ export default function SportJoylariPage() {
           <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-4">
             Filtrlar
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Select value={filterSport} onValueChange={setFilterSport}>
               <SelectTrigger>
                 <SelectValue placeholder="Barcha sport turlari" />
@@ -54,23 +57,53 @@ export default function SportJoylariPage() {
                 ))}
               </SelectContent>
             </Select>
-            <Select value={filterTuman} onValueChange={setFilterTuman}>
+
+            {/* Viloyat Select */}
+            <Select
+              value={filterViloyat}
+              onValueChange={(v) => {
+                setFilterViloyat(v);
+                setFilterTuman("all");
+              }}
+            >
               <SelectTrigger>
-                <SelectValue placeholder="Barcha tumanlar" />
+                <SelectValue placeholder="Viloyatni tanlang" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Barcha tumanlar</SelectItem>
-                {tumanlar.map((tuman) => (
-                  <SelectItem key={tuman} value={tuman}>
-                    {tuman}
+                <SelectItem value="all">Barcha viloyatlar</SelectItem>
+                {VILOYATLAR.map((v) => (
+                  <SelectItem key={v} value={v}>
+                    {v}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
+
+            {/* Tuman Select (зависит от Viloyat) */}
+            <Select
+              value={filterTuman}
+              onValueChange={setFilterTuman}
+              disabled={filterViloyat === "all"}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Tumanni tanlang" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Barcha tumanlar</SelectItem>
+                {filterViloyat !== "all" &&
+                  VILOYATLAR_VA_TUMANLAR[filterViloyat]?.map((t) => (
+                    <SelectItem key={t} value={t}>
+                      {t}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+
             <Button
               variant="outline"
               onClick={() => {
                 setFilterSport("all");
+                setFilterViloyat("all");
                 setFilterTuman("all");
               }}
             >

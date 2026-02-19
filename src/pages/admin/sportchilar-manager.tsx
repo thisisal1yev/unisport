@@ -118,11 +118,6 @@ export default function SportchilarManager() {
             if (!open) resetForm();
           }}
         >
-          <DialogTrigger asChild>
-            <Button className="bg-emerald-500 hover:bg-emerald-600">
-              + Yangi sportchi
-            </Button>
-          </DialogTrigger>
           <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
@@ -294,13 +289,6 @@ export default function SportchilarManager() {
                     onClick={() => openEditDialog(sportchi)}
                   >
                     ✏️
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => handleDelete(sportchi.id)}
-                  >
-                    🗑️
                   </Button>
                 </div>
               </div>

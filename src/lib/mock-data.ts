@@ -434,13 +434,13 @@ export const tumanlar = [
   "Oltiariq",
 ];
 export const fakultetlar = [
-  "Axborot texnologiyalari",
-  "Iqtisodiyot",
-  "Fizika-matematika",
-  "Jismoniy tarbiya",
-  "Xorijiy tillar",
-  "Matematika",
-  "Biologiya",
+  "Mexanika-mashinasozlik fakulteti",
+  "Energetika muhandisligi fakulteti",
+  "Kimyo texnologiya fakulteti",
+  "Arxitektura va qurilish fakulteti",
+  "Ishlab chiqarishda boshqaruv fakulteti",
+  "Yengil sanoat va to'qimachilik fakulteti",
+  "Axborot texnologiyalari va telekommunikatsiya fakulteti",
 ];
 export const guruhlar = [
   "AT-21",

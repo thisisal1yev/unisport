@@ -203,23 +203,6 @@ export default function CoachKlublar() {
                     👑 Lider tayinlanmagan
                   </p>
                 )}
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex-1"
-                    onClick={() => openEditDialog(klub)}
-                  >
-                    ✏️ Tahrirlash
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => deleteKlub(klub.id)}
-                  >
-                    🗑️
-                  </Button>
-                </div>
               </CardContent>
             </Card>
           );

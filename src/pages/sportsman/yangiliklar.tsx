@@ -19,9 +19,17 @@ export default function YangiliklarPage() {
             className="group hover:-translate-y-1 transition-all duration-300 hover:shadow-xl border-0 shadow-lg bg-white dark:bg-slate-800"
           >
             <CardContent className="p-6">
-              <div className="text-5xl mb-4 group-hover:scale-110 transition-transform inline-block">
-                {yangilik.rasm_emoji}
-              </div>
+              {yangilik.rasm ? (
+                <img
+                  src={yangilik.rasm}
+                  alt={yangilik.sarlavha}
+                  className="w-full h-48 object-cover rounded mb-4"
+                />
+              ) : (
+                <div className="text-5xl mb-4 group-hover:scale-110 transition-transform inline-block">
+                  {yangilik.rasm_emoji}
+                </div>
+              )}
               <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-2">
                 {yangilik.sarlavha}
               </h3>
@@ -38,12 +46,6 @@ export default function YangiliklarPage() {
                   </span>
                 </div>
                 <div className="flex gap-4">
-                  <span className="flex items-center gap-1 text-sm text-red-500">
-                    ❤️ {yangilik.layklar}
-                  </span>
-                  <span className="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400">
-                    💬 {yangilik.izohlar_soni}
-                  </span>
                 </div>
               </div>
             </CardContent>

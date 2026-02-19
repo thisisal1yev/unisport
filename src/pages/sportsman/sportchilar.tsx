@@ -15,14 +15,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { fakultetlar, guruhlar } from "@/lib/mock-data";
+import { fakultetlar } from "@/lib/mock-data";
 import { useApp } from "@/lib/store";
 import type { Sportchi } from "@/lib/types";
 import { getMedalEmoji } from "@/lib/utils";
 import { useState } from "react";
 
 export default function SportchilarPage() {
-  const { sportTurlari, sportchilar, yutuqlar } = useApp();
+  const { sportTurlari, sportchilar, yutuqlar, guruhlar } = useApp();
 
   const [filterSport, setFilterSport] = useState("all");
   const [filterFakultet, setFilterFakultet] = useState("all");
