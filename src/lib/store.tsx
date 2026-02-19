@@ -90,6 +90,11 @@ interface AppState {
   addYutuq: (yutuq: Omit<Yutuq, "id">) => void;
   deleteYutuq: (id: number) => void;
 
+  assignWinners: (
+    musobaqaId: number,
+    winners: { sportchiId: number; medal_turi: "oltin" | "kumush" | "bronza" }[],
+  ) => void;
+
   addYangilik: (yangilik: Omit<Yangilik, "id">) => void;
   updateYangilik: (id: number, yangilik: Partial<Yangilik>) => void;
   deleteYangilik: (id: number) => void;
@@ -354,7 +359,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const addMusobaqa = (musobaqa: Omit<Musobaqa, "id">) => {
     setMusobaqalar((prev) => {
       const newId = Math.max(...prev.map((m) => m.id), 0) + 1;
-      return [...prev, { ...musobaqa, id: newId }];
+      // attach owner if available
+      const ownerId = currentUser ? currentUser.id : undefined;
+      return [...prev, { ...musobaqa, id: newId, ownerId }];
     });
   };
 
@@ -410,6 +417,51 @@ export function AppProvider({ children }: { children: ReactNode }) {
       const newId = Math.max(...prev.map((y) => y.id), 0) + 1;
       return [...prev, { ...yutuq, id: newId }];
     });
+  };
+
+  const assignWinners = (
+    musobaqaId: number,
+    winners: { sportchiId: number; medal_turi: "oltin" | "kumush" | "bronza" }[],
+  ) => {
+    const musobaqa = musobaqalar.find((m) => m.id === musobaqaId);
+    if (!musobaqa) return;
+
+    // create yutuq records and update sportchilar
+    winners.forEach((w) => {
+      const sportchi = sportchilar.find((s) => s.id === w.sportchiId);
+      if (!sportchi) return;
+
+      // increment medals and stars
+      const medallarInc = 1;
+      let yulduzInc = 1;
+      if (w.medal_turi === "oltin") yulduzInc = 3;
+      if (w.medal_turi === "kumush") yulduzInc = 2;
+
+      setSportchilar((prev) =>
+        prev.map((s) =>
+          s.id === sportchi.id
+            ? { ...s, medallar: s.medallar + medallarInc, yulduzlar: s.yulduzlar + yulduzInc }
+            : s,
+        ),
+      );
+
+      addYutuq({
+        nomi: `${musobaqa.nomi} - ${w.medal_turi}`,
+        sportchi: { id: sportchi.id, ism: sportchi.ism },
+        musobaqa: musobaqa.nomi,
+        medal_turi: w.medal_turi,
+        medal_soni: 1,
+        sana: new Date().toISOString().split("T")[0],
+        rasm_emoji: "🏅",
+      });
+    });
+
+    // mark competition as finished and store winners
+    setMusobaqalar((prev) =>
+      prev.map((m) =>
+        m.id === musobaqaId ? { ...m, holat: "yakunlangan", winners } : m,
+      ),
+    );
   };
 
   const deleteYutuq = (id: number) => {
@@ -495,6 +547,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         deleteKlub,
         addYutuq,
         deleteYutuq,
+        assignWinners,
         addYangilik,
         updateYangilik,
         deleteYangilik,

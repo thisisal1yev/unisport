@@ -32,6 +32,8 @@ export default function CoachMusobaqalar() {
     addMusobaqa,
     updateMusobaqa,
     deleteMusobaqa,
+    currentUser,
+    assignWinners,
   } = useApp();
 
   const [filterSport, setFilterSport] = useState("all");
@@ -124,6 +126,77 @@ export default function CoachMusobaqalar() {
   const getParticipants = (kategoriya: string) => {
     return sportchilar.filter((s) => s.sport === kategoriya);
   };
+
+  function AssignWinnersPanel({
+    musobaqa,
+    participants,
+    onAssign,
+  }: {
+    musobaqa: Musobaqa;
+    participants: typeof sportchilar;
+    onAssign: (winners: { sportchiId: number; medal_turi: "oltin" | "kumush" | "bronza" }[]) => void;
+  }) {
+    const [gold, setGold] = useState<number | null>(null);
+    const [silver, setSilver] = useState<number | null>(null);
+    const [bronze, setBronze] = useState<number | null>(null);
+
+    const submit = () => {
+      const winners = [] as { sportchiId: number; medal_turi: "oltin" | "kumush" | "bronza" }[];
+      if (gold) winners.push({ sportchiId: gold, medal_turi: "oltin" });
+      if (silver) winners.push({ sportchiId: silver, medal_turi: "kumush" });
+      if (bronze) winners.push({ sportchiId: bronze, medal_turi: "bronza" });
+      if (winners.length > 0) onAssign(winners);
+    };
+
+    return (
+      <div className="p-4 border rounded-lg bg-slate-50 dark:bg-slate-800">
+        <h4 className="font-semibold mb-2">🏆 G'oliblarni belgilash</h4>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+          <Select value={gold?.toString() || ""} onValueChange={(v) => setGold(v ? Number(v) : null)}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="1-o'rin (oltin)" />
+            </SelectTrigger>
+            <SelectContent>
+              {participants.map((p) => (
+                <SelectItem key={p.id} value={p.id.toString()}>
+                  {p.avatar_emoji} {p.ism}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={silver?.toString() || ""} onValueChange={(v) => setSilver(v ? Number(v) : null)}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="2-o'rin (kumush)" />
+            </SelectTrigger>
+            <SelectContent>
+              {participants.map((p) => (
+                <SelectItem key={p.id} value={p.id.toString()}>
+                  {p.avatar_emoji} {p.ism}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={bronze?.toString() || ""} onValueChange={(v) => setBronze(v ? Number(v) : null)}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="3-o'rin (bronza)" />
+            </SelectTrigger>
+            <SelectContent>
+              {participants.map((p) => (
+                <SelectItem key={p.id} value={p.id.toString()}>
+                  {p.avatar_emoji} {p.ism}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex justify-end mt-3">
+          <Button onClick={submit} className="bg-emerald-500 hover:bg-emerald-600">
+            Saqlash
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
@@ -305,21 +378,16 @@ export default function CoachMusobaqalar() {
                 </Button>
               </div>
               <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex-1"
-                  onClick={() => openEditDialog(musobaqa)}
-                >
-                  ✏️ Tahrirlash
-                </Button>
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => deleteMusobaqa(musobaqa.id)}
-                >
-                  🗑️
-                </Button>
+                {!(musobaqa.winners && musobaqa.winners.length > 0 && currentUser && musobaqa.ownerId === currentUser.id && !currentUser.isAdmin) && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1"
+                    onClick={() => openEditDialog(musobaqa)}
+                  >
+                    ✏️ Tahrirlash
+                  </Button>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -352,6 +420,23 @@ export default function CoachMusobaqalar() {
                     </p>
                   </div>
                 </div>
+                {detailModal.winners && detailModal.winners.length > 0 && (
+                  <div className="mt-4">
+                    <h3 className="text-lg font-bold mb-2">🏅 G'oliblar</h3>
+                    <div className="flex gap-2">
+                      {detailModal.winners.map((w) => {
+                        const p = sportchilar.find((s) => s.id === w.sportchiId);
+                        const emoji = w.medal_turi === "oltin" ? "🥇" : w.medal_turi === "kumush" ? "🥈" : "🥉";
+                        return (
+                          <div key={w.sportchiId} className="p-2 bg-slate-50 dark:bg-slate-800 rounded">
+                            <div className="font-semibold">{emoji} {p?.ism}</div>
+                            <div className="text-sm text-slate-500">{p?.sport}</div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
               </DialogHeader>
 
               <div className="space-y-6 mt-4">
@@ -445,6 +530,18 @@ export default function CoachMusobaqalar() {
                   )}
                 </div>
               </div>
+              {/* Assign winners button for owner or admin when winners not set */}
+              {detailModal && currentUser && (currentUser.isAdmin || detailModal.ownerId === currentUser.id) && (!detailModal.winners || detailModal.winners.length === 0) && (
+                <div className="mt-4">
+                  <AssignWinnersPanel
+                    musobaqa={detailModal}
+                    participants={getParticipants(detailModal.kategoriya)}
+                    onAssign={(winners) => {
+                      assignWinners(detailModal.id, winners);
+                    }}
+                  />
+                </div>
+              )}
 
               <div className="flex justify-end mt-6">
                 <Button variant="outline" onClick={() => setDetailModal(null)}>

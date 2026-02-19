@@ -42,6 +42,11 @@ export interface Musobaqa {
   rasm_emoji: string;
   tavsif?: string;
   mukofotlar?: string;
+  ownerId?: number;
+  winners?: {
+    sportchiId: number;
+    medal_turi: "oltin" | "kumush" | "bronza";
+  }[];
 }
 
 // Athletes

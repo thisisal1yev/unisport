@@ -23,6 +23,85 @@ import { useApp } from "@/lib/store";
 import type { Musobaqa } from "@/lib/types";
 import { useState } from "react";
 
+function AssignWinnersInline({
+  musobaqa,
+  participants,
+  onAssign,
+}: {
+  musobaqa: Musobaqa;
+  participants: any[];
+  onAssign: (winners: { sportchiId: number; medal_turi: "oltin" | "kumush" | "bronza" }[]) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [gold, setGold] = useState<number | null>(null);
+  const [silver, setSilver] = useState<number | null>(null);
+  const [bronze, setBronze] = useState<number | null>(null);
+
+  const submit = () => {
+    const winners = [] as { sportchiId: number; medal_turi: "oltin" | "kumush" | "bronza" }[];
+    if (gold) winners.push({ sportchiId: gold, medal_turi: "oltin" });
+    if (silver) winners.push({ sportchiId: silver, medal_turi: "kumush" });
+    if (bronze) winners.push({ sportchiId: bronze, medal_turi: "bronza" });
+    if (winners.length > 0) onAssign(winners);
+    setOpen(false);
+  };
+
+  return (
+    <div>
+      <Button size="sm" onClick={() => setOpen((s) => !s)}>
+        🏆 G'oliblar
+      </Button>
+      {open && (
+        <div className="p-3 bg-slate-50 rounded mt-2">
+          <div className="grid grid-cols-1 gap-2">
+            <Select value={gold?.toString() || ""} onValueChange={(v) => setGold(v ? Number(v) : null)}>
+              <SelectTrigger>
+                <SelectValue placeholder="1-o'rin" />
+              </SelectTrigger>
+              <SelectContent>
+                {participants.map((p) => (
+                  <SelectItem key={p.id} value={p.id.toString()}>
+                    {p.avatar_emoji} {p.ism}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={silver?.toString() || ""} onValueChange={(v) => setSilver(v ? Number(v) : null)}>
+              <SelectTrigger>
+                <SelectValue placeholder="2-o'rin" />
+              </SelectTrigger>
+              <SelectContent>
+                {participants.map((p) => (
+                  <SelectItem key={p.id} value={p.id.toString()}>
+                    {p.avatar_emoji} {p.ism}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={bronze?.toString() || ""} onValueChange={(v) => setBronze(v ? Number(v) : null)}>
+              <SelectTrigger>
+                <SelectValue placeholder="3-o'rin" />
+              </SelectTrigger>
+              <SelectContent>
+                {participants.map((p) => (
+                  <SelectItem key={p.id} value={p.id.toString()}>
+                    {p.avatar_emoji} {p.ism}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <div className="flex justify-end">
+              <Button size="sm" onClick={submit} className="bg-emerald-500 hover:bg-emerald-600">
+                Saqlash
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function MusobaqalarManager() {
   const {
     musobaqalar,
@@ -31,6 +110,9 @@ export default function MusobaqalarManager() {
     addMusobaqa,
     updateMusobaqa,
     deleteMusobaqa,
+    sportchilar,
+    assignWinners,
+    currentUser,
   } = useApp();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingMusobaqa, setEditingMusobaqa] = useState<Musobaqa | null>(null);
@@ -270,6 +352,10 @@ export default function MusobaqalarManager() {
                   >
                     🗑️
                   </Button>
+                  {/* Admin assign winners inline */}
+                  {currentUser && currentUser.isAdmin && (!m.winners || m.winners.length === 0) && (
+                    <AssignWinnersInline musobaqa={m} participants={sportchilar.filter((s) => s.sport === m.kategoriya)} onAssign={(winners) => assignWinners(m.id, winners)} />
+                  )}
                 </div>
               </div>
             </CardContent>
