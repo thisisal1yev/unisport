@@ -208,8 +208,6 @@ bun run format	Форматирование кода с Biome
 [[plugins]]
 
   package = "@netlify/plugin-nextjs"
-Production URL
-🔗 https://same-nzgsc2eqxhq-latest.netlify.app
 
 🗃️ Модели данных
 SportType (Вид спорта)
@@ -321,3 +319,4 @@ MIT License
 
 
 </div>
+
