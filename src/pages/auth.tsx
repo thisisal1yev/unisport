@@ -16,9 +16,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { fakultetlar, guruhlar, sportTurlari } from "@/lib/mock-data";
 import { useApp } from "@/lib/store";
-import { AVATAR_EMOJIS } from "@/lib/constants";
+import { AVATAR_EMOJIS, FAKULTETLAR, GURUHLAR } from "@/lib/constants";
 import {
   Calendar,
   GraduationCap,
@@ -31,7 +30,7 @@ import {
   User,
   Users,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function AuthPage() {
   const {
@@ -39,10 +38,19 @@ export default function AuthPage() {
     login,
     setCurrentPage,
     sportTurlari: sportTypes,
+    isAuthenticated,
   } = useApp();
   const [isLogin, setIsLogin] = useState(true);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Redirect to profile once auth state is confirmed
+  useEffect(() => {
+    if (isAuthenticated) {
+      setCurrentPage("profil");
+    }
+  }, [isAuthenticated, setCurrentPage]);
 
   // Login form
   const [loginEmail, setLoginEmail] = useState("");
@@ -66,7 +74,7 @@ export default function AuthPage() {
     sport_turlari: [] as string[],
   });
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccess("");
@@ -76,16 +84,19 @@ export default function AuthPage() {
       return;
     }
 
-    const result = login(loginEmail, loginPassword);
+    setIsSubmitting(true);
+    const result = await login(loginEmail, loginPassword);
+    setIsSubmitting(false);
+
     if (result.success) {
-      setSuccess(result.message);
-      setCurrentPage("profil");
+      setSuccess("Muvaffaqiyatli kirdingiz!");
+      // redirect handled by useEffect watching isAuthenticated
     } else {
       setError(result.message);
     }
   };
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccess("");
@@ -105,7 +116,8 @@ export default function AuthPage() {
       return;
     }
 
-    const result = register({
+    setIsSubmitting(true);
+    const result = await register({
       ism: regData.ism,
       familiya: regData.familiya,
       email: regData.email,
@@ -120,10 +132,13 @@ export default function AuthPage() {
       bio: regData.bio || undefined,
       sport_turlari: regData.sport_turlari,
     });
+    setIsSubmitting(false);
 
     if (result.success) {
-      setSuccess(result.message);
-      setCurrentPage("profil");
+      setSuccess(
+        "Ro'yxatdan o'tish muvaffaqiyatli! Emailingizga tasdiqlash xabari yuborilgan bo'lsa, uni tasdiqlang.",
+      );
+      // redirect handled by useEffect if auto-confirmed, otherwise user sees message
     } else {
       setError(result.message);
     }
@@ -140,12 +155,12 @@ export default function AuthPage() {
 
   return (
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center py-8">
-      <Card className="w-full max-w-lg border-0 shadow-2xl bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-800">
+      <Card className="w-full max-w-lg border-0 shadow-2xl bg-linear-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-800">
         <CardHeader className="text-center space-y-4 pb-8">
-          <div className="mx-auto w-20 h-20 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg">
+          <div className="mx-auto w-20 h-20 rounded-full bg-linear-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg">
             <Trophy className="w-10 h-10 text-white" />
           </div>
-          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+          <CardTitle className="text-3xl font-bold bg-linear-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
             UniSport
           </CardTitle>
           <CardDescription className="text-base">
@@ -219,9 +234,10 @@ export default function AuthPage() {
               </div>
               <Button
                 type="submit"
+                disabled={isSubmitting}
                 className="w-full h-12 bg-emerald-600 hover:bg-emerald-700 text-lg font-semibold"
               >
-                Kirish
+                {isSubmitting ? "Kirish..." : "Kirish"}
               </Button>
             </form>
           ) : (
@@ -368,7 +384,7 @@ export default function AuthPage() {
                     <SelectValue placeholder="Fakultet" />
                   </SelectTrigger>
                   <SelectContent>
-                    {fakultetlar.map((f) => (
+                    {FAKULTETLAR.map((f) => (
                       <SelectItem key={f} value={f}>
                         {f}
                       </SelectItem>
@@ -387,7 +403,7 @@ export default function AuthPage() {
                     <SelectValue placeholder="Guruh" />
                   </SelectTrigger>
                   <SelectContent>
-                    {guruhlar.map((g) => (
+                    {GURUHLAR.map((g) => (
                       <SelectItem key={g} value={g}>
                         {g}
                       </SelectItem>
@@ -461,9 +477,10 @@ export default function AuthPage() {
 
               <Button
                 type="submit"
+                disabled={isSubmitting}
                 className="w-full h-12 bg-emerald-600 hover:bg-emerald-700 text-lg font-semibold"
               >
-                Ro'yxatdan o'tish
+                {isSubmitting ? "Yuklanmoqda..." : "Ro'yxatdan o'tish"}
               </Button>
             </form>
           )}

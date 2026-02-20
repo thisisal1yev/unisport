@@ -5,9 +5,10 @@ import { ChevronRight, Crown, Medal, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { sportchilar } from "@/lib/mock-data";
+import { useApp } from "@/lib/store";
 
 export function TopAthletes() {
+  const { sportchilar } = useApp();
   return (
     <section id="sportchilar" className="athletes-section">
       <div className="athletes-container">

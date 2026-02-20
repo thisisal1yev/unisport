@@ -107,11 +107,10 @@ export interface Yangilik {
 
 // User
 export interface User {
-  id: number;
+  id: string; // UUID from Supabase Auth
   ism: string;
   familiya: string;
   email: string;
-  parol: string;
   telefon?: string;
   tug_sana?: string;
   fakultet?: string;

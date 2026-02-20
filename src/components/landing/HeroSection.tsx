@@ -13,18 +13,10 @@ export function HeroSection() {
 
   const handlePlatformAccess = () => {
     if (currentUser) {
-      switch (currentUser.role) {
-        case "admin":
-          router.push("/admin/dashboard");
-          break;
-        case "coach":
-          router.push("/coach/dashboard");
-          break;
-        case "sportsman":
-          router.push("/sportsman/dashboard");
-          break;
-        default:
-          router.push("/auth");
+      if (currentUser.isAdmin) {
+        router.push("/admin/dashboard");
+      } else {
+        router.push("/sportsman/dashboard");
       }
     } else {
       router.push("/auth");

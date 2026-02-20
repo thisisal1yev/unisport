@@ -26,6 +26,7 @@ export default function KlublarManager() {
   const { klublar, sportTurlari, addKlub, updateKlub, deleteKlub } = useApp();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingKlub, setEditingKlub] = useState<Klub | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     nomi: "",
     tavsif: "",
@@ -57,14 +58,22 @@ export default function KlublarManager() {
     setIsDialogOpen(true);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (!formData.nomi || !formData.sport_turi) return;
+    setIsSubmitting(true);
     if (editingKlub) {
-      updateKlub(editingKlub.id, formData);
+      await updateKlub(editingKlub.id, formData);
     } else {
-      addKlub(formData);
+      await addKlub(formData);
     }
+    setIsSubmitting(false);
     setIsDialogOpen(false);
     resetForm();
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!confirm("Rostdan ham o'chirmoqchimisiz?")) return;
+    await deleteKlub(id);
   };
 
   return (
@@ -93,7 +102,7 @@ export default function KlublarManager() {
             </DialogHeader>
             <div className="space-y-4 mt-4">
               <Input
-                placeholder="Klub nomi"
+                placeholder="Klub nomi *"
                 value={formData.nomi}
                 onChange={(e) =>
                   setFormData({ ...formData, nomi: e.target.value })
@@ -111,7 +120,7 @@ export default function KlublarManager() {
                 }}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Sport turi" />
+                  <SelectValue placeholder="Sport turi *" />
                 </SelectTrigger>
                 <SelectContent>
                   {sportTurlari.map((s) => (
@@ -130,9 +139,14 @@ export default function KlublarManager() {
               />
               <Button
                 onClick={handleSubmit}
+                disabled={isSubmitting}
                 className="w-full bg-emerald-500 hover:bg-emerald-600"
               >
-                {editingKlub ? "Saqlash" : "Qo'shish"}
+                {isSubmitting
+                  ? "Yuklanmoqda..."
+                  : editingKlub
+                    ? "Saqlash"
+                    : "Qo'shish"}
               </Button>
             </div>
           </DialogContent>
@@ -145,7 +159,7 @@ export default function KlublarManager() {
             <CardContent className="py-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-2xl">
+                  <div className="w-12 h-12 rounded-xl bg-linear-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-2xl">
                     {klub.rasm_emoji}
                   </div>
                   <div>
@@ -168,7 +182,7 @@ export default function KlublarManager() {
                   <Button
                     variant="destructive"
                     size="sm"
-                    onClick={() => deleteKlub(klub.id)}
+                    onClick={() => handleDelete(klub.id)}
                   >
                     🗑️
                   </Button>

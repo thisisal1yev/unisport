@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { YandexMap } from "@/components/ui/yandex-map";
-import { tumanlar } from "@/lib/mock-data";
+import { TUMANLAR } from "@/lib/constants";
 import { useApp } from "@/lib/store";
 import { useState } from "react";
 
@@ -56,11 +56,11 @@ export default function SportJoylariPage() {
             </Select>
             <Select value={filterTuman} onValueChange={setFilterTuman}>
               <SelectTrigger>
-                <SelectValue placeholder="Barcha tumanlar" />
+                <SelectValue placeholder="Barcha TUMANLAR" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Barcha tumanlar</SelectItem>
-                {tumanlar.map((tuman) => (
+                <SelectItem value="all">Barcha TUMANLAR</SelectItem>
+                {TUMANLAR.map((tuman) => (
                   <SelectItem key={tuman} value={tuman}>
                     {tuman}
                   </SelectItem>

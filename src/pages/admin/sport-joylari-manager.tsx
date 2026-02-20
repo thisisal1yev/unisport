@@ -25,12 +25,14 @@ import { useState } from "react";
 export default function SportJoylariManager() {
   const {
     sportJoylari,
+    sportTurlari,
     addSportJoy,
     updateSportJoy,
     deleteSportJoy,
   } = useApp();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingJoy, setEditingJoy] = useState<SportJoy | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     nomi: "",
     manzil: "",
@@ -74,14 +76,31 @@ export default function SportJoylariManager() {
     setIsDialogOpen(true);
   };
 
-  const handleSubmit = () => {
+  const toggleSport = (sport: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      sport_turlari: prev.sport_turlari.includes(sport)
+        ? prev.sport_turlari.filter((s) => s !== sport)
+        : [...prev.sport_turlari, sport],
+    }));
+  };
+
+  const handleSubmit = async () => {
+    if (!formData.nomi || !formData.manzil || !formData.tuman) return;
+    setIsSubmitting(true);
     if (editingJoy) {
-      updateSportJoy(editingJoy.id, formData);
+      await updateSportJoy(editingJoy.id, formData);
     } else {
-      addSportJoy(formData);
+      await addSportJoy(formData);
     }
+    setIsSubmitting(false);
     setIsDialogOpen(false);
     resetForm();
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!confirm("Rostdan ham o'chirmoqchimisiz?")) return;
+    await deleteSportJoy(id);
   };
 
   return (
@@ -110,14 +129,14 @@ export default function SportJoylariManager() {
             </DialogHeader>
             <div className="space-y-4 mt-4">
               <Input
-                placeholder="Joy nomi"
+                placeholder="Joy nomi *"
                 value={formData.nomi}
                 onChange={(e) =>
                   setFormData({ ...formData, nomi: e.target.value })
                 }
               />
               <Input
-                placeholder="Manzil"
+                placeholder="Manzil *"
                 value={formData.manzil}
                 onChange={(e) =>
                   setFormData({ ...formData, manzil: e.target.value })
@@ -128,7 +147,7 @@ export default function SportJoylariManager() {
                 onValueChange={(v) => setFormData({ ...formData, tuman: v })}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Tuman" />
+                  <SelectValue placeholder="Tuman *" />
                 </SelectTrigger>
                 <SelectContent>
                   {TUMANLAR.map((t) => (
@@ -154,6 +173,32 @@ export default function SportJoylariManager() {
                   }
                 />
               </div>
+              <div className="grid grid-cols-2 gap-4">
+                <Input
+                  type="number"
+                  step="0.0001"
+                  placeholder="Kenglik (lat)"
+                  value={formData.kenglik}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      kenglik: Number(e.target.value),
+                    })
+                  }
+                />
+                <Input
+                  type="number"
+                  step="0.0001"
+                  placeholder="Uzunlik (lng)"
+                  value={formData.uzunlik}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      uzunlik: Number(e.target.value),
+                    })
+                  }
+                />
+              </div>
               <Input
                 type="number"
                 step="0.1"
@@ -163,11 +208,38 @@ export default function SportJoylariManager() {
                   setFormData({ ...formData, reyting: Number(e.target.value) })
                 }
               />
+              {/* Sport turlari multi-select */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                  Sport turlari
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {sportTurlari.map((sport) => (
+                    <button
+                      type="button"
+                      key={sport.id}
+                      onClick={() => toggleSport(sport.nomi)}
+                      className={`px-3 py-1.5 text-sm rounded-full transition-all ${
+                        formData.sport_turlari.includes(sport.nomi)
+                          ? "bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 ring-1 ring-emerald-500"
+                          : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
+                      }`}
+                    >
+                      {sport.rasm_emoji} {sport.nomi}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <Button
                 onClick={handleSubmit}
+                disabled={isSubmitting}
                 className="w-full bg-emerald-500 hover:bg-emerald-600"
               >
-                {editingJoy ? "Saqlash" : "Qo'shish"}
+                {isSubmitting
+                  ? "Yuklanmoqda..."
+                  : editingJoy
+                    ? "Saqlash"
+                    : "Qo'shish"}
               </Button>
             </div>
           </DialogContent>
@@ -180,7 +252,7 @@ export default function SportJoylariManager() {
             <CardContent className="py-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-400 to-indigo-500 flex items-center justify-center text-2xl">
+                  <div className="w-12 h-12 rounded-xl bg-linear-to-br from-purple-400 to-indigo-500 flex items-center justify-center text-2xl">
                     📍
                   </div>
                   <div>
@@ -203,7 +275,7 @@ export default function SportJoylariManager() {
                   <Button
                     variant="destructive"
                     size="sm"
-                    onClick={() => deleteSportJoy(joy.id)}
+                    onClick={() => handleDelete(joy.id)}
                   >
                     🗑️
                   </Button>

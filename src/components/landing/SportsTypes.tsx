@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { sportTurlari } from "@/lib/mock-data";
+import { sportTurlari } from "@/lib/sports-data";
 
 export function SportsTypes() {
   return (

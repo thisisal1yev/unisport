@@ -34,6 +34,7 @@ export default function MusobaqalarManager() {
   } = useApp();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingMusobaqa, setEditingMusobaqa] = useState<Musobaqa | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     nomi: "",
     kategoriya: "",
@@ -80,14 +81,22 @@ export default function MusobaqalarManager() {
     setIsDialogOpen(true);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (!formData.nomi || !formData.kategoriya || !formData.sana || !formData.joy) return;
+    setIsSubmitting(true);
     if (editingMusobaqa) {
-      updateMusobaqa(editingMusobaqa.id, formData);
+      await updateMusobaqa(editingMusobaqa.id, formData);
     } else {
-      addMusobaqa(formData);
+      await addMusobaqa(formData);
     }
+    setIsSubmitting(false);
     setIsDialogOpen(false);
     resetForm();
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!confirm("Rostdan ham o'chirmoqchimisiz?")) return;
+    await deleteMusobaqa(id);
   };
 
   const holatBadge = (holat: string) => {
@@ -127,7 +136,7 @@ export default function MusobaqalarManager() {
             </DialogHeader>
             <div className="space-y-4 mt-4">
               <Input
-                placeholder="Musobaqa nomi"
+                placeholder="Musobaqa nomi *"
                 value={formData.nomi}
                 onChange={(e) =>
                   setFormData({ ...formData, nomi: e.target.value })
@@ -145,7 +154,7 @@ export default function MusobaqalarManager() {
                 }}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Kategoriya" />
+                  <SelectValue placeholder="Kategoriya *" />
                 </SelectTrigger>
                 <SelectContent>
                   {sportTurlari.map((s) => (
@@ -167,7 +176,7 @@ export default function MusobaqalarManager() {
                 onValueChange={(v) => setFormData({ ...formData, joy: v })}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Joy" />
+                  <SelectValue placeholder="Joy *" />
                 </SelectTrigger>
                 <SelectContent>
                   {sportJoylari.map((j) => (
@@ -221,9 +230,14 @@ export default function MusobaqalarManager() {
               />
               <Button
                 onClick={handleSubmit}
+                disabled={isSubmitting}
                 className="w-full bg-emerald-500 hover:bg-emerald-600"
               >
-                {editingMusobaqa ? "Saqlash" : "Qo'shish"}
+                {isSubmitting
+                  ? "Yuklanmoqda..."
+                  : editingMusobaqa
+                    ? "Saqlash"
+                    : "Qo'shish"}
               </Button>
             </div>
           </DialogContent>
@@ -236,7 +250,7 @@ export default function MusobaqalarManager() {
             <CardContent className="py-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-2xl">
+                  <div className="w-12 h-12 rounded-xl bg-linear-to-br from-orange-400 to-red-500 flex items-center justify-center text-2xl">
                     {m.rasm_emoji}
                   </div>
                   <div>
@@ -266,7 +280,7 @@ export default function MusobaqalarManager() {
                   <Button
                     variant="destructive"
                     size="sm"
-                    onClick={() => deleteMusobaqa(m.id)}
+                    onClick={() => handleDelete(m.id)}
                   >
                     🗑️
                   </Button>

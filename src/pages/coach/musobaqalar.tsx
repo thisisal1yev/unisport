@@ -38,6 +38,7 @@ export default function CoachMusobaqalar() {
   const [detailModal, setDetailModal] = useState<Musobaqa | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingMusobaqa, setEditingMusobaqa] = useState<Musobaqa | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     nomi: "",
     kategoriya: "",
@@ -88,14 +89,22 @@ export default function CoachMusobaqalar() {
     setIsDialogOpen(true);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (!formData.nomi || !formData.kategoriya || !formData.sana || !formData.joy) return;
+    setIsSubmitting(true);
     if (editingMusobaqa) {
-      updateMusobaqa(editingMusobaqa.id, formData);
+      await updateMusobaqa(editingMusobaqa.id, formData);
     } else {
-      addMusobaqa(formData);
+      await addMusobaqa(formData);
     }
+    setIsSubmitting(false);
     setIsDialogOpen(false);
     resetForm();
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!confirm("Rostdan ham o'chirmoqchimisiz?")) return;
+    await deleteMusobaqa(id);
   };
 
   const getStatusBadge = (holat: string) => {
@@ -245,9 +254,14 @@ export default function CoachMusobaqalar() {
               />
               <Button
                 onClick={handleSubmit}
+                disabled={isSubmitting}
                 className="w-full bg-emerald-500 hover:bg-emerald-600"
               >
-                {editingMusobaqa ? "Saqlash" : "Qo'shish"}
+                {isSubmitting
+                  ? "Yuklanmoqda..."
+                  : editingMusobaqa
+                    ? "Saqlash"
+                    : "Qo'shish"}
               </Button>
             </div>
           </DialogContent>
@@ -316,7 +330,7 @@ export default function CoachMusobaqalar() {
                 <Button
                   variant="destructive"
                   size="sm"
-                  onClick={() => deleteMusobaqa(musobaqa.id)}
+                  onClick={() => handleDelete(musobaqa.id)}
                 >
                   🗑️
                 </Button>

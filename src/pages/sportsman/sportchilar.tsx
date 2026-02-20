@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { fakultetlar, guruhlar } from "@/lib/mock-data";
+import { FAKULTETLAR, GURUHLAR } from "@/lib/constants";
 import { useApp } from "@/lib/store";
 import type { Sportchi } from "@/lib/types";
 import { getMedalEmoji } from "@/lib/utils";
@@ -80,11 +80,11 @@ export default function SportchilarPage() {
             </Select>
             <Select value={filterFakultet} onValueChange={setFilterFakultet}>
               <SelectTrigger>
-                <SelectValue placeholder="Barcha fakultetlar" />
+                <SelectValue placeholder="Barcha FAKULTETLAR" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Barcha fakultetlar</SelectItem>
-                {fakultetlar.map((f) => (
+                <SelectItem value="all">Barcha FAKULTETLAR</SelectItem>
+                {FAKULTETLAR.map((f) => (
                   <SelectItem key={f} value={f}>
                     {f}
                   </SelectItem>
@@ -93,11 +93,11 @@ export default function SportchilarPage() {
             </Select>
             <Select value={filterGuruh} onValueChange={setFilterGuruh}>
               <SelectTrigger>
-                <SelectValue placeholder="Barcha guruhlar" />
+                <SelectValue placeholder="Barcha GURUHLAR" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Barcha guruhlar</SelectItem>
-                {guruhlar.map((g) => (
+                <SelectItem value="all">Barcha GURUHLAR</SelectItem>
+                {GURUHLAR.map((g) => (
                   <SelectItem key={g} value={g}>
                     {g}
                   </SelectItem>

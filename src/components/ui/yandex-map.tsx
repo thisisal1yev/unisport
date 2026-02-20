@@ -187,7 +187,7 @@ export function YandexMap({ locations, onLocationSelect, selectedLocationId }: Y
 
   if (error) {
     return (
-      <div className="h-80 bg-gradient-to-br from-red-50 to-red-100 dark:from-red-950/30 dark:to-red-900/30 rounded-xl flex items-center justify-center">
+      <div className="h-80 bg-linear-to-br from-red-50 to-red-100 dark:from-red-950/30 dark:to-red-900/30 rounded-xl flex items-center justify-center">
         <div className="text-center">
           <div className="text-5xl mb-3">⚠️</div>
           <p className="text-red-600 dark:text-red-400 font-medium">{error}</p>
@@ -205,7 +205,7 @@ export function YandexMap({ locations, onLocationSelect, selectedLocationId }: Y
 
   if (!isLoaded) {
     return (
-      <div className="h-80 bg-gradient-to-br from-blue-50 to-teal-50 dark:from-slate-700 dark:to-slate-600 rounded-xl flex items-center justify-center">
+      <div className="h-80 bg-linear-to-br from-blue-50 to-teal-50 dark:from-slate-700 dark:to-slate-600 rounded-xl flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin text-5xl mb-3">🗺️</div>
           <p className="text-slate-600 dark:text-slate-300 font-medium">

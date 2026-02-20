@@ -6,9 +6,11 @@ import { ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { musobaqalar } from "@/lib/mock-data";
+import { useApp } from "@/lib/store";
 
 export function Competitions() {
+  const { musobaqalar } = useApp();
+
   const kelgusiMusobaqalar = musobaqalar.filter((m) => m.holat === "kelgusi");
   const faolMusobaqalar = musobaqalar.filter((m) => m.holat === "faol");
 

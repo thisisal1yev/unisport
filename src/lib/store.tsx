@@ -7,15 +7,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import {
-  klublar as initialKlublar,
-  musobaqalar as initialMusobaqalar,
-  sportJoylari as initialSportJoylari,
-  sportTurlari as initialSportTurlari,
-  sportchilar as initialSportchilar,
-  yangiliklar as initialYangiliklar,
-  yutuqlar as initialYutuqlar,
-} from "./mock-data";
+import { supabase } from "./supabase";
 import type {
   Klub,
   Musobaqa,
@@ -27,6 +19,23 @@ import type {
   Yutuq,
 } from "./types";
 
+interface RegisterInput {
+  ism: string;
+  familiya: string;
+  email: string;
+  parol: string;
+  telefon?: string;
+  tug_sana?: string;
+  fakultet?: string;
+  guruh?: string;
+  vazn?: number;
+  boy?: number;
+  avatar_emoji: string;
+  bio?: string;
+  sport_turlari: string[];
+  isAdmin?: boolean;
+}
+
 interface AppState {
   sportTurlari: SportType[];
   sportJoylari: SportJoy[];
@@ -37,190 +46,329 @@ interface AppState {
   yangiliklar: Yangilik[];
   currentPage: string;
   setCurrentPage: (page: string) => void;
+  isLoading: boolean;
 
   // User state
   currentUser: User | null;
   users: User[];
   isAuthenticated: boolean;
 
-  // Auth functions
+  // Auth functions (async)
   register: (
-    userData: Omit<
-      User,
-      "id" | "ro_yxatdan_sana" | "klublar_ids" | "musobaqalar_ids"
-    >,
-  ) => { success: boolean; message: string };
+    userData: RegisterInput,
+  ) => Promise<{ success: boolean; message: string }>;
   login: (
     email: string,
     parol: string,
-  ) => { success: boolean; message: string };
-  logout: () => void;
-  updateProfile: (data: Partial<User>) => void;
+  ) => Promise<{ success: boolean; message: string }>;
+  logout: () => Promise<void>;
+  updateProfile: (data: Partial<User>) => Promise<void>;
 
   // User management (admin)
-  deleteUser: (id: number) => void;
-  toggleUserAdmin: (id: number) => void;
+  deleteUser: (id: string) => Promise<void>;
+  toggleUserAdmin: (id: string) => Promise<void>;
 
   // Participation functions
-  joinKlub: (klubId: number) => void;
-  leaveKlub: (klubId: number) => void;
-  joinMusobaqa: (musobaqaId: number) => void;
-  leaveMusobaqa: (musobaqaId: number) => void;
+  joinKlub: (klubId: number) => Promise<void>;
+  leaveKlub: (klubId: number) => Promise<void>;
+  joinMusobaqa: (musobaqaId: number) => Promise<void>;
+  leaveMusobaqa: (musobaqaId: number) => Promise<void>;
 
   // CRUD operations
-  addSportJoy: (joy: Omit<SportJoy, "id">) => void;
-  updateSportJoy: (id: number, joy: Partial<SportJoy>) => void;
-  deleteSportJoy: (id: number) => void;
+  addSportJoy: (joy: Omit<SportJoy, "id">) => Promise<void>;
+  updateSportJoy: (id: number, joy: Partial<SportJoy>) => Promise<void>;
+  deleteSportJoy: (id: number) => Promise<void>;
 
-  addMusobaqa: (musobaqa: Omit<Musobaqa, "id">) => void;
-  updateMusobaqa: (id: number, musobaqa: Partial<Musobaqa>) => void;
-  deleteMusobaqa: (id: number) => void;
+  addMusobaqa: (musobaqa: Omit<Musobaqa, "id">) => Promise<void>;
+  updateMusobaqa: (id: number, musobaqa: Partial<Musobaqa>) => Promise<void>;
+  deleteMusobaqa: (id: number) => Promise<void>;
 
-  addSportchi: (sportchi: Omit<Sportchi, "id">) => void;
-  updateSportchi: (id: number, sportchi: Partial<Sportchi>) => void;
-  deleteSportchi: (id: number) => void;
+  addSportchi: (sportchi: Omit<Sportchi, "id">) => Promise<void>;
+  updateSportchi: (id: number, sportchi: Partial<Sportchi>) => Promise<void>;
+  deleteSportchi: (id: number) => Promise<void>;
 
-  addKlub: (klub: Omit<Klub, "id">) => void;
-  updateKlub: (id: number, klub: Partial<Klub>) => void;
-  deleteKlub: (id: number) => void;
+  addKlub: (klub: Omit<Klub, "id">) => Promise<void>;
+  updateKlub: (id: number, klub: Partial<Klub>) => Promise<void>;
+  deleteKlub: (id: number) => Promise<void>;
 
-  addYutuq: (yutuq: Omit<Yutuq, "id">) => void;
-  deleteYutuq: (id: number) => void;
+  addYutuq: (yutuq: Omit<Yutuq, "id">) => Promise<void>;
+  deleteYutuq: (id: number) => Promise<void>;
 
-  addYangilik: (yangilik: Omit<Yangilik, "id">) => void;
-  updateYangilik: (id: number, yangilik: Partial<Yangilik>) => void;
-  deleteYangilik: (id: number) => void;
-  likeYangilik: (id: number) => void;
+  addYangilik: (yangilik: Omit<Yangilik, "id">) => Promise<void>;
+  updateYangilik: (id: number, yangilik: Partial<Yangilik>) => Promise<void>;
+  deleteYangilik: (id: number) => Promise<void>;
+  likeYangilik: (id: number) => Promise<void>;
 }
 
 const AppContext = createContext<AppState | undefined>(undefined);
 
-// LocalStorage keys
-const USERS_KEY = "unisport_users";
-const CURRENT_USER_KEY = "unisport_current_user";
+// Map Supabase profile row → User
+function profileToUser(
+  profile: Record<string, unknown>,
+  email: string,
+  klublar_ids: number[] = [],
+  musobaqalar_ids: number[] = [],
+): User {
+  return {
+    id: profile.id as string,
+    ism: (profile.ism as string) ?? "",
+    familiya: (profile.familiya as string) ?? "",
+    email,
+    telefon: profile.telefon as string | undefined,
+    tug_sana: profile.tug_sana as string | undefined,
+    fakultet: profile.fakultet as string | undefined,
+    guruh: profile.guruh as string | undefined,
+    vazn: profile.vazn as number | undefined,
+    boy: profile.boy as number | undefined,
+    avatar_emoji: (profile.avatar_emoji as string) ?? "🧑",
+    bio: profile.bio as string | undefined,
+    sport_turlari: (profile.sport_turlari as string[]) ?? [],
+    isAdmin: (profile.is_admin as boolean) ?? false,
+    klublar_ids,
+    musobaqalar_ids,
+    ro_yxatdan_sana:
+      (profile.ro_yxatdan_sana as string) ??
+      new Date().toISOString().split("T")[0],
+  };
+}
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [sportTurlari] = useState<SportType[]>(initialSportTurlari);
-  const [sportJoylari, setSportJoylari] =
-    useState<SportJoy[]>(initialSportJoylari);
-  const [musobaqalar, setMusobaqalar] =
-    useState<Musobaqa[]>(initialMusobaqalar);
-  const [sportchilar, setSportchilar] =
-    useState<Sportchi[]>(initialSportchilar);
-  const [klublar, setKlublar] = useState<Klub[]>(initialKlublar);
-  const [yutuqlar, setYutuqlar] = useState<Yutuq[]>(initialYutuqlar);
-  const [yangiliklar, setYangiliklar] =
-    useState<Yangilik[]>(initialYangiliklar);
+  const [sportTurlari, setSportTurlari] = useState<SportType[]>([]);
+  const [sportJoylari, setSportJoylari] = useState<SportJoy[]>([]);
+  const [musobaqalar, setMusobaqalar] = useState<Musobaqa[]>([]);
+  const [sportchilar, setSportchilar] = useState<Sportchi[]>([]);
+  const [klublar, setKlublar] = useState<Klub[]>([]);
+  const [yutuqlar, setYutuqlar] = useState<Yutuq[]>([]);
+  const [yangiliklar, setYangiliklar] = useState<Yangilik[]>([]);
   const [currentPage, setCurrentPage] = useState("dashboard");
+  const [isLoading, setIsLoading] = useState(true);
 
   // User state
   const [users, setUsers] = useState<User[]>([]);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Load users from localStorage on mount
+  // Load all public data from Supabase on mount
   useEffect(() => {
-    const savedUsers = localStorage.getItem(USERS_KEY);
-    const savedCurrentUser = localStorage.getItem(CURRENT_USER_KEY);
+    const loadData = async () => {
+      setIsLoading(true);
+      const [joylari, musobaqa, sportchi, klub, yutuq, yangilik, profiles, sportTurlariRes] =
+        await Promise.all([
+          supabase.from("sport_joylari").select("*").order("id"),
+          supabase.from("musobaqalar").select("*").order("id"),
+          supabase.from("sportchilar").select("*").order("id"),
+          supabase.from("klublar").select("*").order("id"),
+          supabase.from("yutuqlar").select("*").order("id"),
+          supabase.from("yangiliklar").select("*").order("id"),
+          supabase.from("profiles").select("*").order("ro_yxatdan_sana"),
+          supabase.from("sport_turlari").select("*").order("id"),
+        ]);
 
-    if (savedUsers) {
-      setUsers(JSON.parse(savedUsers));
-    }
-    if (savedCurrentUser) {
-      const user = JSON.parse(savedCurrentUser);
-      setCurrentUser(user);
-      setIsAuthenticated(true);
-    }
-  }, []);
-
-  // Save users to localStorage when changed
-  useEffect(() => {
-    if (users.length > 0) {
-      localStorage.setItem(USERS_KEY, JSON.stringify(users));
-    }
-  }, [users]);
-
-  // Save current user to localStorage when changed
-  useEffect(() => {
-    if (currentUser) {
-      localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
-    } else {
-      localStorage.removeItem(CURRENT_USER_KEY);
-    }
-  }, [currentUser]);
-
-  // Auth functions
-  const register = (
-    userData: Omit<
-      User,
-      "id" | "ro_yxatdan_sana" | "klublar_ids" | "musobaqalar_ids"
-    >,
-  ) => {
-    const existingUser = users.find((u) => u.email === userData.email);
-    if (existingUser) {
-      return {
-        success: false,
-        message: "Bu email allaqachon ro'yxatdan o'tgan",
-      };
-    }
-
-    const newUser: User = {
-      ...userData,
-      id: Math.max(...users.map((u) => u.id), 0) + 1,
-      klublar_ids: [],
-      musobaqalar_ids: [],
-      ro_yxatdan_sana: new Date().toISOString().split("T")[0],
+      if (joylari.data) setSportJoylari(joylari.data as SportJoy[]);
+      if (musobaqa.data) setMusobaqalar(musobaqa.data as Musobaqa[]);
+      if (sportchi.data) setSportchilar(sportchi.data as Sportchi[]);
+      if (klub.data) setKlublar(klub.data as Klub[]);
+      if (yutuq.data) setYutuqlar(yutuq.data as Yutuq[]);
+      if (yangilik.data) setYangiliklar(yangilik.data as Yangilik[]);
+      if (profiles.data) {
+        const mapped = profiles.data.map((p) =>
+          profileToUser(p as Record<string, unknown>, ""),
+        );
+        setUsers(mapped);
+      }
+      if (sportTurlariRes.data) setSportTurlari(sportTurlariRes.data as SportType[]);
+      setIsLoading(false);
     };
 
-    setUsers((prev) => [...prev, newUser]);
-    setCurrentUser(newUser);
-    setIsAuthenticated(true);
+    loadData();
+  }, []);
+
+  // Auth state listener
+  useEffect(() => {
+    const loadUserProfile = async (userId: string, email: string) => {
+      const [profileRes, klublarRes, musobaqalarRes] = await Promise.all([
+        supabase.from("profiles").select("*").eq("id", userId).single(),
+        supabase
+          .from("user_klublar")
+          .select("klub_id")
+          .eq("user_id", userId),
+        supabase
+          .from("user_musobaqalar")
+          .select("musobaqa_id")
+          .eq("user_id", userId),
+      ]);
+
+      if (profileRes.data) {
+        const klubIds =
+          klublarRes.data?.map((r: { klub_id: number }) => r.klub_id) ?? [];
+        const musobaqaIds =
+          musobaqalarRes.data?.map(
+            (r: { musobaqa_id: number }) => r.musobaqa_id,
+          ) ?? [];
+        const user = profileToUser(
+          profileRes.data as Record<string, unknown>,
+          email,
+          klubIds,
+          musobaqaIds,
+        );
+        setCurrentUser(user);
+        setIsAuthenticated(true);
+      }
+    };
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        loadUserProfile(session.user.id, session.user.email ?? "");
+      } else {
+        setCurrentUser(null);
+        setIsAuthenticated(false);
+      }
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        loadUserProfile(session.user.id, session.user.email ?? "");
+      } else {
+        setCurrentUser(null);
+        setIsAuthenticated(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // Auth functions
+  const register = async (
+    userData: RegisterInput,
+  ): Promise<{ success: boolean; message: string }> => {
+    const { data, error } = await supabase.auth.signUp({
+      email: userData.email,
+      password: userData.parol,
+      options: {
+        data: {
+          ism: userData.ism,
+          familiya: userData.familiya,
+          avatar_emoji: userData.avatar_emoji,
+        },
+      },
+    });
+
+    if (error) {
+      return { success: false, message: error.message };
+    }
+
+    // Update profile with additional fields after trigger creates it
+    if (data.user) {
+      await supabase
+        .from("profiles")
+        .update({
+          telefon: userData.telefon ?? null,
+          tug_sana: userData.tug_sana ?? null,
+          fakultet: userData.fakultet ?? null,
+          guruh: userData.guruh ?? null,
+          vazn: userData.vazn ?? null,
+          boy: userData.boy ?? null,
+          bio: userData.bio ?? null,
+          sport_turlari: userData.sport_turlari,
+        })
+        .eq("id", data.user.id);
+    }
+
     return { success: true, message: "Muvaffaqiyatli ro'yxatdan o'tdingiz!" };
   };
 
-  const login = (email: string, parol: string) => {
-    const user = users.find((u) => u.email === email && u.parol === parol);
-    if (!user) {
+  const login = async (
+    email: string,
+    parol: string,
+  ): Promise<{ success: boolean; message: string }> => {
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password: parol,
+    });
+
+    if (error) {
       return { success: false, message: "Email yoki parol noto'g'ri" };
     }
 
-    setCurrentUser(user);
-    setIsAuthenticated(true);
     return { success: true, message: "Muvaffaqiyatli kirdingiz!" };
   };
 
-  const logout = () => {
+  const logout = async (): Promise<void> => {
+    await supabase.auth.signOut();
     setCurrentUser(null);
     setIsAuthenticated(false);
     setCurrentPage("dashboard");
   };
 
-  const updateProfile = (data: Partial<User>) => {
+  const updateProfile = async (data: Partial<User>): Promise<void> => {
     if (!currentUser) return;
 
-    const updatedUser = { ...currentUser, ...data };
-    setCurrentUser(updatedUser);
-    setUsers((prev) =>
-      prev.map((u) => (u.id === currentUser.id ? updatedUser : u)),
-    );
+    const { error } = await supabase
+      .from("profiles")
+      .update({
+        ism: data.ism,
+        familiya: data.familiya,
+        telefon: data.telefon,
+        tug_sana: data.tug_sana,
+        fakultet: data.fakultet,
+        guruh: data.guruh,
+        vazn: data.vazn,
+        boy: data.boy,
+        avatar_emoji: data.avatar_emoji,
+        bio: data.bio,
+        sport_turlari: data.sport_turlari,
+      })
+      .eq("id", currentUser.id);
+
+    if (!error) {
+      const updatedUser = { ...currentUser, ...data };
+      setCurrentUser(updatedUser);
+      setUsers((prev) =>
+        prev.map((u) => (u.id === currentUser.id ? updatedUser : u)),
+      );
+    }
   };
 
   // User management (admin)
-  const deleteUser = (id: number) => {
+  const deleteUser = async (id: string): Promise<void> => {
+    await supabase.from("profiles").delete().eq("id", id);
     setUsers((prev) => prev.filter((u) => u.id !== id));
   };
 
-  const toggleUserAdmin = (id: number) => {
-    setUsers((prev) =>
-      prev.map((u) => (u.id === id ? { ...u, isAdmin: !u.isAdmin } : u)),
-    );
+  const toggleUserAdmin = async (id: string): Promise<void> => {
+    const user = users.find((u) => u.id === id);
+    if (!user) return;
+
+    const newIsAdmin = !user.isAdmin;
+    const { error } = await supabase
+      .from("profiles")
+      .update({ is_admin: newIsAdmin })
+      .eq("id", id);
+
+    if (!error) {
+      setUsers((prev) =>
+        prev.map((u) => (u.id === id ? { ...u, isAdmin: newIsAdmin } : u)),
+      );
+      if (currentUser?.id === id) {
+        setCurrentUser((prev) =>
+          prev ? { ...prev, isAdmin: newIsAdmin } : prev,
+        );
+      }
+    }
   };
 
   // Participation functions
-  const joinKlub = (klubId: number) => {
+  const joinKlub = async (klubId: number): Promise<void> => {
     if (!currentUser) return;
+    if (currentUser.klublar_ids.includes(klubId)) return;
 
-    if (!currentUser.klublar_ids.includes(klubId)) {
+    const { error } = await supabase
+      .from("user_klublar")
+      .insert({ user_id: currentUser.id, klub_id: klubId });
+
+    if (!error) {
       const updatedUser = {
         ...currentUser,
         klublar_ids: [...currentUser.klublar_ids, klubId],
@@ -229,39 +377,51 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setUsers((prev) =>
         prev.map((u) => (u.id === currentUser.id ? updatedUser : u)),
       );
-
-      // Update klub members count
       setKlublar((prev) =>
         prev.map((k) =>
           k.id === klubId ? { ...k, azolar_soni: k.azolar_soni + 1 } : k,
         ),
       );
+      await supabase
+        .from("klublar")
+        .update({ azolar_soni: (klublar.find((k) => k.id === klubId)?.azolar_soni ?? 0) + 1 })
+        .eq("id", klubId);
     }
   };
 
-  const leaveKlub = (klubId: number) => {
+  const leaveKlub = async (klubId: number): Promise<void> => {
     if (!currentUser) return;
 
-    const updatedUser = {
-      ...currentUser,
-      klublar_ids: currentUser.klublar_ids.filter((id) => id !== klubId),
-    };
-    setCurrentUser(updatedUser);
-    setUsers((prev) =>
-      prev.map((u) => (u.id === currentUser.id ? updatedUser : u)),
-    );
+    const { error } = await supabase
+      .from("user_klublar")
+      .delete()
+      .eq("user_id", currentUser.id)
+      .eq("klub_id", klubId);
 
-    // Update klub members count
-    setKlublar((prev) =>
-      prev.map((k) =>
-        k.id === klubId
-          ? { ...k, azolar_soni: Math.max(0, k.azolar_soni - 1) }
-          : k,
-      ),
-    );
+    if (!error) {
+      const updatedUser = {
+        ...currentUser,
+        klublar_ids: currentUser.klublar_ids.filter((id) => id !== klubId),
+      };
+      setCurrentUser(updatedUser);
+      setUsers((prev) =>
+        prev.map((u) => (u.id === currentUser.id ? updatedUser : u)),
+      );
+      setKlublar((prev) =>
+        prev.map((k) =>
+          k.id === klubId
+            ? { ...k, azolar_soni: Math.max(0, k.azolar_soni - 1) }
+            : k,
+        ),
+      );
+      await supabase
+        .from("klublar")
+        .update({ azolar_soni: Math.max(0, (klublar.find((k) => k.id === klubId)?.azolar_soni ?? 1) - 1) })
+        .eq("id", klubId);
+    }
   };
 
-  const joinMusobaqa = (musobaqaId: number) => {
+  const joinMusobaqa = async (musobaqaId: number): Promise<void> => {
     if (!currentUser) return;
 
     const musobaqa = musobaqalar.find((m) => m.id === musobaqaId);
@@ -270,8 +430,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
       musobaqa.ishtirokchilar_soni >= musobaqa.maksimal_ishtirokchilar
     )
       return;
+    if (currentUser.musobaqalar_ids.includes(musobaqaId)) return;
 
-    if (!currentUser.musobaqalar_ids.includes(musobaqaId)) {
+    const { error } = await supabase
+      .from("user_musobaqalar")
+      .insert({ user_id: currentUser.id, musobaqa_id: musobaqaId });
+
+    if (!error) {
       const updatedUser = {
         ...currentUser,
         musobaqalar_ids: [...currentUser.musobaqalar_ids, musobaqaId],
@@ -280,8 +445,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setUsers((prev) =>
         prev.map((u) => (u.id === currentUser.id ? updatedUser : u)),
       );
-
-      // Update competition participants count
       setMusobaqalar((prev) =>
         prev.map((m) =>
           m.id === musobaqaId
@@ -289,144 +452,244 @@ export function AppProvider({ children }: { children: ReactNode }) {
             : m,
         ),
       );
+      await supabase
+        .from("musobaqalar")
+        .update({ ishtirokchilar_soni: musobaqa.ishtirokchilar_soni + 1 })
+        .eq("id", musobaqaId);
     }
   };
 
-  const leaveMusobaqa = (musobaqaId: number) => {
+  const leaveMusobaqa = async (musobaqaId: number): Promise<void> => {
     if (!currentUser) return;
 
-    const updatedUser = {
-      ...currentUser,
-      musobaqalar_ids: currentUser.musobaqalar_ids.filter(
-        (id) => id !== musobaqaId,
-      ),
-    };
-    setCurrentUser(updatedUser);
-    setUsers((prev) =>
-      prev.map((u) => (u.id === currentUser.id ? updatedUser : u)),
-    );
+    const { error } = await supabase
+      .from("user_musobaqalar")
+      .delete()
+      .eq("user_id", currentUser.id)
+      .eq("musobaqa_id", musobaqaId);
 
-    // Update competition participants count
-    setMusobaqalar((prev) =>
-      prev.map((m) =>
-        m.id === musobaqaId
-          ? {
-              ...m,
-              ishtirokchilar_soni: Math.max(0, m.ishtirokchilar_soni - 1),
-            }
-          : m,
-      ),
-    );
+    if (!error) {
+      const musobaqa = musobaqalar.find((m) => m.id === musobaqaId);
+      const updatedUser = {
+        ...currentUser,
+        musobaqalar_ids: currentUser.musobaqalar_ids.filter(
+          (id) => id !== musobaqaId,
+        ),
+      };
+      setCurrentUser(updatedUser);
+      setUsers((prev) =>
+        prev.map((u) => (u.id === currentUser.id ? updatedUser : u)),
+      );
+      setMusobaqalar((prev) =>
+        prev.map((m) =>
+          m.id === musobaqaId
+            ? {
+                ...m,
+                ishtirokchilar_soni: Math.max(0, m.ishtirokchilar_soni - 1),
+              }
+            : m,
+        ),
+      );
+      if (musobaqa) {
+        await supabase
+          .from("musobaqalar")
+          .update({
+            ishtirokchilar_soni: Math.max(
+              0,
+              musobaqa.ishtirokchilar_soni - 1,
+            ),
+          })
+          .eq("id", musobaqaId);
+      }
+    }
   };
 
   // Sport Joylari CRUD
-  const addSportJoy = (joy: Omit<SportJoy, "id">) => {
-    setSportJoylari((prev) => {
-      const newId = Math.max(...prev.map((j) => j.id), 0) + 1;
-      return [...prev, { ...joy, id: newId }];
-    });
+  const addSportJoy = async (joy: Omit<SportJoy, "id">): Promise<void> => {
+    const { data, error } = await supabase
+      .from("sport_joylari")
+      .insert(joy)
+      .select()
+      .single();
+    if (!error && data) setSportJoylari((prev) => [...prev, data as SportJoy]);
   };
 
-  const updateSportJoy = (id: number, joy: Partial<SportJoy>) => {
-    setSportJoylari((prev) =>
-      prev.map((j) => (j.id === id ? { ...j, ...joy } : j)),
-    );
+  const updateSportJoy = async (
+    id: number,
+    joy: Partial<SportJoy>,
+  ): Promise<void> => {
+    const { error } = await supabase
+      .from("sport_joylari")
+      .update(joy)
+      .eq("id", id);
+    if (!error)
+      setSportJoylari((prev) =>
+        prev.map((j) => (j.id === id ? { ...j, ...joy } : j)),
+      );
   };
 
-  const deleteSportJoy = (id: number) => {
-    setSportJoylari((prev) => prev.filter((j) => j.id !== id));
+  const deleteSportJoy = async (id: number): Promise<void> => {
+    const { error } = await supabase
+      .from("sport_joylari")
+      .delete()
+      .eq("id", id);
+    if (!error) setSportJoylari((prev) => prev.filter((j) => j.id !== id));
   };
 
   // Musobaqalar CRUD
-  const addMusobaqa = (musobaqa: Omit<Musobaqa, "id">) => {
-    setMusobaqalar((prev) => {
-      const newId = Math.max(...prev.map((m) => m.id), 0) + 1;
-      return [...prev, { ...musobaqa, id: newId }];
-    });
+  const addMusobaqa = async (
+    musobaqa: Omit<Musobaqa, "id">,
+  ): Promise<void> => {
+    const { data, error } = await supabase
+      .from("musobaqalar")
+      .insert(musobaqa)
+      .select()
+      .single();
+    if (!error && data) setMusobaqalar((prev) => [...prev, data as Musobaqa]);
   };
 
-  const updateMusobaqa = (id: number, musobaqa: Partial<Musobaqa>) => {
-    setMusobaqalar((prev) =>
-      prev.map((m) => (m.id === id ? { ...m, ...musobaqa } : m)),
-    );
+  const updateMusobaqa = async (
+    id: number,
+    musobaqa: Partial<Musobaqa>,
+  ): Promise<void> => {
+    const { error } = await supabase
+      .from("musobaqalar")
+      .update(musobaqa)
+      .eq("id", id);
+    if (!error)
+      setMusobaqalar((prev) =>
+        prev.map((m) => (m.id === id ? { ...m, ...musobaqa } : m)),
+      );
   };
 
-  const deleteMusobaqa = (id: number) => {
-    setMusobaqalar((prev) => prev.filter((m) => m.id !== id));
+  const deleteMusobaqa = async (id: number): Promise<void> => {
+    const { error } = await supabase
+      .from("musobaqalar")
+      .delete()
+      .eq("id", id);
+    if (!error) setMusobaqalar((prev) => prev.filter((m) => m.id !== id));
   };
 
   // Sportchilar CRUD
-  const addSportchi = (sportchi: Omit<Sportchi, "id">) => {
-    setSportchilar((prev) => {
-      const newId = Math.max(...prev.map((s) => s.id), 0) + 1;
-      return [...prev, { ...sportchi, id: newId }];
-    });
+  const addSportchi = async (
+    sportchi: Omit<Sportchi, "id">,
+  ): Promise<void> => {
+    const { data, error } = await supabase
+      .from("sportchilar")
+      .insert(sportchi)
+      .select()
+      .single();
+    if (!error && data) setSportchilar((prev) => [...prev, data as Sportchi]);
   };
 
-  const updateSportchi = (id: number, sportchi: Partial<Sportchi>) => {
-    setSportchilar((prev) =>
-      prev.map((s) => (s.id === id ? { ...s, ...sportchi } : s)),
-    );
+  const updateSportchi = async (
+    id: number,
+    sportchi: Partial<Sportchi>,
+  ): Promise<void> => {
+    const { error } = await supabase
+      .from("sportchilar")
+      .update(sportchi)
+      .eq("id", id);
+    if (!error)
+      setSportchilar((prev) =>
+        prev.map((s) => (s.id === id ? { ...s, ...sportchi } : s)),
+      );
   };
 
-  const deleteSportchi = (id: number) => {
-    setSportchilar((prev) => prev.filter((s) => s.id !== id));
+  const deleteSportchi = async (id: number): Promise<void> => {
+    const { error } = await supabase
+      .from("sportchilar")
+      .delete()
+      .eq("id", id);
+    if (!error) setSportchilar((prev) => prev.filter((s) => s.id !== id));
   };
 
   // Klublar CRUD
-  const addKlub = (klub: Omit<Klub, "id">) => {
-    setKlublar((prev) => {
-      const newId = Math.max(...prev.map((k) => k.id), 0) + 1;
-      return [...prev, { ...klub, id: newId }];
-    });
+  const addKlub = async (klub: Omit<Klub, "id">): Promise<void> => {
+    const { data, error } = await supabase
+      .from("klublar")
+      .insert(klub)
+      .select()
+      .single();
+    if (!error && data) setKlublar((prev) => [...prev, data as Klub]);
   };
 
-  const updateKlub = (id: number, klub: Partial<Klub>) => {
-    setKlublar((prev) =>
-      prev.map((k) => (k.id === id ? { ...k, ...klub } : k)),
-    );
+  const updateKlub = async (id: number, klub: Partial<Klub>): Promise<void> => {
+    const { error } = await supabase
+      .from("klublar")
+      .update(klub)
+      .eq("id", id);
+    if (!error)
+      setKlublar((prev) =>
+        prev.map((k) => (k.id === id ? { ...k, ...klub } : k)),
+      );
   };
 
-  const deleteKlub = (id: number) => {
-    setKlublar((prev) => prev.filter((k) => k.id !== id));
+  const deleteKlub = async (id: number): Promise<void> => {
+    const { error } = await supabase.from("klublar").delete().eq("id", id);
+    if (!error) setKlublar((prev) => prev.filter((k) => k.id !== id));
   };
 
   // Yutuqlar CRUD
-  const addYutuq = (yutuq: Omit<Yutuq, "id">) => {
-    setYutuqlar((prev) => {
-      const newId = Math.max(...prev.map((y) => y.id), 0) + 1;
-      return [...prev, { ...yutuq, id: newId }];
-    });
+  const addYutuq = async (yutuq: Omit<Yutuq, "id">): Promise<void> => {
+    const { data, error } = await supabase
+      .from("yutuqlar")
+      .insert(yutuq)
+      .select()
+      .single();
+    if (!error && data) setYutuqlar((prev) => [...prev, data as Yutuq]);
   };
 
-  const deleteYutuq = (id: number) => {
-    setYutuqlar((prev) => prev.filter((y) => y.id !== id));
+  const deleteYutuq = async (id: number): Promise<void> => {
+    const { error } = await supabase.from("yutuqlar").delete().eq("id", id);
+    if (!error) setYutuqlar((prev) => prev.filter((y) => y.id !== id));
   };
 
   // Yangiliklar CRUD
-  const addYangilik = (yangilik: Omit<Yangilik, "id">) => {
-    setYangiliklar((prev) => {
-      const newId = Math.max(...prev.map((y) => y.id), 0) + 1;
-      return [...prev, { ...yangilik, id: newId }];
-    });
+  const addYangilik = async (
+    yangilik: Omit<Yangilik, "id">,
+  ): Promise<void> => {
+    const { data, error } = await supabase
+      .from("yangiliklar")
+      .insert(yangilik)
+      .select()
+      .single();
+    if (!error && data) setYangiliklar((prev) => [...prev, data as Yangilik]);
   };
 
-  const updateYangilik = (id: number, yangilik: Partial<Yangilik>) => {
+  const updateYangilik = async (
+    id: number,
+    yangilik: Partial<Yangilik>,
+  ): Promise<void> => {
+    const { error } = await supabase
+      .from("yangiliklar")
+      .update(yangilik)
+      .eq("id", id);
+    if (!error)
+      setYangiliklar((prev) =>
+        prev.map((y) => (y.id === id ? { ...y, ...yangilik } : y)),
+      );
+  };
+
+  const deleteYangilik = async (id: number): Promise<void> => {
+    const { error } = await supabase
+      .from("yangiliklar")
+      .delete()
+      .eq("id", id);
+    if (!error) setYangiliklar((prev) => prev.filter((y) => y.id !== id));
+  };
+
+  const likeYangilik = async (id: number): Promise<void> => {
+    const current = yangiliklar.find((y) => y.id === id);
+    if (!current) return;
+    const newLayklar = current.layklar + 1;
     setYangiliklar((prev) =>
-      prev.map((y) => (y.id === id ? { ...y, ...yangilik } : y)),
+      prev.map((y) => (y.id === id ? { ...y, layklar: newLayklar } : y)),
     );
-  };
-
-  const deleteYangilik = (id: number) => {
-    setYangiliklar((prev) => prev.filter((y) => y.id !== id));
-  };
-
-  const likeYangilik = (id: number) => {
-    setYangiliklar((prev) =>
-      prev.map((y) =>
-        y.id === id ? { ...y, layklar: y.layklar + 1 } : y,
-      ),
-    );
+    await supabase
+      .from("yangiliklar")
+      .update({ layklar: newLayklar })
+      .eq("id", id);
   };
 
   return (
@@ -441,6 +704,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         yangiliklar,
         currentPage,
         setCurrentPage,
+        isLoading,
         // User state
         currentUser,
         users,

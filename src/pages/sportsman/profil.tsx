@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { fakultetlar, guruhlar } from "@/lib/mock-data";
+import { FAKULTETLAR, GURUHLAR } from "@/lib/constants";
 import { useApp } from "@/lib/store";
 import { AVATAR_EMOJIS } from "@/lib/constants";
 import {
@@ -243,7 +243,7 @@ export default function ProfilPage() {
                       <SelectValue placeholder="Fakultet" />
                     </SelectTrigger>
                     <SelectContent>
-                      {fakultetlar.map((f) => (
+                      {FAKULTETLAR.map((f) => (
                         <SelectItem key={f} value={f}>
                           {f}
                         </SelectItem>
@@ -260,7 +260,7 @@ export default function ProfilPage() {
                       <SelectValue placeholder="Guruh" />
                     </SelectTrigger>
                     <SelectContent>
-                      {guruhlar.map((g) => (
+                      {GURUHLAR.map((g) => (
                         <SelectItem key={g} value={g}>
                           {g}
                         </SelectItem>
@@ -338,7 +338,7 @@ export default function ProfilPage() {
       </div>
 
       {/* Profile Card */}
-      <Card className="border-0 shadow-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white">
+      <Card className="border-0 shadow-xl bg-linear-to-br from-emerald-500 to-teal-600 text-white">
         <CardContent className="p-6 md:p-8">
           <div className="flex flex-col md:flex-row items-center gap-6">
             <div className="w-28 h-28 rounded-full bg-white/20 flex items-center justify-center text-6xl shadow-lg">

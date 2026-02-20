@@ -1,18 +1,14 @@
 "use client";
 
 import { Trophy, Medal, Users, Target } from "lucide-react";
-import {
-  musobaqalar,
-  yutuqlar,
-  sportchilar,
-  klublar,
-} from "@/lib/mock-data";
+import { useApp } from "@/lib/store";
 
 interface StatsProps {
   variant?: "default" | "compact";
 }
 
 export function Stats({ variant = "default" }: StatsProps) {
+  const { musobaqalar, yutuqlar, sportchilar, klublar } = useApp();
   const stats = [
     {
       icon: Trophy,
@@ -44,7 +40,7 @@ export function Stats({ variant = "default" }: StatsProps) {
     <div className={`stats-grid ${variant === "compact" ? "stats-compact" : ""}`}>
       {stats.map((stat) => (
         <div key={stat.label} className="stats-card">
-          <div className={`stats-icon-wrapper bg-gradient-to-br ${stat.color}`}>
+          <div className={`stats-icon-wrapper bg-linear-to-br ${stat.color}`}>
             <stat.icon className="stats-icon" />
           </div>
           <div className="stats-info">

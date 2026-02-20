@@ -28,6 +28,7 @@ export default function CoachKlublar() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingKlub, setEditingKlub] = useState<Klub | null>(null);
   const [membersModal, setMembersModal] = useState<Klub | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     nomi: "",
     tavsif: "",
@@ -59,14 +60,22 @@ export default function CoachKlublar() {
     setIsDialogOpen(true);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (!formData.nomi || !formData.sport_turi) return;
+    setIsSubmitting(true);
     if (editingKlub) {
-      updateKlub(editingKlub.id, formData);
+      await updateKlub(editingKlub.id, formData);
     } else {
-      addKlub(formData);
+      await addKlub(formData);
     }
+    setIsSubmitting(false);
     setIsDialogOpen(false);
     resetForm();
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!confirm("Rostdan ham o'chirmoqchimisiz?")) return;
+    await deleteKlub(id);
   };
 
   const getKlubMembers = (klub: Klub): Sportchi[] => {
@@ -148,9 +157,14 @@ export default function CoachKlublar() {
               />
               <Button
                 onClick={handleSubmit}
+                disabled={isSubmitting}
                 className="w-full bg-emerald-500 hover:bg-emerald-600"
               >
-                {editingKlub ? "Saqlash" : "Qo'shish"}
+                {isSubmitting
+                  ? "Yuklanmoqda..."
+                  : editingKlub
+                    ? "Saqlash"
+                    : "Qo'shish"}
               </Button>
             </div>
           </DialogContent>
@@ -215,7 +229,7 @@ export default function CoachKlublar() {
                   <Button
                     variant="destructive"
                     size="sm"
-                    onClick={() => deleteKlub(klub.id)}
+                    onClick={() => handleDelete(klub.id)}
                   >
                     🗑️
                   </Button>

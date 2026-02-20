@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { FAKULTETLAR, GURUHLAR } from "@/lib/constants";
 import { useApp } from "@/lib/store";
 import type { Sportchi } from "@/lib/types";
 import { useState } from "react";
@@ -34,6 +35,7 @@ export default function SportchilarManager() {
   } = useApp();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingSportchi, setEditingSportchi] = useState<Sportchi | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     ism: "",
     sport: "",
@@ -89,20 +91,22 @@ export default function SportchilarManager() {
     setIsDialogOpen(true);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (!formData.ism || !formData.sport) return;
+    setIsSubmitting(true);
     if (editingSportchi) {
-      updateSportchi(editingSportchi.id, formData);
+      await updateSportchi(editingSportchi.id, formData);
     } else {
-      addSportchi(formData);
+      await addSportchi(formData);
     }
+    setIsSubmitting(false);
     setIsDialogOpen(false);
     resetForm();
   };
 
-  const handleDelete = (id: number) => {
-    if (confirm("Rostdan ham o'chirmoqchimisiz?")) {
-      deleteSportchi(id);
-    }
+  const handleDelete = async (id: number) => {
+    if (!confirm("Rostdan ham o'chirmoqchimisiz?")) return;
+    await deleteSportchi(id);
   };
 
   return (
@@ -133,7 +137,7 @@ export default function SportchilarManager() {
             </DialogHeader>
             <div className="space-y-4 mt-4">
               <Input
-                placeholder="Ism familiya"
+                placeholder="Ism familiya *"
                 value={formData.ism}
                 onChange={(e) =>
                   setFormData({ ...formData, ism: e.target.value })
@@ -144,7 +148,7 @@ export default function SportchilarManager() {
                 onValueChange={(v) => setFormData({ ...formData, sport: v })}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Sport turi" />
+                  <SelectValue placeholder="Sport turi *" />
                 </SelectTrigger>
                 <SelectContent>
                   {sportTurlari.map((s) => (
@@ -155,20 +159,38 @@ export default function SportchilarManager() {
                 </SelectContent>
               </Select>
               <div className="grid grid-cols-2 gap-4">
-                <Input
-                  placeholder="Fakultet"
+                <Select
                   value={formData.fakultet}
-                  onChange={(e) =>
-                    setFormData({ ...formData, fakultet: e.target.value })
+                  onValueChange={(v) =>
+                    setFormData({ ...formData, fakultet: v })
                   }
-                />
-                <Input
-                  placeholder="Guruh"
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Fakultet" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {FAKULTETLAR.map((f) => (
+                      <SelectItem key={f} value={f}>
+                        {f}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select
                   value={formData.guruh}
-                  onChange={(e) =>
-                    setFormData({ ...formData, guruh: e.target.value })
-                  }
-                />
+                  onValueChange={(v) => setFormData({ ...formData, guruh: v })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Guruh" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {GURUHLAR.map((g) => (
+                      <SelectItem key={g} value={g}>
+                        {g}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <Select
                 value={formData.daraja}
@@ -222,7 +244,7 @@ export default function SportchilarManager() {
                   const klub = klublar.find((k) => k.id === Number(v));
                   setFormData({
                     ...formData,
-                    klub_id: Number(v),
+                    klub_id: v ? Number(v) : undefined,
                     klub: klub?.nomi || "",
                   });
                 }}
@@ -248,9 +270,14 @@ export default function SportchilarManager() {
               />
               <Button
                 onClick={handleSubmit}
+                disabled={isSubmitting}
                 className="w-full bg-emerald-500 hover:bg-emerald-600"
               >
-                {editingSportchi ? "Saqlash" : "Qo'shish"}
+                {isSubmitting
+                  ? "Yuklanmoqda..."
+                  : editingSportchi
+                    ? "Saqlash"
+                    : "Qo'shish"}
               </Button>
             </div>
           </DialogContent>

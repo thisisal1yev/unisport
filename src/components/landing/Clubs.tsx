@@ -4,9 +4,10 @@ import Link from "next/link";
 import { ChevronRight, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { klublar } from "@/lib/mock-data";
+import { useApp } from "@/lib/store";
 
 export function Clubs() {
+  const { klublar } = useApp();
   return (
     <section id="klublar" className="clubs-section">
       <div className="clubs-container">
