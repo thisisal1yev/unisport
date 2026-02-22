@@ -16,8 +16,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { fakultetlar, guruhlar, sportTurlari } from "@/lib/mock-data";
+import { fakultetlar } from "@/lib/mock-data";
 import { useApp } from "@/lib/store";
+import { createClient } from "@/lib/supabase/browser";
 import { AVATAR_EMOJIS } from "@/lib/constants";
 import {
   Calendar,
@@ -32,12 +33,13 @@ import {
   Users,
 } from "lucide-react";
 import { useState } from "react";
+import { useRouter } from "next/router";
+
+const supabase = createClient();
 
 export default function AuthPage() {
+  const router = useRouter();
   const {
-    register,
-    login,
-    setCurrentPage,
     sportTurlari: sportTypes,
     guruhlar,
     addGuruh,
@@ -70,7 +72,21 @@ export default function AuthPage() {
     sport_turlari: [] as string[],
   });
 
-  const handleLogin = (e: React.FormEvent) => {
+  const redirectByRole = (role?: string) => {
+    switch (role) {
+      case "admin":
+        router.push("/admin/dashboard");
+        break;
+      case "coach":
+        router.push("/coach/dashboard");
+        break;
+      default:
+        router.push("/sportsman/dashboard");
+        break;
+    }
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccess("");
@@ -80,16 +96,22 @@ export default function AuthPage() {
       return;
     }
 
-    const result = login(loginEmail, loginPassword);
-    if (result.success) {
-      setSuccess(result.message);
-      setCurrentPage("profil");
-    } else {
-      setError(result.message);
+    const { data, error: authError } = await supabase.auth.signInWithPassword({
+      email: loginEmail,
+      password: loginPassword,
+    });
+
+    if (authError) {
+      setError(authError.message);
+      return;
     }
+
+    setSuccess("Muvaffaqiyatli kirdingiz!");
+    const role = data.user?.user_metadata?.role as string | undefined;
+    redirectByRole(role);
   };
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccess("");
@@ -116,28 +138,38 @@ export default function AuthPage() {
       finalGuruh = newGuruh.trim();
     }
 
-    const result = register({
-      ism: regData.ism,
-      familiya: regData.familiya,
+    const { data, error: authError } = await supabase.auth.signUp({
       email: regData.email,
-      parol: regData.parol,
-      telefon: regData.telefon || undefined,
-      tug_sana: regData.tug_sana || undefined,
-      fakultet: regData.fakultet || undefined,
-      guruh: finalGuruh || undefined,
-      vazn: regData.vazn ? Number.parseFloat(regData.vazn) : undefined,
-      boy: regData.boy ? Number.parseFloat(regData.boy) : undefined,
-      avatar_emoji: regData.avatar_emoji,
-      bio: regData.bio || undefined,
-      sport_turlari: regData.sport_turlari,
+      password: regData.parol,
+      options: {
+        data: {
+          ism: regData.ism,
+          familiya: regData.familiya,
+          telefon: regData.telefon || undefined,
+          tug_sana: regData.tug_sana || undefined,
+          fakultet: regData.fakultet || undefined,
+          guruh: finalGuruh || undefined,
+          vazn: regData.vazn ? Number.parseFloat(regData.vazn) : undefined,
+          boy: regData.boy ? Number.parseFloat(regData.boy) : undefined,
+          avatar_emoji: regData.avatar_emoji,
+          bio: regData.bio || undefined,
+          sport_turlari: regData.sport_turlari,
+          role: "sportsman",
+          klublar_ids: [],
+          musobaqalar_ids: [],
+          ro_yxatdan_sana: new Date().toISOString().split("T")[0],
+        },
+      },
     });
 
-    if (result.success) {
-      setSuccess(result.message);
-      setCurrentPage("profil");
-    } else {
-      setError(result.message);
+    if (authError) {
+      setError(authError.message);
+      return;
     }
+
+    setSuccess("Muvaffaqiyatli ro'yxatdan o'tdingiz!");
+    const role = data.user?.user_metadata?.role as string | undefined;
+    redirectByRole(role);
   };
 
   const toggleSport = (sport: string) => {

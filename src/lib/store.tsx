@@ -27,6 +27,7 @@ import type {
   Yangilik,
   Yutuq,
 } from "./types";
+import { createClient } from "./supabase/browser";
 
 interface AppState {
   sportTurlari: SportType[];
@@ -47,17 +48,7 @@ interface AppState {
   isAuthenticated: boolean;
 
   // Auth functions
-  register: (
-    userData: Omit<
-      User,
-      "id" | "ro_yxatdan_sana" | "klublar_ids" | "musobaqalar_ids"
-    >,
-  ) => { success: boolean; message: string };
-  login: (
-    email: string,
-    parol: string,
-  ) => { success: boolean; message: string };
-  logout: () => void;
+  logout: () => Promise<void>;
   updateProfile: (data: Partial<User>) => void;
 
   // User management (admin)
@@ -105,8 +96,36 @@ const AppContext = createContext<AppState | undefined>(undefined);
 
 // LocalStorage keys
 const GURUHLAR_KEY = "unisport_guruhlar";
-const USERS_KEY = "unisport_users";
-const CURRENT_USER_KEY = "unisport_current_user";
+
+const supabase = createClient();
+
+function userFromMetadata(
+  supabaseUser: { id: string; email?: string; user_metadata: Record<string, unknown> },
+): User {
+  const m = supabaseUser.user_metadata;
+  return {
+    id: 0,
+    supabase_id: supabaseUser.id,
+    ism: (m.ism as string) ?? "",
+    familiya: (m.familiya as string) ?? "",
+    email: supabaseUser.email ?? "",
+    parol: "",
+    telefon: m.telefon as string | undefined,
+    tug_sana: m.tug_sana as string | undefined,
+    fakultet: m.fakultet as string | undefined,
+    guruh: m.guruh as string | undefined,
+    vazn: m.vazn as number | undefined,
+    boy: m.boy as number | undefined,
+    avatar_emoji: (m.avatar_emoji as string) ?? "🧑",
+    bio: m.bio as string | undefined,
+    sport_turlari: (m.sport_turlari as string[]) ?? [],
+    role: (m.role as "admin" | "coach" | "sportsman") ?? "sportsman",
+    isAdmin: m.role === "admin",
+    klublar_ids: (m.klublar_ids as number[]) ?? [],
+    musobaqalar_ids: (m.musobaqalar_ids as number[]) ?? [],
+    ro_yxatdan_sana: (m.ro_yxatdan_sana as string) ?? new Date().toISOString().split("T")[0],
+  };
+}
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [sportTurlari] = useState<SportType[]>(initialSportTurlari);
@@ -127,40 +146,38 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Load users from localStorage on mount
+  // Listen to Supabase auth state changes
   useEffect(() => {
-    const savedUsers = localStorage.getItem(USERS_KEY);
-    const savedCurrentUser = localStorage.getItem(CURRENT_USER_KEY);
-    const savedGuruhlar = localStorage.getItem(GURUHLAR_KEY);
+    // Check initial session
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) {
+        setCurrentUser(userFromMetadata(user));
+        setIsAuthenticated(true);
+      }
+    });
 
-    if (savedUsers) {
-      setUsers(JSON.parse(savedUsers));
-    }
-    if (savedCurrentUser) {
-      const user = JSON.parse(savedCurrentUser);
-      setCurrentUser(user);
-      setIsAuthenticated(true);
-    }
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setCurrentUser(userFromMetadata(session.user));
+        setIsAuthenticated(true);
+      } else {
+        setCurrentUser(null);
+        setIsAuthenticated(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // Load guruhlar from localStorage on mount
+  useEffect(() => {
+    const savedGuruhlar = localStorage.getItem(GURUHLAR_KEY);
     if (savedGuruhlar) {
       setGuruhlar(JSON.parse(savedGuruhlar));
     }
   }, []);
-
-  // Save users to localStorage when changed
-  useEffect(() => {
-    if (users.length > 0) {
-      localStorage.setItem(USERS_KEY, JSON.stringify(users));
-    }
-  }, [users]);
-
-  // Save current user to localStorage when changed
-  useEffect(() => {
-    if (currentUser) {
-      localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
-    } else {
-      localStorage.removeItem(CURRENT_USER_KEY);
-    }
-  }, [currentUser]);
 
   // Save guruhlar to localStorage when changed
   useEffect(() => {
@@ -168,46 +185,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, [guruhlar]);
 
   // Auth functions
-  const register = (
-    userData: Omit<
-      User,
-      "id" | "ro_yxatdan_sana" | "klublar_ids" | "musobaqalar_ids"
-    >,
-  ) => {
-    const existingUser = users.find((u) => u.email === userData.email);
-    if (existingUser) {
-      return {
-        success: false,
-        message: "Bu email allaqachon ro'yxatdan o'tgan",
-      };
-    }
-
-    const newUser: User = {
-      ...userData,
-      id: Math.max(...users.map((u) => u.id), 0) + 1,
-      klublar_ids: [],
-      musobaqalar_ids: [],
-      ro_yxatdan_sana: new Date().toISOString().split("T")[0],
-    };
-
-    setUsers((prev) => [...prev, newUser]);
-    setCurrentUser(newUser);
-    setIsAuthenticated(true);
-    return { success: true, message: "Muvaffaqiyatli ro'yxatdan o'tdingiz!" };
-  };
-
-  const login = (email: string, parol: string) => {
-    const user = users.find((u) => u.email === email && u.parol === parol);
-    if (!user) {
-      return { success: false, message: "Email yoki parol noto'g'ri" };
-    }
-
-    setCurrentUser(user);
-    setIsAuthenticated(true);
-    return { success: true, message: "Muvaffaqiyatli kirdingiz!" };
-  };
-
-  const logout = () => {
+  const logout = async () => {
+    await supabase.auth.signOut();
     setCurrentUser(null);
     setIsAuthenticated(false);
     setCurrentPage("dashboard");
@@ -520,8 +499,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
         users,
         isAuthenticated,
         // Auth functions
-        register,
-        login,
         logout,
         updateProfile,
         // User management (admin)

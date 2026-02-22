@@ -116,6 +116,7 @@ export interface Yangilik {
 // User
 export interface User {
   id: number;
+  supabase_id?: string;
   ism: string;
   familiya: string;
   email: string;
