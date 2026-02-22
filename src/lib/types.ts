@@ -129,6 +129,7 @@ export interface User {
   avatar_emoji: string;
   bio?: string;
   sport_turlari: string[];
+  role?: "admin" | "coach" | "sportsman";
   isAdmin?: boolean;
   klublar_ids: number[];
   musobaqalar_ids: number[];

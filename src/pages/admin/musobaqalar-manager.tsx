@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useApp } from "@/lib/store";
-import type { Musobaqa } from "@/lib/types";
+import type { Musobaqa, Sportchi } from "@/lib/types";
 import { useState } from "react";
 
 function AssignWinnersInline({
@@ -29,7 +29,7 @@ function AssignWinnersInline({
   onAssign,
 }: {
   musobaqa: Musobaqa;
-  participants: any[];
+  participants: Sportchi[];
   onAssign: (winners: { sportchiId: number; medal_turi: "oltin" | "kumush" | "bronza" }[]) => void;
 }) {
   const [open, setOpen] = useState(false);
