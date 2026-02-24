@@ -142,8 +142,63 @@ CREATE TABLE IF NOT EXISTS musobaqalar (
   rasm_emoji TEXT,
   tavsif TEXT,
   mukofotlar TEXT,
+  nizomUrl TEXT,
+  ownerId BIGINT,
+  winners JSONB,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Add missing columns to musobaqalar if they don't exist
+DO $$ 
+BEGIN 
+  -- Add nizomUrl column
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'musobaqalar' AND column_name = 'nizomUrl'
+  ) THEN
+    ALTER TABLE musobaqalar ADD COLUMN nizomUrl TEXT;
+  END IF;
+  
+  -- Add ownerId column
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'musobaqalar' AND column_name = 'ownerId'
+  ) THEN
+    ALTER TABLE musobaqalar ADD COLUMN ownerId BIGINT;
+  END IF;
+  
+  -- Add winners column
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'musobaqalar' AND column_name = 'winners'
+  ) THEN
+    ALTER TABLE musobaqalar ADD COLUMN winners JSONB;
+  END IF;
+  
+  -- Add tavsif column
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'musobaqalar' AND column_name = 'tavsif'
+  ) THEN
+    ALTER TABLE musobaqalar ADD COLUMN tavsif TEXT;
+  END IF;
+  
+  -- Add mukofotlar column
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'musobaqalar' AND column_name = 'mukofotlar'
+  ) THEN
+    ALTER TABLE musobaqalar ADD COLUMN mukofotlar TEXT;
+  END IF;
+  
+  -- Add ishtirokchilar_soni column
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'musobaqalar' AND column_name = 'ishtirokchilar_soni'
+  ) THEN
+    ALTER TABLE musobaqalar ADD COLUMN ishtirokchilar_soni INTEGER DEFAULT 0;
+  END IF;
+END $$;
 
 -- Sportchilar (Athletes)
 CREATE TABLE IF NOT EXISTS sportchilar (
@@ -268,12 +323,24 @@ CREATE TRIGGER on_auth_user_created
   FOR EACH ROW
   EXECUTE FUNCTION public.handle_new_user();
 
--- Policies for profiles
+-- Policies for profiles (drop if exists and recreate)
+DROP POLICY IF EXISTS "Public profiles are viewable by everyone" ON profiles;
+DROP POLICY IF EXISTS "Users can insert own profile" ON profiles;
+DROP POLICY IF EXISTS "Users can update own profile" ON profiles;
+
 CREATE POLICY "Public profiles are viewable by everyone" ON profiles FOR SELECT USING (true);
 CREATE POLICY "Users can insert own profile" ON profiles FOR INSERT WITH CHECK (auth.uid() = id);
 CREATE POLICY "Users can update own profile" ON profiles FOR UPDATE USING (auth.uid() = id);
 
--- Policies for public read access
+-- Policies for public read access (drop if exists and recreate)
+DROP POLICY IF EXISTS "Public read access for sport_turlari" ON sport_turlari;
+DROP POLICY IF EXISTS "Public read access for sport_joylari" ON sport_joylari;
+DROP POLICY IF EXISTS "Public read access for klublar" ON klublar;
+DROP POLICY IF EXISTS "Public read access for musobaqalar" ON musobaqalar;
+DROP POLICY IF EXISTS "Public read access for sportchilar" ON sportchilar;
+DROP POLICY IF EXISTS "Public read access for yangiliklar" ON yangiliklar;
+DROP POLICY IF EXISTS "Public read access for yutuqlar" ON yutuqlar;
+
 CREATE POLICY "Public read access for sport_turlari" ON sport_turlari FOR SELECT USING (true);
 CREATE POLICY "Public read access for sport_joylari" ON sport_joylari FOR SELECT USING (true);
 CREATE POLICY "Public read access for klublar" ON klublar FOR SELECT USING (true);
@@ -282,17 +349,28 @@ CREATE POLICY "Public read access for sportchilar" ON sportchilar FOR SELECT USI
 CREATE POLICY "Public read access for yangiliklar" ON yangiliklar FOR SELECT USING (true);
 CREATE POLICY "Public read access for yutuqlar" ON yutuqlar FOR SELECT USING (true);
 
--- Policies for user_klublar
+-- Policies for user_klublar (drop if exists and recreate)
+DROP POLICY IF EXISTS "Users can view own klub memberships" ON user_klublar;
+DROP POLICY IF EXISTS "Users can insert own klub memberships" ON user_klublar;
+DROP POLICY IF EXISTS "Users can delete own klub memberships" ON user_klublar;
+
 CREATE POLICY "Users can view own klub memberships" ON user_klublar FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Users can insert own klub memberships" ON user_klublar FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Users can delete own klub memberships" ON user_klublar FOR DELETE USING (auth.uid() = user_id);
 
--- Policies for user_musobaqalar
+-- Policies for user_musobaqalar (drop if exists and recreate)
+DROP POLICY IF EXISTS "Users can view own musobaqa registrations" ON user_musobaqalar;
+DROP POLICY IF EXISTS "Users can insert own musobaqa registrations" ON user_musobaqalar;
+DROP POLICY IF EXISTS "Users can delete own musobaqa registrations" ON user_musobaqalar;
+
 CREATE POLICY "Users can view own musobaqa registrations" ON user_musobaqalar FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Users can insert own musobaqa registrations" ON user_musobaqalar FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Users can delete own musobaqa registrations" ON user_musobaqalar FOR DELETE USING (auth.uid() = user_id);
 
--- Policies for yutuqlar
+-- Policies for yutuqlar (drop if exists and recreate)
+DROP POLICY IF EXISTS "Users can view own yutuqlar" ON yutuqlar;
+DROP POLICY IF EXISTS "Service role can insert yutuqlar" ON yutuqlar;
+
 CREATE POLICY "Users can view own yutuqlar" ON yutuqlar FOR SELECT USING (auth.uid() = (sportchi->>'id')::uuid);
 CREATE POLICY "Service role can insert yutuqlar" ON yutuqlar FOR INSERT WITH CHECK (auth.jwt()->>'role' = 'service_role');
 
@@ -301,3 +379,35 @@ GRANT ALL ON ALL TABLES IN SCHEMA public TO postgres;
 GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO postgres;
 GRANT ALL ON ALL TABLES IN SCHEMA public TO authenticated;
 GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO authenticated;
+
+-- =====================================================
+-- SUPABASE STORAGE SETUP (for nizom uploads)
+-- =====================================================
+
+-- Create storage bucket for nizom documents if not exists
+INSERT INTO storage.buckets (id, name, public) 
+VALUES ('nizomlar', 'nizomlar', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- Drop existing policies if they exist
+DROP POLICY IF EXISTS "Authenticated users can upload nizom" ON storage.objects;
+DROP POLICY IF EXISTS "Public can read nizomlar" ON storage.objects;
+DROP POLICY IF EXISTS "Users can delete own nizom" ON storage.objects;
+
+-- Policy for uploading (authenticated users only)
+CREATE POLICY "Authenticated users can upload nizom"
+  ON storage.objects FOR INSERT
+  TO authenticated
+  WITH CHECK (bucket_id = 'nizomlar');
+
+-- Policy for reading (public)
+CREATE POLICY "Public can read nizomlar"
+  ON storage.objects FOR SELECT
+  TO public
+  USING (bucket_id = 'nizomlar');
+
+-- Policy for deleting (owner only)
+CREATE POLICY "Users can delete own nizom"
+  ON storage.objects FOR DELETE
+  TO authenticated
+  USING (bucket_id = 'nizomlar' AND owner = auth.uid());

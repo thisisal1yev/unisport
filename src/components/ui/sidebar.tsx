@@ -49,6 +49,7 @@ export function Sidebar() {
   const { currentPage, setCurrentPage, isAuthenticated, currentUser, logout } =
     useApp();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
 
   const handleNavClick = (pageId: string) => {
     setCurrentPage(pageId);
@@ -60,21 +61,49 @@ export function Sidebar() {
     setMobileOpen(false);
   };
 
+  const toggleSidebar = () => {
+    setCollapsed(!collapsed);
+  };
+
   const SidebarContent = () => (
-    <div className="h-full flex flex-col bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800">
-      {/* Logo */}
-      <div className="p-6 border-b border-slate-200 dark:border-slate-800">
-        <div className="flex items-center gap-3">
-          <div className="text-4xl">🏆</div>
-          <div>
-            <h2 className="text-xl font-bold text-slate-800 dark:text-white">
-              UniSport
-            </h2>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
-              Sport Platformasi
-            </p>
+    <div className={cn(
+      "h-full flex flex-col bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 transition-all duration-300",
+      collapsed ? "w-20" : "w-64"
+    )}>
+      {/* Logo and Collapse Toggle */}
+      <div className={cn(
+        "border-b border-slate-200 dark:border-slate-800 flex items-center justify-between",
+        collapsed ? "p-4 justify-center" : "p-6"
+      )}>
+        {!collapsed && (
+          <div className="flex items-center gap-3">
+            <div className="text-4xl">🏆</div>
+            <div>
+              <h2 className="text-xl font-bold text-slate-800 dark:text-white whitespace-nowrap">
+                UniSport
+              </h2>
+              <p className="text-sm text-slate-500 dark:text-slate-400">
+                Sport Platformasi
+              </p>
+            </div>
           </div>
-        </div>
+        )}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={toggleSidebar}
+          className="shrink-0"
+        >
+          {collapsed ? (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+            </svg>
+          ) : (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+            </svg>
+          )}
+        </Button>
       </div>
 
       {/* User Profile Section */}
@@ -84,35 +113,37 @@ export function Sidebar() {
           onClick={() => handleNavClick("profil")}
           className={cn(
             "mx-4 mt-4 p-3 rounded-xl flex items-center gap-3 transition-all",
+            collapsed ? "justify-center" : "",
             currentPage === "profil"
               ? "bg-linear-to-r from-emerald-500 to-teal-600 text-white shadow-lg"
               : "bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700",
           )}
         >
-          <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-xl">
+          <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-xl shrink-0">
             {currentUser.avatar_emoji}
           </div>
-          <div className="text-left flex-1">
-            2
-            <p
-              className={cn(
-                "font-semibold text-sm",
-                currentPage === "profil"
-                  ? "text-white"
-                  : "text-slate-800 dark:text-white",
-              )}
-            >
-              {currentUser.ism} {currentUser.familiya}
-            </p>
-            <p
-              className={cn(
-                "text-xs",
-                currentPage === "profil" ? "text-white/80" : "text-slate-500",
-              )}
-            >
-              Profilni ko'rish
-            </p>
-          </div>
+          {!collapsed && (
+            <div className="text-left flex-1 min-w-0">
+              <p
+                className={cn(
+                  "font-semibold text-sm truncate",
+                  currentPage === "profil"
+                    ? "text-white"
+                    : "text-slate-800 dark:text-white",
+                )}
+              >
+                {currentUser.ism} {currentUser.familiya}
+              </p>
+              <p
+                className={cn(
+                  "text-xs truncate",
+                  currentPage === "profil" ? "text-white/80" : "text-slate-500",
+                )}
+              >
+                Profilni ko'rish
+              </p>
+            </div>
+          )}
         </Link>
       ) : (
         <Link
@@ -120,36 +151,39 @@ export function Sidebar() {
           onClick={() => handleNavClick("auth")}
           className={cn(
             "mx-4 mt-4 p-3 rounded-xl flex items-center gap-3 transition-all",
+            collapsed ? "justify-center" : "",
             currentPage === "auth"
               ? "bg-linear-to-r from-emerald-500 to-teal-600 text-white shadow-lg"
               : "bg-emerald-50 dark:bg-emerald-900/30 hover:bg-emerald-100 dark:hover:bg-emerald-900/50",
           )}
         >
-          <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-800 flex items-center justify-center text-xl">
+          <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-800 flex items-center justify-center text-xl shrink-0">
             👤
           </div>
-          <div className="text-left flex-1">
-            <p
-              className={cn(
-                "font-semibold text-sm",
-                currentPage === "auth"
-                  ? "text-white"
-                  : "text-emerald-700 dark:text-emerald-300",
-              )}
-            >
-              Kirish / Ro'yxatdan o'tish
-            </p>
-            <p
-              className={cn(
-                "text-xs",
-                currentPage === "auth"
-                  ? "text-white/80"
-                  : "text-emerald-600/70 dark:text-emerald-400/70",
-              )}
-            >
-              Musobaqalarda qatnashing
-            </p>
-          </div>
+          {!collapsed && (
+            <div className="text-left flex-1">
+              <p
+                className={cn(
+                  "font-semibold text-sm",
+                  currentPage === "auth"
+                    ? "text-white"
+                    : "text-emerald-700 dark:text-emerald-300",
+                )}
+              >
+                Kirish / Ro'yxatdan o'tish
+              </p>
+              <p
+                className={cn(
+                  "text-xs",
+                  currentPage === "auth"
+                    ? "text-white/80"
+                    : "text-emerald-600/70 dark:text-emerald-400/70",
+                )}
+              >
+                Musobaqalarda qatnashing
+              </p>
+            </div>
+          )}
         </Link>
       )}
 
@@ -162,49 +196,61 @@ export function Sidebar() {
             type="button"
             href={item.to}
             className={cn(
-              "w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-medium",
+              "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-medium",
+              collapsed ? "justify-center" : "w-full",
               currentPage === item.id
                 ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/25"
                 : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800",
             )}
+            title={collapsed ? item.label : undefined}
           >
-            <span className="text-xl">{item.icon}</span>
-            <span>{item.label}</span>
+            <span className="text-xl shrink-0">{item.icon}</span>
+            {!collapsed && <span>{item.label}</span>}
           </Link>
         ))}
       </nav>
 
       {/* Bottom Actions */}
-      <div className="p-4 border-t border-slate-200 dark:border-slate-800 space-y-2">
+      <div className={cn(
+        "p-4 border-t border-slate-200 dark:border-slate-800 space-y-2",
+        collapsed ? "flex flex-col items-center" : ""
+      )}>
         {/* Admin Panel Link */}
         {isAuthenticated && currentUser?.isAdmin && (
-          <button
-            type="button"
-            onClick={() => handleNavClick("admin")}
+          <Link
+            href="/admin/coaches-manager"
+            onClick={() => handleNavClick("coaches-manager")}
             className={cn(
-              "w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-medium",
-              currentPage === "admin"
-                ? "bg-gradient-to-r from-red-500 to-rose-600 text-white shadow-lg shadow-red-500/25"
-                : "text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20",
+              "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-medium",
+              collapsed ? "justify-center w-full" : "w-full",
+              currentPage === "coaches-manager"
+                ? "bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg shadow-green-500/25"
+                : "text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20",
             )}
+            title={collapsed ? "Coachlar" : undefined}
           >
-            <span className="text-xl">🔧</span>
-            <span>Admin Panel</span>
-          </button>
+            <span className="text-xl shrink-0">📋</span>
+            {!collapsed && <span>Coachlar</span>}
+          </Link>
         )}
 
-        <ThemeToggle />
+        <div className={cn("flex gap-2", collapsed ? "flex-col w-full" : "")}>
+          <ThemeToggle />
 
-        {isAuthenticated && (
-          <Button
-            variant="destructive"
-            className="w-full justify-center gap-2"
-            onClick={handleLogout}
-          >
-            <span>🚪</span>
-            <span>Chiqish</span>
-          </Button>
-        )}
+          {isAuthenticated && (
+            <Button
+              variant="destructive"
+              className={cn(
+                "justify-center gap-2",
+                collapsed ? "w-full" : "flex-1"
+              )}
+              onClick={handleLogout}
+            >
+              <span>🚪</span>
+              {!collapsed && <span>Chiqish</span>}
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -212,7 +258,10 @@ export function Sidebar() {
   return (
     <>
       {/* Desktop Sidebar */}
-      <aside className="hidden md:block w-64 h-screen fixed left-0 top-0 z-40">
+      <aside className={cn(
+        "hidden md:block h-screen fixed left-0 top-0 z-40 transition-all duration-300",
+        collapsed ? "w-20" : "w-64"
+      )}>
         <SidebarContent />
       </aside>
 

@@ -51,6 +51,8 @@ export default function CoachMusobaqalar() {
     rasm_emoji: "🏆",
     tavsif: "",
     mukofotlar: "",
+    nizom: null as File | null,
+    nizomUrl: "",
   });
 
   const filteredMusobaqalar = musobaqalar.filter((m) => {
@@ -69,6 +71,8 @@ export default function CoachMusobaqalar() {
       rasm_emoji: "🏆",
       tavsif: "",
       mukofotlar: "",
+      nizom: null,
+      nizomUrl: "",
     });
     setEditingMusobaqa(null);
   };
@@ -86,15 +90,26 @@ export default function CoachMusobaqalar() {
       rasm_emoji: m.rasm_emoji,
       tavsif: m.tavsif || "",
       mukofotlar: m.mukofotlar || "",
+      nizom: null,
+      nizomUrl: m.nizomUrl || "",
     });
     setIsDialogOpen(true);
   };
 
   const handleSubmit = () => {
+    // Simulate file upload - in real app, upload to Supabase Storage
+    let nizomUrl = formData.nizomUrl;
+    if (formData.nizom) {
+      // Create a fake URL for the uploaded file
+      nizomUrl = `/uploads/nizom_${Date.now()}_${formData.nizom.name}`;
+      // In real app: upload to Supabase Storage and get public URL
+      console.log("Uploading nizom:", formData.nizom.name);
+    }
+    
     if (editingMusobaqa) {
-      updateMusobaqa(editingMusobaqa.id, formData);
+      updateMusobaqa(editingMusobaqa.id, { ...formData, nizomUrl });
     } else {
-      addMusobaqa(formData);
+      addMusobaqa({ ...formData, nizomUrl });
     }
     setIsDialogOpen(false);
     resetForm();
@@ -316,6 +331,24 @@ export default function CoachMusobaqalar() {
                   setFormData({ ...formData, mukofotlar: e.target.value })
                 }
               />
+              <div className="space-y-2">
+                <label className="text-sm font-medium">📄 Nizom (hujjat)</label>
+                <Input
+                  type="file"
+                  accept=".pdf,.doc,.docx"
+                  onChange={(e) =>
+                    setFormData({ ...formData, nizom: e.target.files?.[0] || null })
+                  }
+                />
+                {formData.nizomUrl && (
+                  <p className="text-xs text-green-600">
+                    ✓ Hozirgi nizom: {formData.nizomUrl}
+                  </p>
+                )}
+                <p className="text-xs text-slate-500">
+                  Faqat PDF, DOC, DOCX formatlari
+                </p>
+              </div>
               <Button
                 onClick={handleSubmit}
                 className="w-full bg-emerald-500 hover:bg-emerald-600"
@@ -487,6 +520,22 @@ export default function CoachMusobaqalar() {
                     <p className="text-slate-600 dark:text-slate-400 whitespace-pre-line">
                       {detailModal.mukofotlar}
                     </p>
+                  </div>
+                )}
+
+                {detailModal.nizomUrl && (
+                  <div className="bg-blue-50 dark:bg-blue-900/30 rounded-xl p-4">
+                    <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-2">
+                      📄 Nizom
+                    </h3>
+                    <a
+                      href={detailModal.nizomUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-2"
+                    >
+                      📎 Nizom hujjatini yuklab olish
+                    </a>
                   </div>
                 )}
 

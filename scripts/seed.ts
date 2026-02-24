@@ -319,6 +319,7 @@ const musobaqalar = [
     rasm_emoji: '⚽',
     tavsif: 'Farg\'ona viloyati universitetlari o\'rtasidagi an\'anaviy futbol musobaqasi',
     mukofotlar: '1-o\'rin: 5,000,000 so\'m\n2-o\'rin: 3,000,000 so\'m\n3-o\'rin: 1,500,000 so\'m',
+    nizomUrl: '/nizomlar/futbol_kubogi_2026.pdf',
   },
   {
     id: 2,
@@ -332,6 +333,7 @@ const musobaqalar = [
     rasm_emoji: '🏀',
     tavsif: 'Talabalar o\'rtasidagi basketbol chempionati',
     mukofotlar: '1-o\'rin: 3,000,000 so\'m\n2-o\'rin: 2,000,000 so\'m',
+    nizomUrl: '/nizomlar/basketbol_chempionati.pdf',
   },
   {
     id: 3,
@@ -345,6 +347,7 @@ const musobaqalar = [
     rasm_emoji: '🏐',
     tavsif: 'Qishki voleybol turniri',
     mukofotlar: 'G\'olib jamoaga sovg\'alar',
+    nizomUrl: null,
   },
   {
     id: 4,
@@ -358,6 +361,7 @@ const musobaqalar = [
     rasm_emoji: '♟️',
     tavsif: 'Intellektual sport musobaqasi',
     mukofotlar: null,
+    nizomUrl: null,
   },
   {
     id: 5,
@@ -371,6 +375,7 @@ const musobaqalar = [
     rasm_emoji: '🏃',
     tavsif: '5 km va 10 km masofalar',
     mukofotlar: null,
+    nizomUrl: null,
   },
 ];
 

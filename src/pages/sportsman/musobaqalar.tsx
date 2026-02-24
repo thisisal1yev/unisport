@@ -201,6 +201,31 @@ export default function MusobaqalarPage() {
                   </div>
                 )}
 
+                {detailModal.nizomUrl && (
+                  <div className="bg-blue-50 dark:bg-blue-900/30 rounded-xl p-4 border-2 border-blue-200 dark:border-blue-800">
+                    <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-2 flex items-center gap-2">
+                      📄 Nizom (Reglament)
+                    </h3>
+                    <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                      Musobaqa qoidalari va talablari bilan tanishing
+                    </p>
+                    <a
+                      href={detailModal.nizomUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                      </svg>
+                      Nizomni yuklab olish
+                    </a>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
+                      📎 PDF, DOC, DOCX formatlari qo'llab-quvvatlanadi
+                    </p>
+                  </div>
+                )}
+
                 {/* Participants */}
                 <div>
                   <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-4">

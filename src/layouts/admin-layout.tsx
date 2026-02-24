@@ -4,6 +4,7 @@ import { BaseSidebar, type NavItem } from "./base-sidebar";
 
 const navItems: NavItem[] = [
   { id: "admin-dashboard", label: "Dashboard", icon: "📊", to: "/admin/dashboard" },
+  { id: "coaches-manager", label: "Murabbiylar", icon: "📋", to: "/admin/coaches-manager" },
   { id: "sportchilar-manager", label: "Sportchilar", icon: "🤾‍♂️", to: "/admin/sportchilar-manager" },
   { id: "klublar-manager", label: "Klublar", icon: "⚽", to: "/admin/klublar-manager" },
   { id: "musobaqalar-manager", label: "Musobaqalar", icon: "📅", to: "/admin/musobaqalar-manager" },

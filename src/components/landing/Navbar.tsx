@@ -1,12 +1,14 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Trophy, Menu } from "lucide-react";
+import { Trophy, Menu, UserCircle } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { useApp } from "@/lib/store";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const { currentUser, isAuthenticated } = useApp();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -15,6 +17,13 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const getDashboardLink = () => {
+    if (!currentUser) return "/auth";
+    if (currentUser.isAdmin) return "/admin/dashboard";
+    if (currentUser.role === "coach") return "/coach/dashboard";
+    return "/sportsman/dashboard";
+  };
 
   const NavLinks = () => (
     <>
@@ -42,14 +51,25 @@ export default function Navbar() {
         </div>
 
         <div className="hidden md:flex items-center gap-4">
-          <Link href="/auth">
-            <Button variant="ghost" size="sm" className="font-semibold">Log In</Button>
-          </Link>
-          <Link href="/auth">
-            <Button size="sm" className="font-semibold uppercase tracking-wide">
-              Join Now
-            </Button>
-          </Link>
+          {isAuthenticated && currentUser ? (
+            <Link href={getDashboardLink()}>
+              <Button variant="ghost" size="sm" className="font-semibold flex items-center gap-2">
+                <UserCircle className="h-4 w-4" />
+                Dashboard
+              </Button>
+            </Link>
+          ) : (
+            <>
+              <Link href="/auth">
+                <Button variant="ghost" size="sm" className="font-semibold">Log In</Button>
+              </Link>
+              <Link href="/auth">
+                <Button size="sm" className="font-semibold uppercase tracking-wide">
+                  Join Now
+                </Button>
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile Nav */}
@@ -63,14 +83,23 @@ export default function Navbar() {
             <SheetContent>
               <div className="flex flex-col gap-6 mt-10">
                 <NavLinks />
-                <div className="flex flex-col gap-4 mt-4">
-                  <Link href="/auth">
-                    <Button variant="outline" className="w-full">Log In</Button>
+                {isAuthenticated && currentUser ? (
+                  <Link href={getDashboardLink()}>
+                    <Button className="w-full flex items-center gap-2">
+                      <UserCircle className="h-4 w-4" />
+                      Dashboard
+                    </Button>
                   </Link>
-                  <Link href="/auth">
-                    <Button className="w-full">Join Now</Button>
-                  </Link>
-                </div>
+                ) : (
+                  <div className="flex flex-col gap-4 mt-4">
+                    <Link href="/auth">
+                      <Button variant="outline" className="w-full">Log In</Button>
+                    </Link>
+                    <Link href="/auth">
+                      <Button className="w-full">Join Now</Button>
+                    </Link>
+                  </div>
+                )}
               </div>
             </SheetContent>
           </Sheet>

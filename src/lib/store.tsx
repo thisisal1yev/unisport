@@ -54,6 +54,9 @@ interface AppState {
   // User management (admin)
   deleteUser: (id: number) => void;
   toggleUserAdmin: (id: number) => void;
+  setUserRole: (id: number, role: "admin" | "coach" | "sportsman") => void;
+  assignCoachToSportsman: (coachId: number, sportsmanId: number) => void;
+  removeCoachFromSportsman: (sportsmanId: number) => void;
 
   // Participation functions
   joinKlub: (klubId: number) => void;
@@ -215,6 +218,24 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const toggleUserAdmin = (id: number) => {
     setUsers((prev) =>
       prev.map((u) => (u.id === id ? { ...u, isAdmin: !u.isAdmin } : u)),
+    );
+  };
+
+  const setUserRole = (id: number, role: "admin" | "coach" | "sportsman") => {
+    setUsers((prev) =>
+      prev.map((u) => (u.id === id ? { ...u, role } : u)),
+    );
+  };
+
+  const assignCoachToSportsman = (coachId: number, sportsmanId: number) => {
+    setSportchilar((prev) =>
+      prev.map((s) => (s.id === sportsmanId ? { ...s, coach_id: coachId } : s)),
+    );
+  };
+
+  const removeCoachFromSportsman = (sportsmanId: number) => {
+    setSportchilar((prev) =>
+      prev.map((s) => (s.id === sportsmanId ? { ...s, coach_id: undefined } : s)),
     );
   };
 
@@ -509,6 +530,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
         // User management (admin)
         deleteUser,
         toggleUserAdmin,
+        setUserRole,
+        assignCoachToSportsman,
+        removeCoachFromSportsman,
         // Participation functions
         joinKlub,
         leaveKlub,

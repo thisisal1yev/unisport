@@ -42,6 +42,7 @@ export interface Musobaqa {
   rasm_emoji: string;
   tavsif?: string;
   mukofotlar?: string;
+  nizomUrl?: string;
   ownerId?: number;
   winners?: {
     sportchiId: number;
@@ -66,6 +67,7 @@ export interface Sportchi {
   bio?: string;
   klub?: string;
   klub_id?: number;
+  coach_id?: number; // Assigned coach
 }
 
 // Clubs

@@ -58,6 +58,12 @@ export default function AdminDashboard() {
       color: "from-cyan-500 to-cyan-600",
     },
     {
+      label: "Murabbiylar",
+      value: users.filter((u) => u.role === "coach").length,
+      icon: "📋",
+      color: "from-green-500 to-green-600",
+    },
+    {
       label: "Adminlar",
       value: users.filter((u) => u.isAdmin).length,
       icon: "🔐",
