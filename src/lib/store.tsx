@@ -171,6 +171,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
+  // Refresh session on mount to ensure sync with middleware
+  useEffect(() => {
+    supabase.auth.refreshSession();
+  }, []);
+
   // Load guruhlar from localStorage on mount
   useEffect(() => {
     const savedGuruhlar = localStorage.getItem(GURUHLAR_KEY);

@@ -56,10 +56,13 @@ export async function middleware(request: NextRequest) {
   // Role enforcement: ensure user accesses only their own role prefix
   if (isProtected && user) {
     const allowedPrefix = rolePrefixes[role] ?? "/sportsman";
+    // Prevent redirect loops by checking if already on correct dashboard
     if (!pathname.startsWith(allowedPrefix)) {
-      return NextResponse.redirect(
-        new URL(getDashboardPath(role), request.url),
-      );
+      const dashboardPath = getDashboardPath(role);
+      // Avoid infinite redirect if already on dashboard
+      if (pathname !== dashboardPath) {
+        return NextResponse.redirect(new URL(dashboardPath, request.url));
+      }
     }
   }
 

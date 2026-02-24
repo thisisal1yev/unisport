@@ -73,17 +73,20 @@ export default function AuthPage() {
   });
 
   const redirectByRole = (role?: string) => {
-    switch (role) {
-      case "admin":
-        router.push("/admin/dashboard");
-        break;
-      case "coach":
-        router.push("/coach/dashboard");
-        break;
-      default:
-        router.push("/sportsman/dashboard");
-        break;
-    }
+    // Delay redirect to allow session to propagate
+    setTimeout(() => {
+      switch (role) {
+        case "admin":
+          router.push("/admin/dashboard");
+          break;
+        case "coach":
+          router.push("/coach/dashboard");
+          break;
+        default:
+          router.push("/sportsman/dashboard");
+          break;
+      }
+    }, 1000);
   };
 
   const handleLogin = async (e: React.FormEvent) => {

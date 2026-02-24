@@ -41,6 +41,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# bun
+bun.lock
+package-lock.json
+
+# sqlite
 .localstorage*
 *.wal
 *.shm
