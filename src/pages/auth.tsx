@@ -138,28 +138,28 @@ export default function AuthPage() {
       finalGuruh = newGuruh.trim();
     }
 
+    const metadata: Record<string, unknown> = {
+      ism: regData.ism,
+      familiya: regData.familiya,
+      avatar_emoji: regData.avatar_emoji,
+      sport_turlari: regData.sport_turlari,
+      role: "sportsman",
+      klublar_ids: [],
+      musobaqalar_ids: [],
+      ro_yxatdan_sana: new Date().toISOString().split("T")[0],
+    };
+    if (regData.telefon) metadata.telefon = regData.telefon;
+    if (regData.tug_sana) metadata.tug_sana = regData.tug_sana;
+    if (regData.fakultet) metadata.fakultet = regData.fakultet;
+    if (finalGuruh) metadata.guruh = finalGuruh;
+    if (regData.vazn) metadata.vazn = Number.parseFloat(regData.vazn);
+    if (regData.boy) metadata.boy = Number.parseFloat(regData.boy);
+    if (regData.bio) metadata.bio = regData.bio;
+
     const { data, error: authError } = await supabase.auth.signUp({
       email: regData.email,
       password: regData.parol,
-      options: {
-        data: {
-          ism: regData.ism,
-          familiya: regData.familiya,
-          telefon: regData.telefon || undefined,
-          tug_sana: regData.tug_sana || undefined,
-          fakultet: regData.fakultet || undefined,
-          guruh: finalGuruh || undefined,
-          vazn: regData.vazn ? Number.parseFloat(regData.vazn) : undefined,
-          boy: regData.boy ? Number.parseFloat(regData.boy) : undefined,
-          avatar_emoji: regData.avatar_emoji,
-          bio: regData.bio || undefined,
-          sport_turlari: regData.sport_turlari,
-          role: "sportsman",
-          klublar_ids: [],
-          musobaqalar_ids: [],
-          ro_yxatdan_sana: new Date().toISOString().split("T")[0],
-        },
-      },
+      options: { data: metadata },
     });
 
     if (authError) {

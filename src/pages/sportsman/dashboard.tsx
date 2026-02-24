@@ -2,11 +2,12 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { StatCard } from "@/components/shared/StatCard";
 import { useApp } from "@/lib/store";
+import Link from "next/link";
 
 export default function DashboardPage() {
-  const { musobaqalar, yutuqlar, sportchilar, klublar, setCurrentPage } =
-    useApp();
+  const { musobaqalar, yutuqlar, sportchilar, klublar } = useApp();
 
   const stats = [
     {
@@ -44,24 +45,7 @@ export default function DashboardPage() {
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         {stats.map((stat) => (
-          <Card
-            key={stat.label}
-            className="group hover:-translate-y-1 transition-all duration-300 hover:shadow-xl border-0 shadow-lg bg-white dark:bg-slate-800"
-          >
-            <CardContent className="p-6">
-              <div
-                className={`w-12 h-12 rounded-full bg-linear-to-r ${stat.gradient} flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform`}
-              >
-                {stat.icon}
-              </div>
-              <h3 className="text-3xl font-bold text-slate-800 dark:text-white">
-                {stat.value}
-              </h3>
-              <p className="text-slate-600 dark:text-slate-400 mt-1">
-                {stat.label}
-              </p>
-            </CardContent>
-          </Card>
+          <StatCard key={stat.label} {...stat} />
         ))}
       </div>
 
@@ -72,15 +56,17 @@ export default function DashboardPage() {
             <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-4">
               🎯 Sport turlari
             </h2>
+
             <p className="text-slate-600 dark:text-slate-400 mb-4">
               12 xil sport turi bilan tanishing
             </p>
-            <Button
-              onClick={() => setCurrentPage("sport-turlari")}
-              className="bg-linear-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700"
+
+            <Link
+              href={"/sportsman/sport-turlari"}
+              className="bg-linear-to-r rounded-md px-4 py-2 inline-block from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700"
             >
               Ko'rish
-            </Button>
+            </Link>
           </CardContent>
         </Card>
 
@@ -89,15 +75,17 @@ export default function DashboardPage() {
             <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-4">
               📍 Qayerda mashq qilish mumkin?
             </h2>
+
             <p className="text-slate-600 dark:text-slate-400 mb-4">
               Yaqinroqdagi sport joylarini toping
             </p>
-            <Button
-              onClick={() => setCurrentPage("sport-joylari")}
-              className="bg-linear-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700"
+
+            <Link
+              href={"/sportsman/sport-joylari"}
+              className="bg-linear-to-r rounded-md px-4 py-2 from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700"
             >
               Xaritadan ko'rish
-            </Button>
+            </Link>
           </CardContent>
         </Card>
       </div>
@@ -135,13 +123,13 @@ export default function DashboardPage() {
                 </div>
               ))}
           </div>
-          <Button
-            variant="outline"
-            className="w-full mt-4"
-            onClick={() => setCurrentPage("/sportsman/musobaqalar")}
+
+          <Link
+            href={"/sportsman/musobaqalar"}
+            className="w-full mt-4 flex items-center justify-center bg-neutral-800 py-2 rounded-md"
           >
             Barcha musobaqalar
-          </Button>
+          </Link>
         </CardContent>
       </Card>
     </div>

@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -11,6 +10,9 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { NewsCard } from "@/components/shared/NewsCard";
+import { EmptyState } from "@/components/shared/EmptyState";
+import { PageHeader } from "@/components/shared/PageHeader";
 import { useApp } from "@/lib/store";
 import { useState } from "react";
 
@@ -47,10 +49,7 @@ export default function YangiliklarPage() {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl md:text-4xl font-bold text-slate-800 dark:text-white">
-          Yangiliklar
-        </h1>
+      <PageHeader title="Yangiliklar">
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button className="bg-emerald-500 hover:bg-emerald-600">
@@ -130,56 +129,16 @@ export default function YangiliklarPage() {
             </div>
           </DialogContent>
         </Dialog>
-      </div>
+      </PageHeader>
 
       <div className="space-y-6">
         {yangiliklar.map((yangilik) => (
-          <Card
-            key={yangilik.id}
-            className="group hover:-translate-y-1 transition-all duration-300 hover:shadow-xl border-0 shadow-lg bg-white dark:bg-slate-800"
-          >
-            <CardContent className="p-6">
-              {yangilik.rasm ? (
-                <img
-                  src={yangilik.rasm}
-                  alt={yangilik.sarlavha}
-                  className="w-full h-48 object-cover rounded mb-4"
-                />
-              ) : (
-                <div className="text-5xl mb-4 group-hover:scale-110 transition-transform inline-block">
-                  {yangilik.rasm_emoji}
-                </div>
-              )}
-              <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-2">
-                {yangilik.sarlavha}
-              </h3>
-              <p className="text-sm text-slate-600 dark:text-slate-400 mb-3 line-clamp-3">
-                {yangilik.mazmun}
-              </p>
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-2">
-                  <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 rounded text-xs font-medium">
-                    {yangilik.kategoriya}
-                  </span>
-                  <span className="text-xs text-slate-500 dark:text-slate-400">
-                    📅 {yangilik.sana}
-                  </span>
-                </div>
-                <div className="flex gap-4">
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <NewsCard key={yangilik.id} yangilik={yangilik} />
         ))}
       </div>
 
       {yangiliklar.length === 0 && (
-        <div className="text-center py-12">
-          <div className="text-6xl mb-4">📰</div>
-          <p className="text-slate-600 dark:text-slate-400">
-            Hech qanday yangilik topilmadi
-          </p>
-        </div>
+        <EmptyState emoji="📰" message="Hech qanday yangilik topilmadi" />
       )}
     </div>
   );

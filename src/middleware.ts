@@ -1,4 +1,4 @@
-import { type NextRequest, NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/middleware";
 
 const publicRoutes = ["/", "/auth"];
@@ -17,11 +17,12 @@ export async function middleware(request: NextRequest) {
   const { supabase, response } = createClient(request);
   const { pathname } = request.nextUrl;
 
-  // Skip static assets and API routes
+  // Skip static assets, API routes, and auth callbacks
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api") ||
-    pathname.includes(".")
+    pathname.includes(".") ||
+    pathname.startsWith("/auth/callback")
   ) {
     return response;
   }
@@ -30,7 +31,7 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const role: string = user?.user_metadata?.role ?? "sportsman";
+  const role: string = (user?.user_metadata?.role as string) ?? "sportsman";
 
   // If authenticated user visits /auth → redirect to their dashboard
   if (pathname === "/auth" && user) {
@@ -66,5 +67,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.json).*)"],
 };
