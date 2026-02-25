@@ -28,6 +28,7 @@ import type {
   Yutuq,
 } from "./types";
 import { createClient } from "./supabase/browser";
+import { uploadNizom, deleteNizom } from "./supabase/browser";
 
 interface AppState {
   sportTurlari: SportType[];
@@ -93,6 +94,10 @@ interface AppState {
   updateYangilik: (id: number, yangilik: Partial<Yangilik>) => void;
   deleteYangilik: (id: number) => void;
   likeYangilik: (id: number) => void;
+
+  // Nizom file management
+  uploadNizomFile: (file: File, musobaqaId?: number) => Promise<{ url?: string; error?: string }>;
+  deleteNizomFile: (fileName: string) => Promise<{ success: boolean; error?: string }>;
 }
 
 const AppContext = createContext<AppState | undefined>(undefined);
@@ -506,6 +511,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // Nizom file management
+  const uploadNizomFile = async (file: File, musobaqaId?: number) => {
+    return await uploadNizom(file, musobaqaId);
+  };
+
+  const deleteNizomFile = async (fileName: string) => {
+    return await deleteNizom(fileName);
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -558,6 +572,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         updateYangilik,
         deleteYangilik,
         likeYangilik,
+        uploadNizomFile,
+        deleteNizomFile,
       }}
     >
       {children}
