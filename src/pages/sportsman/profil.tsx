@@ -1,7 +1,11 @@
-"use client";
+import dynamic from "next/dynamic";
+import { PageLoading } from "@/components/shared/PageLoading";
 
-import { ProfilePage } from "@/components/shared/ProfilePage";
+const SportsmanProfil = dynamic(() => import("@/components/sportsman/SportsmanProfil"), {
+  loading: () => <PageLoading />,
+  ssr: false,
+});
 
-export default function ProfilPage() {
-  return <ProfilePage />;
+export default function SportsmanProfilPage() {
+  return <SportsmanProfil />;
 }
